@@ -1,56 +1,94 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import { Container } from "./style";
-import sidebar from "../utils/sidebar";
-import { Sidebar } from "../components/Sidebar";
+import React from "react";
+import {
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 
-export const Root = () => {
+// Superadmin
+import SuperadminDashboard from "../pages/SuperadminDashboard";
+import SuperadminMahsulotlar from "../pages/SuperadminDashboard/Mahsulotlar";
+import Adminlar from "../pages/SuperadminDashboard/Adminlar";
+import Kategoriya from "../pages/SuperadminDashboard/Kategoriya";
+
+// Admin
+import AdminDashboard from "../pages/AdminDashboard";
+import AdminMahsulotlar from "../pages/AdminDashboard/Mahsulotlar";
+import AdminKategoriya from "../pages/AdminDashboard/Kategoriya";
+
+// Komendant
+import KomendantDashboard from "../pages/KomendantDashboard";
+import KomendantMahsulotlar from "../pages/KomendantDashboard/Mahsulotlar";
+import KomendantSavatcha from "../pages/KomendantDashboard/Savat";
+import KomendantOlinganMahsulotlar from "../pages/KomendantDashboard/OlinganMahsulotlar";
+
+// Login and NotFoundPage
+import NotFoundPage from "../pages/NotFoundPage";
+import Login from "../components/Login";
+
+const Root = () => {
+  const isAuthenticated = true;
+  // const role = "superadmin";
+  // const role = "admin";
+  const role = "komendant";
+  // const role = "";
+
   return (
-    <Container>
       <Routes>
-        <Route element={<Sidebar />}>
-          {sidebar.map((parent) => {
-            const ElementParent = parent.element;
-            if (parent?.children) {
-              return parent.children.map((child) => {
-                const ElementChild = child.element;
-                return (
-                  <Route
-                    key={child.id}
-                    path={child.path}
-                    element={<ElementChild />}
-                  />
-                );
-              });
-            } else
-              return (
-                !parent.hidden && (
-                  <Route
-                    key={parent.id}
-                    path={parent.path}
-                    element={<ElementParent />}
-                  />
-                )
-              );
-          })}
+        {/* SUPERADMIN */}
+        <Route
+          path="/superadmin"
+          element={
+            isAuthenticated && role === "superadmin" ? (
+              <SuperadminDashboard />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        >
+          <Route index element={<SuperadminMahsulotlar />} />
+          <Route path="mahsulotlar" element={<SuperadminMahsulotlar />} />
+          <Route path="adminlar" element={<Adminlar />} />
+          <Route path="kategoriya" element={<Kategoriya />} />
         </Route>
 
-        {sidebar.map((parent) => {
-          const ElementParent = parent.element;
-          return (
-            parent.hidden && (
-              <Route
-                key={parent.id}
-                path={parent.path}
-                element={<ElementParent />}
-              />
+        {/* ADMIN */}
+        <Route
+          path="/admin"
+          element={
+            isAuthenticated && role === "admin" ? (
+              <AdminDashboard />
+            ) : (
+              <Navigate to="/login" />
             )
-          );
-        })}
+          }
+        >
+          <Route index element={<AdminMahsulotlar />} />
+          <Route path="mahsulotlar" element={<AdminMahsulotlar />} />
+          <Route path="kategoriya" element={<AdminKategoriya />} />
+        </Route>
 
-        <Route path="/" element={<Navigate to={"/login"} />} />
-        <Route path="*" element={<h1>404 not found</h1>} />
+        {/* KOMENDANT */}
+        <Route
+          path="/komendant"
+          element={
+            isAuthenticated && role === "komendant" ? (
+              <KomendantDashboard />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        >
+          <Route index element={<KomendantMahsulotlar />} />
+          <Route path="mahsulotlar" element={<KomendantMahsulotlar />} />
+          <Route path="olingan-mahsulotlar" element={<KomendantOlinganMahsulotlar />} />
+          <Route path="savatcha" element={<KomendantSavatcha />} />
+        </Route>
+
+        {/* LOGIN and * */}
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </Container>
   );
 };
 
