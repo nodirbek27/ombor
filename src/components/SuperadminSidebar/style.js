@@ -35,7 +35,7 @@ const Side = styled.div`
 const Body = styled.div`
   flex: 1;
   height: 100vh;
-  min-width: calc(1440px - 280px);
+  /* min-width: calc(1440px - 280px); */
   /* border: 2px solid blue; */
   overflow-y: scroll;
 `;
