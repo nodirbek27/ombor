@@ -5,12 +5,13 @@ import { Route, Routes } from "react-router-dom";
 import SuperadminDashboard from "../pages/SuperadminDashboard";
 import SuperadminMahsulotlar from "../pages/SuperadminDashboard/Mahsulotlar";
 import Adminlar from "../pages/SuperadminDashboard/Adminlar";
-import Kategoriya from "../pages/SuperadminDashboard/Kategoriya";
+import Arxiv from "../pages/SuperadminDashboard/ArxivPage";
 
 // Admin
 import AdminDashboard from "../pages/AdminDashboard";
 import AdminMahsulotlar from "../pages/AdminDashboard/Mahsulotlar";
 import AdminKategoriya from "../pages/AdminDashboard/Kategoriya";
+import AdminArxiv from "../pages/AdminDashboard/ArxivPage";
 
 // Komendant
 import KomendantDashboard from "../pages/KomendantDashboard";
@@ -53,7 +54,7 @@ const Root = () => {
         <Route index element={<SuperadminMahsulotlar />} />
         <Route path="mahsulotlar" element={<SuperadminMahsulotlar />} />
         <Route path="adminlar" element={<Adminlar />} />
-        <Route path="kategoriya" element={<Kategoriya />} />
+        <Route path="arxiv" element={<Arxiv />} />
       </Route>
 
       {/* ADMIN */}
@@ -64,6 +65,7 @@ const Root = () => {
         <Route index element={<AdminMahsulotlar />} />
         <Route path="mahsulotlar" element={<AdminMahsulotlar />} />
         <Route path="kategoriya" element={<AdminKategoriya />} />
+        <Route path="arxiv" element={<AdminArxiv />} />
       </Route>
 
       {/* KOMENDANT */}

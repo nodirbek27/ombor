@@ -3,7 +3,7 @@
 
 // import { ReactComponent as Analitika } from "../assets/icons/analytics.svg";
 import { ReactComponent as Admin } from "../assets/icons/admin.svg";
-import { ReactComponent as Category } from "../assets/icons/category.svg";
+import { ReactComponent as Arxiv } from "../assets/icons/arxiv.svg";
 import { ReactComponent as Mahsulot } from "../assets/icons/items.svg";
 
 // LOGIN
@@ -12,7 +12,7 @@ import Login from "../components/Login";
 // HOME
 import SuperadminMahsulotlar from "../pages/SuperadminDashboard/Mahsulotlar";
 import SuperadminAdminlar from "../pages/SuperadminDashboard/Adminlar";
-import SuperadminKategoriya from "../pages/SuperadminDashboard/Kategoriya";
+import SuperadminKategoriya from "../pages/SuperadminDashboard/ArxivPage";
 
 const sidebar = [
   {
@@ -35,9 +35,9 @@ const sidebar = [
   },
   {
     id: 4,
-    title: "Kategoriya",
-    path: "/superadmin/kategoriya",
-    icon: Category,
+    title: "Arxiv",
+    path: "/superadmin/arxiv",
+    icon: Arxiv,
     isPrivate: true,
     element: SuperadminKategoriya,
     role: ["admin"],
