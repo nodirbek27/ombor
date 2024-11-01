@@ -3,7 +3,7 @@ import axios from "axios";
 const axiosInstance = axios.create({
   baseURL: "https://omborxona2024.pythonanywhere.com/",
   headers: {
-    "Content-Type": "multipart/form-data",
+    "Content-Type": "application/json",
     Accept: "application/json",
   },
 });

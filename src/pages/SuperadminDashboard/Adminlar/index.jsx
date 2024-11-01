@@ -1,8 +1,11 @@
 import React from 'react'
+import SuperadminAdminlar from '../../../components/SuperadminAdminlar'
 
 const Adminlar = () => {
   return (
-    <div>Adminlar</div>
+    <div>
+      <SuperadminAdminlar />
+    </div>
   )
 }
 

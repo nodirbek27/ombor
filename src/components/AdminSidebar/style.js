@@ -8,6 +8,7 @@ const Arrow = styled(arrow)`
   margin-left: auto;
   transform: ${({ active }) => active === "true" && `rotate(90deg)`};
   transition: all 0.1s;
+  /* z-index: 0; */
 `;
 
 const Container = styled.div`
@@ -25,18 +26,22 @@ const Side = styled.div`
   height: 100vh;
   overflow: hidden;
   overflow-y: scroll;
+  scrollbar-width: none; /* For Firefox */
+
   &::-webkit-scrollbar {
-    width: 0;
+    display: none; /* For Chrome, Safari, and Edge */
   }
 `;
 const Body = styled.div`
   flex: 1;
   height: 100vh;
   min-width: calc(1440px - 280px);
+  /* border: 2px solid blue; */
   overflow-y: scroll;
 `;
 
 const Wrapper = styled.div`
+  /* border: 2px solid blue; */
   margin: 16px;
   background-color: white;
   border-radius: 8px;
@@ -52,6 +57,7 @@ const Logo = styled.div`
   border-bottom: 1px solid rgba(222, 225, 227, 1);
   cursor: pointer;
   background-color: white;
+  z-index: 999;
 `;
 
 const LogOut = styled(Logo)`
@@ -63,6 +69,41 @@ const LogOut = styled(Logo)`
   bottom: 0;
   border-top: 1px solid rgba(222, 225, 227, 1);
   border-bottom: 0;
+`;
+
+// PROFILE
+const ProfileContaier = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 23px 24px 32px 24px;
+`;
+
+ProfileContaier.Image = styled.img`
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-right: 16px;
+`;
+ProfileContaier.Name = styled.div`
+  width: 168px;
+  font-weight: 600;
+  size: 14px;
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--primaryColor);
+`;
+ProfileContaier.Email = styled.div`
+  width: 168px;
+  font-weight: 500;
+  size: 12px;
+  line-height: 20px;
+  color: var(--secondaryColor);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 // MENU
@@ -130,6 +171,7 @@ export {
   Wrapper,
   Logo,
   LogOut,
+  ProfileContaier,
   Arrow,
   ExitIcon,
 };

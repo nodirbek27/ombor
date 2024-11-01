@@ -1,12 +1,40 @@
-import React, { useState } from "react";
-import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import APIUsers from "../../services/user";
 import { MdOutlineLocalGroceryStore } from "react-icons/md";
 import { RiMenu2Fill } from "react-icons/ri";
 import { CgClose } from "react-icons/cg";
 
 const KomendantNavbar = () => {
   const { totalItems } = useSelector((state) => state.cart);
+  const [user, setUser] = useState([]);
+
+  const navigate = useNavigate();
+
+  const getUserProfile = async () => {
+    try {
+      const userId = localStorage.getItem("userId");
+      if (userId) {
+        const response = await APIUsers.get();
+        const loggedInUser = response.data.find(
+          (item) => item.id === parseInt(userId)
+        );
+
+        if (loggedInUser) {
+          setUser(loggedInUser);
+        } else {
+          console.error("User not found");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch user profile", error);
+    }
+  };
+
+  useEffect(() => {
+    getUserProfile();
+  }, []);
 
   const [open, setOpen] = useState(false);
   const location = useLocation();
@@ -16,8 +44,12 @@ const KomendantNavbar = () => {
     { title: "Qabul qilingan", link: "/komendant/olingan-mahsulotlar" },
   ];
 
-  const onLogout = () => {
-    Navigate("/login");
+  const onLogOut = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('role');
+    localStorage.removeItem('refreshToken');
+    navigate("/");
   };
 
   return (
@@ -69,6 +101,9 @@ const KomendantNavbar = () => {
                 !open && "hidden"
               }`}
             >
+              <li className="p-1 rounded-md cursor-pointer hover:bg-gray-400 transition-colors duration-300 text-[#004269] font-semibold text-md items-center gap-x-4">
+                {user.first_name} {user.last_name}
+              </li>
               {Menus.map((Menu, index) => (
                 <li key={index}>
                   <Link
@@ -90,12 +125,12 @@ const KomendantNavbar = () => {
               ))}
               <li>
                 {/* Chiqish */}
-                <Link
+                <button
                   className="p-1 rounded-md cursor-pointer hover:bg-gray-400 transition-colors duration-300 text-[#004269] font-semibold text-md items-center gap-x-4"
-                  onClick={() => onLogout()}
+                  onClick={onLogOut}
                 >
                   Chiqish
-                </Link>
+                </button>
               </li>
             </ul>
           </div>

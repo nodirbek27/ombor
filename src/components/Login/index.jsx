@@ -14,24 +14,22 @@ const Login = ({ onLogin }) => {
     e.preventDefault();
   
     try {
-      // Login request
       const loginResponse = await APILogin.post({ username, password });
-  
-      // Save tokens to local storage
+      
       const token = loginResponse.data.access;
       const refreshToken = loginResponse.data.refresh;
       localStorage.setItem("token", token);
       localStorage.setItem("refreshToken", refreshToken);
-  
-      // Fetch user information with the token
+      
       const userResponse = await APIUsers.get();
       const users = userResponse.data;
-  
-      // Find the logged-in user in the array
+      
       const currentUser = users.find((user) => user.username === username);
+      console.log(currentUser);
+      const loggedInUserId = currentUser.id;
+      localStorage.setItem('userId', loggedInUserId);
   
       if (currentUser) {
-        // Check user role and navigate accordingly
         if (currentUser.superadmin) {
           onLogin("superadmin");
           navigate("/superadmin");
@@ -48,8 +46,8 @@ const Login = ({ onLogin }) => {
         setErrorMessage("User not found");
       }
     } catch (error) {
-      console.error("Login failed:", error);
-      setErrorMessage("Login failed. Please check your credentials.");
+      console.error("Login failed:", error.response?.data || error.message);
+      setErrorMessage(error.response?.data?.detail || "Login failed. Please check your credentials.");
     }
   };  
 
@@ -76,7 +74,7 @@ const Login = ({ onLogin }) => {
             required
           />
         </div>
-        <div className="mb-6">
+        <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="password"
@@ -93,7 +91,7 @@ const Login = ({ onLogin }) => {
             required
           />
         </div>
-        {errorMessage && <p className="text-red-500 text-sm text-center">{errorMessage}</p>}
+        {errorMessage && <p className="text-red-500 text-sm text-center mb-3">{errorMessage}</p>}
         <div className="flex items-center justify-center">
           <button
             type="submit"

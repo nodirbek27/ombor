@@ -12,11 +12,12 @@ import {
   Side,
   Wrapper,
 } from "./style";
-import Navbar from "../Navbar";
-import sidebar from "../../utils/sidebar";
+import Navbar from "../AdminNavbar";
+import { Profile } from "./profile";
+import sidebar from "../../utils/adminSidebar";
 import React, { useEffect, useState } from "react";
 
-export const Sidebar = () => {
+export const AdminSidebar = () => {
   const [open, setOpen] = useState([]);
 
   const navigate = useNavigate();
@@ -30,13 +31,19 @@ export const Sidebar = () => {
   useEffect(() => {}, [location]);
 
   const onClickLogo = () => {
-    navigate("/analitika");
+    navigate("/admin/mahsulotlar");
   };
   const onLogOut = () => {
-    navigate("/login");
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('role');
+    localStorage.removeItem('refreshToken');
+    navigate("/");
   };
 
-  const onClickParent = ({ id, children, path }, e) => {
+  const onClickParent = ({ id, children, path, title }, e) => {
+    e.preventDefault();
+
     if (open?.includes(id)) {
       let data = open.filter((val) => val !== id);
       localStorage.setItem("open", JSON.stringify(data));
@@ -46,14 +53,18 @@ export const Sidebar = () => {
       setOpen([...open, id]);
     }
     if (!children) {
-      e.preventDefault();
-      navigate(path);
+      navigate(path, { state: { parent: title } });
     }
+  };
+  const onClickChild = (parent, child, path, e) => {
+    e.preventDefault();
+    navigate(path, { state: { parent, child } });
   };
   return (
     <Container>
       <Side>
-        <Logo onClick={onClickLogo}>KSPI admin panel</Logo>
+        <Logo onClick={onClickLogo}>KSPI Omborxona</Logo>
+        <Profile />
         <Menu>
           {sidebar.map((parent) => {
             const active = open.includes(parent.id);
@@ -79,7 +90,12 @@ export const Sidebar = () => {
                       <MenuItem
                         key={child?.id}
                         to={child.path}
-                        active={(location.pathname === child.path).toString()}
+                        onClick={(e) =>
+                          onClickChild(parent.title, child.title, child.path, e)
+                        }
+                        active={location.pathname
+                          ?.includes(child.path)
+                          .toString()}
                       >
                         <MenuItem.Title>{child?.title}</MenuItem.Title>
                       </MenuItem>
@@ -104,3 +120,5 @@ export const Sidebar = () => {
     </Container>
   );
 };
+
+export default AdminSidebar;

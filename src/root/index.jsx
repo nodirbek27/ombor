@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
 
 // Superadmin
 import SuperadminDashboard from "../pages/SuperadminDashboard";
@@ -26,9 +26,19 @@ const Root = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState("");
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const storedRole = localStorage.getItem("role");
+    if (token) {
+      setIsAuthenticated(true);
+      setRole(storedRole);
+    }
+  }, []);
+
   const handleLogin = (userRole) => {
     setIsAuthenticated(true);
     setRole(userRole);
+    localStorage.setItem("role", userRole);
   };
 
   return (
@@ -37,11 +47,7 @@ const Root = () => {
       <Route
         path="/superadmin"
         element={
-          isAuthenticated && role === "superadmin" ? (
-            <SuperadminDashboard />
-          ) : (
-            <Navigate to="/login" />
-          )
+          isAuthenticated && role === "superadmin" && <SuperadminDashboard />
         }
       >
         <Route index element={<SuperadminMahsulotlar />} />
@@ -53,13 +59,7 @@ const Root = () => {
       {/* ADMIN */}
       <Route
         path="/admin"
-        element={
-          isAuthenticated && role === "admin" ? (
-            <AdminDashboard />
-          ) : (
-            <Navigate to="/login" />
-          )
-        }
+        element={isAuthenticated && role === "admin" && <AdminDashboard />}
       >
         <Route index element={<AdminMahsulotlar />} />
         <Route path="mahsulotlar" element={<AdminMahsulotlar />} />
@@ -70,16 +70,15 @@ const Root = () => {
       <Route
         path="/komendant"
         element={
-          isAuthenticated && role === "komendant" ? (
-            <KomendantDashboard />
-          ) : (
-            <Navigate to="/login" />
-          )
+          isAuthenticated && role === "komendant" && <KomendantDashboard />
         }
       >
         <Route index element={<KomendantMahsulotlar />} />
         <Route path="mahsulotlar" element={<KomendantMahsulotlar />} />
-        <Route path="olingan-mahsulotlar" element={<KomendantOlinganMahsulotlar />} />
+        <Route
+          path="olingan-mahsulotlar"
+          element={<KomendantOlinganMahsulotlar />}
+        />
         <Route path="savatcha" element={<KomendantSavatcha />} />
       </Route>
 
