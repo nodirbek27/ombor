@@ -10,18 +10,18 @@ import { ReactComponent as Mahsulot } from "../assets/icons/items.svg";
 import Login from "../components/Login";
 
 // HOME
-import SuperadminMahsulotlar from "../pages/SuperadminDashboard/Mahsulotlar";
+import SuperadminOmbor from "../pages/SuperadminDashboard/Ombor";
 import SuperadminAdminlar from "../pages/SuperadminDashboard/Adminlar";
 import SuperadminKategoriya from "../pages/SuperadminDashboard/ArxivPage";
 
 const sidebar = [
   {
     id: 1,
-    title: "Mahsulotlar",
-    path: "/superadmin/mahsulotlar",
+    title: "Ombor",
+    path: "/superadmin/ombor",
     icon: Mahsulot,
     isPrivate: true,
-    element: SuperadminMahsulotlar,
+    element: SuperadminOmbor,
     role: ["admin"],
   },
   {

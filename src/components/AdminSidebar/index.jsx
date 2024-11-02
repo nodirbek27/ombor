@@ -31,7 +31,7 @@ export const AdminSidebar = () => {
   useEffect(() => {}, [location]);
 
   const onClickLogo = () => {
-    navigate("/admin/mahsulotlar");
+    navigate("/admin/ombor");
   };
   const onLogOut = () => {
     localStorage.removeItem('token');

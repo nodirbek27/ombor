@@ -25,20 +25,19 @@ const Login = ({ onLogin }) => {
       const users = userResponse.data;
       
       const currentUser = users.find((user) => user.username === username);
-      console.log(currentUser);
       const loggedInUserId = currentUser.id;
       localStorage.setItem('userId', loggedInUserId);
   
       if (currentUser) {
         if (currentUser.superadmin) {
           onLogin("superadmin");
-          navigate("/superadmin");
+          navigate("/superadmin/ombor");
         } else if (currentUser.admin) {
           onLogin("admin");
-          navigate("/admin");
+          navigate("/admin/ombor");
         } else if (currentUser.komendant) {
           onLogin("komendant");
-          navigate("/komendant");
+          navigate("/komendant/ombor");
         } else {
           setErrorMessage("No access level assigned");
         }

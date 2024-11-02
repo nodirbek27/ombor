@@ -1,5 +1,6 @@
-// import { ReactComponent as Analitika } from "../assets/icons/analytics.svg";
+import { ReactComponent as Birlik } from "../assets/icons/scale.svg";
 import { ReactComponent as Category } from "../assets/icons/category.svg";
+import { ReactComponent as Ombor } from "../assets/icons/items.svg";
 import { ReactComponent as Mahsulot } from "../assets/icons/items.svg";
 import { ReactComponent as Arxiv } from "../assets/icons/arxiv.svg";
 
@@ -7,22 +8,24 @@ import { ReactComponent as Arxiv } from "../assets/icons/arxiv.svg";
 import Login from "../components/Login";
 
 // HOME
-import AdminMahsulotlar from "../pages/AdminDashboard/Mahsulotlar";
+import AdminOmbor from "../pages/AdminDashboard/Ombor";
+import AdminBirlik from "../pages/AdminDashboard/Birlik";
 import AdminKategoriya from "../pages/AdminDashboard/Kategoriya";
 import AdminArxiv from "../pages/AdminDashboard/ArxivPage";
+import AdminMahsulotYaratish from "../pages/AdminDashboard/";
 
 const sidebar = [
   {
     id: 1,
-    title: "Mahsulotlar",
-    path: "/admin/mahsulotlar",
-    icon: Mahsulot,
+    title: "Ombor",
+    path: "/admin/ombor",
+    icon: Ombor,
     isPrivate: true,
-    element: AdminMahsulotlar,
+    element: AdminOmbor,
     role: ["admin"],
   },
   {
-    id: 3,
+    id: 2,
     title: "Kategoriya",
     path: "/admin/kategoriya",
     icon: Category,
@@ -31,7 +34,25 @@ const sidebar = [
     role: ["admin"],
   },
   {
+    id: 3,
+    title: "O'lchov birliklari",
+    path: "/admin/birlik",
+    icon: Birlik,
+    isPrivate: true,
+    element: AdminBirlik,
+    role: ["admin"],
+  },
+  {
     id: 4,
+    title: "Mahsulot",
+    path: "/admin/mahsulot",
+    icon: Mahsulot,
+    isPrivate: true,
+    element: AdminMahsulotYaratish,
+    role: ["admin"],
+  },
+  {
+    id: 5,
     title: "Arxiv",
     path: "/admin/arxiv",
     icon: Arxiv,

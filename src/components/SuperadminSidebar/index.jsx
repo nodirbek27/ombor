@@ -31,7 +31,7 @@ export const SuperadminSidebar = () => {
   useEffect(() => {}, [location]);
 
   const onClickLogo = () => {
-    navigate("/superadmin/mahsulotlar");
+    navigate("/superadmin/ombor");
   };
   const onLogOut = () => {
     localStorage.removeItem('token');

@@ -3,19 +3,21 @@ import { Route, Routes } from "react-router-dom";
 
 // Superadmin
 import SuperadminDashboard from "../pages/SuperadminDashboard";
-import SuperadminMahsulotlar from "../pages/SuperadminDashboard/Mahsulotlar";
+import SuperadminOmbor from "../pages/SuperadminDashboard/Ombor";
 import Adminlar from "../pages/SuperadminDashboard/Adminlar";
 import Arxiv from "../pages/SuperadminDashboard/ArxivPage";
 
 // Admin
 import AdminDashboard from "../pages/AdminDashboard";
-import AdminMahsulotlar from "../pages/AdminDashboard/Mahsulotlar";
+import AdminOmbor from "../pages/AdminDashboard/Ombor";
 import AdminKategoriya from "../pages/AdminDashboard/Kategoriya";
+import AdminBirlik from "../pages/AdminDashboard/Birlik";
+import AdminMahsulotlarYaratish from "../pages/AdminDashboard/MahsulotlarYaratish";
 import AdminArxiv from "../pages/AdminDashboard/ArxivPage";
 
 // Komendant
 import KomendantDashboard from "../pages/KomendantDashboard";
-import KomendantMahsulotlar from "../pages/KomendantDashboard/Mahsulotlar";
+import KomendantOmbor from "../pages/KomendantDashboard/Ombor";
 import KomendantSavatcha from "../pages/KomendantDashboard/Savat";
 import KomendantOlinganMahsulotlar from "../pages/KomendantDashboard/OlinganMahsulotlar";
 
@@ -51,8 +53,8 @@ const Root = () => {
           isAuthenticated && role === "superadmin" && <SuperadminDashboard />
         }
       >
-        <Route index element={<SuperadminMahsulotlar />} />
-        <Route path="mahsulotlar" element={<SuperadminMahsulotlar />} />
+        <Route index element={<SuperadminOmbor />} />
+        <Route path="ombor" element={<SuperadminOmbor />} />
         <Route path="adminlar" element={<Adminlar />} />
         <Route path="arxiv" element={<Arxiv />} />
       </Route>
@@ -60,11 +62,15 @@ const Root = () => {
       {/* ADMIN */}
       <Route
         path="/admin"
-        element={isAuthenticated && role === "admin" && <AdminDashboard />}
+        element={
+          isAuthenticated && role === "admin" && <AdminDashboard />
+        }
       >
-        <Route index element={<AdminMahsulotlar />} />
-        <Route path="mahsulotlar" element={<AdminMahsulotlar />} />
+        <Route index element={<AdminOmbor />} />
+        <Route path="ombor" element={<AdminOmbor />} />
         <Route path="kategoriya" element={<AdminKategoriya />} />
+        <Route path="birlik" element={<AdminBirlik />} />
+        <Route path="mahsulot" element={<AdminMahsulotlarYaratish />} />
         <Route path="arxiv" element={<AdminArxiv />} />
       </Route>
 
@@ -75,8 +81,8 @@ const Root = () => {
           isAuthenticated && role === "komendant" && <KomendantDashboard />
         }
       >
-        <Route index element={<KomendantMahsulotlar />} />
-        <Route path="mahsulotlar" element={<KomendantMahsulotlar />} />
+        <Route index element={<KomendantOmbor />} />
+        <Route path="ombor" element={<KomendantOmbor />} />
         <Route
           path="olingan-mahsulotlar"
           element={<KomendantOlinganMahsulotlar />}
