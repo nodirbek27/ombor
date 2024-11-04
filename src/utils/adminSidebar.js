@@ -1,6 +1,6 @@
 import { ReactComponent as Birlik } from "../assets/icons/scale.svg";
 import { ReactComponent as Category } from "../assets/icons/category.svg";
-import { ReactComponent as Ombor } from "../assets/icons/items.svg";
+import { ReactComponent as Ombor } from "../assets/icons/warehouse-icon.svg";
 import { ReactComponent as Mahsulot } from "../assets/icons/items.svg";
 import { ReactComponent as Arxiv } from "../assets/icons/arxiv.svg";
 
@@ -12,7 +12,7 @@ import AdminOmbor from "../pages/AdminDashboard/Ombor";
 import AdminBirlik from "../pages/AdminDashboard/Birlik";
 import AdminKategoriya from "../pages/AdminDashboard/Kategoriya";
 import AdminArxiv from "../pages/AdminDashboard/ArxivPage";
-import AdminMahsulotYaratish from "../pages/AdminDashboard/";
+import AdminMahsulotYaratish from "../pages/AdminDashboard/MahsulotlarYaratish";
 
 const sidebar = [
   {

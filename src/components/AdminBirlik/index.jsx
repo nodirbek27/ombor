@@ -93,7 +93,7 @@ const AdminBirlik = () => {
           }}
         >
           <MdOutlineAddBox className="mr-1 w-5 h-auto" />
-          Yaratish
+          Birlik qo'shish
         </button>
 
         {/* MODAL FOR ADDING/EDITING ADMIN */}
@@ -101,7 +101,7 @@ const AdminBirlik = () => {
           <div className="modal-box">
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-semibold text-gray-900 text-xl">
-                {editingId ? "Tahrirlash" : "Yaratish"}
+                {editingId ? "Tahrirlash" : "Birlik qo'shish"}
               </h2>
               <button
                 type="button"
