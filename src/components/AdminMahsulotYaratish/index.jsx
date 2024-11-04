@@ -199,7 +199,7 @@ const AdminMahsulotYaratish = () => {
                       <p className="text-md mr-3">{product.name}</p>
                       <div className="flex items-center">
                         <div className="mr-4">
-                          {product.maxviylik ? <FaEye className="w-5 h-auto" /> : <FaEyeSlash className="w-5 h-auto" />}
+                          {!product.maxviylik ? <FaEye className="w-5 h-auto" /> : <FaEyeSlash className="w-5 h-auto" />}
                         </div>
                         {/* Edit */}
                         <button
