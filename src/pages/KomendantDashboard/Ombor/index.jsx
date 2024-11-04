@@ -1,10 +1,10 @@
 import React from 'react'
-import KomendantMahsulotlar from '../../../components/KomendantMahsulotlar'
+import KomendantOmbor from '../../../components/KomendantOmbor'
 
 const Mahsulotlar = () => {
   return (
     <div>
-      <KomendantMahsulotlar />
+      <KomendantOmbor />
     </div>
   )
 }

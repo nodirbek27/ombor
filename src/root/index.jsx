@@ -19,7 +19,7 @@ import AdminArxiv from "../pages/AdminDashboard/ArxivPage";
 import KomendantDashboard from "../pages/KomendantDashboard";
 import KomendantOmbor from "../pages/KomendantDashboard/Ombor";
 import KomendantSavatcha from "../pages/KomendantDashboard/Savat";
-import KomendantOlinganMahsulotlar from "../pages/KomendantDashboard/OlinganMahsulotlar";
+import KomendantArxiv from "../pages/KomendantDashboard/Arxiv";
 
 // Login and NotFoundPage
 import NotFoundPage from "../pages/NotFoundPage";
@@ -85,7 +85,7 @@ const Root = () => {
         <Route path="ombor" element={<KomendantOmbor />} />
         <Route
           path="arxiv"
-          element={<KomendantOlinganMahsulotlar />}
+          element={<KomendantArxiv />}
         />
         <Route path="savatcha" element={<KomendantSavatcha />} />
       </Route>
