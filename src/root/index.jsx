@@ -84,7 +84,7 @@ const Root = () => {
         <Route index element={<KomendantOmbor />} />
         <Route path="ombor" element={<KomendantOmbor />} />
         <Route
-          path="olingan-mahsulotlar"
+          path="arxiv"
           element={<KomendantOlinganMahsulotlar />}
         />
         <Route path="savatcha" element={<KomendantSavatcha />} />
