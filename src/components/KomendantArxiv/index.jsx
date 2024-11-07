@@ -1,8 +1,9 @@
 import React from 'react'
+// import APIArxiv from "../../services/arxiv";
 
 const KomendantArxiv = () => {
   return (
-    <div>Komendant Arxiv</div>
+    <div>Komendant </div>
   )
 }
 

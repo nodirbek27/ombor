@@ -4,7 +4,7 @@
 // import { ReactComponent as Analitika } from "../assets/icons/analytics.svg";
 import { ReactComponent as Admin } from "../assets/icons/admin.svg";
 import { ReactComponent as Arxiv } from "../assets/icons/arxiv.svg";
-import { ReactComponent as Mahsulot } from "../assets/icons/items.svg";
+import { ReactComponent as Ombor } from "../assets/icons/warehouse-icon.svg";
 
 // LOGIN
 import Login from "../components/Login";
@@ -19,7 +19,7 @@ const sidebar = [
     id: 1,
     title: "Ombor",
     path: "/superadmin/ombor",
-    icon: Mahsulot,
+    icon: Ombor,
     isPrivate: true,
     element: SuperadminOmbor,
     role: ["admin"],

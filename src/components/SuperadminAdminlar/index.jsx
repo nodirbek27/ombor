@@ -121,7 +121,7 @@ const SuperadminAdminlar = () => {
           Admin va komendantlar
         </p>
         <button
-          className="btn flex items-center"
+          className="btn flex items-center bg-blue-400 hover:bg-blue-500 text-white"
           onClick={() => {
             resetForm();
             document.getElementById("my_modal_2").showModal();
@@ -279,7 +279,7 @@ const SuperadminAdminlar = () => {
 
               {/* Buttons */}
               <div className="modal-action w-full">
-                <button type="submit" className="btn w-full">
+                <button type="submit" className="btn w-full bg-blue-400 hover:bg-blue-500 text-white">
                   {editingId ? "Saqlash" : "Qo'shish"}
                 </button>
               </div>

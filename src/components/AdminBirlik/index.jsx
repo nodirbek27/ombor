@@ -86,7 +86,7 @@ const AdminBirlik = () => {
       <div className="flex items-center justify-between p-4">
         <p className="text-xl font-semibold text-[#004269]">O'lchov birliklari</p>
         <button
-          className="btn flex items-center"
+          className="btn flex items-center bg-blue-400 hover:bg-blue-500 text-white"
           onClick={() => {
             resetForm();
             document.getElementById("my_modal_2").showModal();
@@ -135,7 +135,7 @@ const AdminBirlik = () => {
                 ) : null}
               </div>
               <div className="modal-action w-full">
-                <button type="submit" className="btn w-full">
+                <button type="submit" className="btn w-full bg-blue-400 hover:bg-blue-500 text-white">
                   {editingId ? "Saqlash" : "Yaratish"}
                 </button>
               </div>
@@ -144,7 +144,7 @@ const AdminBirlik = () => {
         </dialog>
       </div>
       <div className="overflow-x-auto">
-        <table className="table">
+        <table className="table table-zebra">
           <thead>
             <tr>
               <th>№</th>

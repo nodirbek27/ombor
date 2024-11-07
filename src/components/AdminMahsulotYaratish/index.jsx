@@ -163,7 +163,7 @@ const AdminMahsulotYaratish = () => {
                     </label>
                     <button
                       type="submit"
-                      className="btn flex items-center bg-green-400 hover:bg-green-500 text-white"
+                      className="btn flex items-center bg-blue-400 hover:bg-blue-500 text-white"
                     >
                       {editingId ? "O'zgartirish" : "Qo'shish"}
                     </button>
@@ -178,7 +178,7 @@ const AdminMahsulotYaratish = () => {
                 </div>
                 {openCategoryId !== item.id && (
                   <button
-                    className="btn items-center bg-green-400 hover:bg-green-500 text-white"
+                    className="btn items-center bg-blue-400 hover:bg-blue-500 text-white"
                     onClick={() => handleClick(item.id)}
                   >
                     <MdOutlineAddCard className="mr-1 w-4 h-auto" />

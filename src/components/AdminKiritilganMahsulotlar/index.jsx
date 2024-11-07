@@ -1,36 +1,34 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useFormik } from "formik";
-import * as Yup from "yup";
-// import APIJami from "../../services/jami";
 import APIOmbor from "../../services/ombor";
+import * as Yup from "yup";
 import APICategory from "../../services/category";
 import APIMahsulot from "../../services/mahsulot";
 import APIBirlik from "../../services/birlik";
 import { MdOutlineAddCard } from "react-icons/md";
+import { CiEdit } from "react-icons/ci";
 
-const AdminOmbor = () => {
-  // const [jami, setJami] = useState([]);
+const AdminKiritilganMahsulotlar = () => {
   const [ombor, setOmbor] = useState([]);
   const [category, setCategory] = useState([]);
   const [mahsulot, setMahsulot] = useState([]);
   const [filteredMahsulot, setFilteredMahsulot] = useState([]);
   const [birlik, setBirlik] = useState([]);
+  const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(true);
   const modalRef = useRef(null);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [ omborData, categoryData, mahsulotData, birlikData] =
+      const [omborData, categoryData, mahsulotData, birlikData] =
         await Promise.all([
-          // APIJami.get(),
           APIOmbor.get(),
           APICategory.get(),
           APIMahsulot.get(),
           APIBirlik.get(),
         ]);
 
-      // setJami(jamiData?.data || []);
       setOmbor(omborData?.data || []);
       setCategory(categoryData?.data || []);
       setMahsulot(mahsulotData?.data || []);
@@ -62,9 +60,15 @@ const AdminOmbor = () => {
       };
 
       try {
-        await APIOmbor.post(dataToPost);
-        alert("Successfully added!");
+        if (editingId) {
+          await APIOmbor.put(`/${editingId}/`, dataToPost);
+          alert("Successfully updated!");
+        } else {
+          await APIOmbor.post(dataToPost);
+          alert("Successfully added!");
+        }
         formik.resetForm();
+        setEditingId(null);
         fetchData();
         modalRef.current.close();
       } catch (error) {
@@ -82,6 +86,16 @@ const AdminOmbor = () => {
     );
     setFilteredMahsulot(filteredProducts);
     formik.setFieldValue("mahsulot", "");
+  };
+
+  const handleEdit = (item) => {
+    setEditingId(item.id);
+    formik.setValues({
+      mahsulot: item.mahsulot,
+      qiymat: item.qiymat,
+      birlik: item.birlik,
+    });
+    modalRef.current.showModal();
   };
 
   if (loading) {
@@ -113,7 +127,9 @@ const AdminOmbor = () => {
       <dialog ref={modalRef} className="modal">
         <div className="modal-box">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="font-semibold text-gray-900 text-xl">Qo'shish</h2>
+            <h2 className="font-semibold text-gray-900 text-xl">
+              {editingId ? "Tahrirlash" : "Qo'shish"}
+            </h2>
             <button
               type="button"
               className="text-lg font-bold w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center"
@@ -191,7 +207,7 @@ const AdminOmbor = () => {
                 type="submit"
                 className="btn w-full bg-blue-400 hover:bg-blue-500 text-white"
               >
-                Saqlash
+                {editingId ? "Saqlash" : "Qo'shish"}
               </button>
             </div>
           </form>
@@ -209,6 +225,7 @@ const AdminOmbor = () => {
                 <tr className="grid grid-cols-3">
                   <th>Mahsulot</th>
                   <th>Miqdor</th>
+                  <th>Amallar</th>
                 </tr>
               </thead>
               <tbody>
@@ -232,10 +249,17 @@ const AdminOmbor = () => {
                         key={omborItem.id}
                         className="grid grid-cols-3 w-full"
                       >
+                        {console.log(omborItem)}
                         <td>{mahsulotNomi}</td>
                         <td>
                           {omborItem.qiymat}
                           {birlikNomi}
+                        </td>
+                        <td className="flex items-center">
+                          <CiEdit
+                            className="w-5 h-auto text-green-400 hover:text-green-600 cursor-pointer mr-4"
+                            onClick={() => handleEdit(omborItem)}
+                          />
                         </td>
                       </tr>
                     );
@@ -249,4 +273,4 @@ const AdminOmbor = () => {
   );
 };
 
-export default AdminOmbor;
+export default AdminKiritilganMahsulotlar;

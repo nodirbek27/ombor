@@ -1,6 +1,6 @@
 import axiosInstance from "./index";
 
-const ep = "ombor/jami_maxsulotlar/";
+const ep = "ombor/ombor/";
 
 const get = () => axiosInstance.get(ep);
 const getbyId = (id) => {
@@ -17,6 +17,6 @@ const put = (id, item) => {
     return axiosInstance.delete(`${ep}${id}/`);
   };
 
-const APIOmbor = { get, getbyId, post, put, del };
+const APIJami = { get, getbyId, post, put, del };
 
-export default APIOmbor;
+export default APIJami;
