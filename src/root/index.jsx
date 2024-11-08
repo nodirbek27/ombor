@@ -13,7 +13,8 @@ import AdminOmbor from "../pages/AdminDashboard/Ombor";
 import AdminKategoriya from "../pages/AdminDashboard/Kategoriya";
 import AdminBirlik from "../pages/AdminDashboard/Birlik";
 import AdminMahsulotlarYaratish from "../pages/AdminDashboard/MahsulotlarYaratish";
-import AdminArxiv from "../pages/AdminDashboard/ArxivPage";
+import KiritilganMahsulotlar from "../pages/AdminDashboard/ArxivPage/KiritilganMahsulotlar";
+import ChiqganMahsulotlar from "../pages/AdminDashboard/ArxivPage/ChiqganMahsulotlar";
 
 // Komendant
 import KomendantDashboard from "../pages/KomendantDashboard";
@@ -71,7 +72,8 @@ const Root = () => {
         <Route path="kategoriya" element={<AdminKategoriya />} />
         <Route path="birlik" element={<AdminBirlik />} />
         <Route path="mahsulot" element={<AdminMahsulotlarYaratish />} />
-        <Route path="arxiv" element={<AdminArxiv />} />
+        <Route path="arxiv/kiritilgan-mahsulotlar" element={<KiritilganMahsulotlar />} />
+        <Route path="arxiv/chiqgan-mahsulotlar" element={<ChiqganMahsulotlar />} />
       </Route>
 
       {/* KOMENDANT */}

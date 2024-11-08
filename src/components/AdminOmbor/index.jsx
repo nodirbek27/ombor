@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-// import APIJami from "../../services/jami";
+import APIJami from "../../services/jami";
 import APIOmbor from "../../services/ombor";
 import APICategory from "../../services/category";
 import APIMahsulot from "../../services/mahsulot";
@@ -9,8 +9,7 @@ import APIBirlik from "../../services/birlik";
 import { MdOutlineAddCard } from "react-icons/md";
 
 const AdminOmbor = () => {
-  // const [jami, setJami] = useState([]);
-  const [ombor, setOmbor] = useState([]);
+  const [jami, setJami] = useState([]);
   const [category, setCategory] = useState([]);
   const [mahsulot, setMahsulot] = useState([]);
   const [filteredMahsulot, setFilteredMahsulot] = useState([]);
@@ -21,17 +20,15 @@ const AdminOmbor = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [ omborData, categoryData, mahsulotData, birlikData] =
+      const [jamiData, categoryData, mahsulotData, birlikData] =
         await Promise.all([
-          // APIJami.get(),
-          APIOmbor.get(),
+          APIJami.get(),
           APICategory.get(),
           APIMahsulot.get(),
           APIBirlik.get(),
         ]);
 
-      // setJami(jamiData?.data || []);
-      setOmbor(omborData?.data || []);
+      setJami(jamiData?.data || []);
       setCategory(categoryData?.data || []);
       setMahsulot(mahsulotData?.data || []);
       setBirlik(birlikData?.data || []);
@@ -204,44 +201,31 @@ const AdminOmbor = () => {
             <h2 className="text-lg font-semibold text-[#004269]">
               {item.name}
             </h2>
-            <table className="table table-zebra w-full">
-              <thead>
-                <tr className="grid grid-cols-3">
-                  <th>Mahsulot</th>
-                  <th>Miqdor</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ombor
-                  .filter((o) =>
-                    mahsulot
-                      .filter((k) => k.kategoriya === item.id)
-                      .map((item) => item.id)
-                      .includes(o.maxsulot)
-                  )
-                  .map((omborItem) => {
-                    const mahsulotNomi =
-                      mahsulot.find((prod) => prod.id === omborItem.maxsulot)
-                        ?.name || "Noma'lum";
-                    const birlikNomi =
-                      birlik.find((unit) => unit.id === omborItem.birlik)
-                        ?.name || "Noma'lum";
-
-                    return (
-                      <tr
-                        key={omborItem.id}
-                        className="grid grid-cols-3 w-full"
-                      >
-                        <td>{mahsulotNomi}</td>
-                        <td>
-                          {omborItem.qiymat}
-                          {birlikNomi}
-                        </td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
+            <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
+              {jami
+                .filter((o) =>
+                  mahsulot
+                    .filter((k) => k.kategoriya === item.id)
+                    .map((item) => item.id)
+                    .includes(o.maxsulot)
+                )
+                .map((jamiItem) => {
+                  const mahsulotNomi =
+                    mahsulot.find((prod) => prod.id === jamiItem.maxsulot)
+                      ?.name || "Noma'lum";
+                  const birlikNomi =
+                    birlik.find((unit) => unit.id === jamiItem.birlik)?.name ||
+                    "Noma'lum";
+                  return (
+                    <div key={jamiItem.id} className="border rounded p-2 flex items-center justify-between bg-slate-50">
+                      <div>{mahsulotNomi}</div>
+                      <div>
+                        {jamiItem.qiymat} {birlikNomi}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
           </div>
         ))}
       </div>

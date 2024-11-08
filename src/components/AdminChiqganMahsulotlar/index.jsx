@@ -1,12 +1,12 @@
 import React from "react";
 import { FaDownload } from "react-icons/fa6";
 
-const Arxiv = () => {
+const AdminChiqganMahsulotlar = () => {
   return (
     <div>
       <div className="flex items-center justify-between p-4">
         <p className="text-xl font-semibold text-[#004269]">
-          Arxiv
+          Chiqarilgan mahsulotlar
         </p>
         <label className="input input-bordered flex items-center gap-2">
           <input type="text" className="grow" placeholder="Search" />
@@ -52,4 +52,4 @@ const Arxiv = () => {
   );
 };
 
-export default Arxiv;
+export default AdminChiqganMahsulotlar;

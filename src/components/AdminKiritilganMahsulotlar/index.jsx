@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
-import APIOmbor from "../../services/ombor";
 import * as Yup from "yup";
+import APIOmbor from "../../services/ombor";
 import APICategory from "../../services/category";
 import APIMahsulot from "../../services/mahsulot";
 import APIBirlik from "../../services/birlik";
-import { MdOutlineAddCard } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
 
 const AdminKiritilganMahsulotlar = () => {
@@ -14,9 +13,10 @@ const AdminKiritilganMahsulotlar = () => {
   const [mahsulot, setMahsulot] = useState([]);
   const [filteredMahsulot, setFilteredMahsulot] = useState([]);
   const [birlik, setBirlik] = useState([]);
+  const [filteredOmbor, setFilteredOmbor] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(true);
-  const modalRef = useRef(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -33,12 +33,14 @@ const AdminKiritilganMahsulotlar = () => {
       setCategory(categoryData?.data || []);
       setMahsulot(mahsulotData?.data || []);
       setBirlik(birlikData?.data || []);
+      setFilteredOmbor(omborData?.data || []);
     } catch (error) {
       console.error("Failed to fetch data", error);
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -53,26 +55,23 @@ const AdminKiritilganMahsulotlar = () => {
     initialValues: { mahsulot: "", qiymat: "", birlik: "" },
     validationSchema,
     onSubmit: async (values) => {
-      const dataToPost = {
-        maxsulot: values.mahsulot,
-        qiymat: values.qiymat,
-        birlik: values.birlik,
-      };
+      if (editingId) {
+        const dataToPut = {
+          maxsulot: values.mahsulot,
+          qiymat: values.qiymat,
+          birlik: values.birlik,
+        };
 
-      try {
-        if (editingId) {
-          await APIOmbor.put(`/${editingId}/`, dataToPost);
+        try {
+          await APIOmbor.put(`/${editingId}/`, dataToPut);
           alert("Successfully updated!");
-        } else {
-          await APIOmbor.post(dataToPost);
-          alert("Successfully added!");
+          formik.resetForm();
+          setEditingId(null);
+          fetchData();
+          setModalOpen(false);
+        } catch (error) {
+          console.error("Failed to update ombor", error);
         }
-        formik.resetForm();
-        setEditingId(null);
-        fetchData();
-        modalRef.current.close();
-      } catch (error) {
-        console.error("Failed to add/update ombor", error);
       }
     },
   });
@@ -86,6 +85,21 @@ const AdminKiritilganMahsulotlar = () => {
     );
     setFilteredMahsulot(filteredProducts);
     formik.setFieldValue("mahsulot", "");
+
+    const filteredOmborItems = ombor.filter((o) =>
+      filteredProducts.map((item) => item.id).includes(o.maxsulot)
+    );
+    setFilteredOmbor(filteredOmborItems);
+  };
+
+  const handleProductChange = (event) => {
+    const selectedProductId = event.target.value;
+    formik.setFieldValue("mahsulot", selectedProductId);
+
+    const filteredOmborItems = ombor.filter(
+      (o) => o.maxsulot === selectedProductId
+    );
+    setFilteredOmbor(filteredOmborItems);
   };
 
   const handleEdit = (item) => {
@@ -95,7 +109,7 @@ const AdminKiritilganMahsulotlar = () => {
       qiymat: item.qiymat,
       birlik: item.birlik,
     });
-    modalRef.current.showModal();
+    setModalOpen(true);
   };
 
   if (loading) {
@@ -109,165 +123,177 @@ const AdminKiritilganMahsulotlar = () => {
   return (
     <div>
       <div className="flex items-center justify-between p-4">
-        <p className="text-xl font-semibold text-[#004269]">Ombor</p>
-        <button
-          className="btn flex items-center bg-blue-400 hover:bg-blue-500 text-white"
-          onClick={() => {
-            formik.resetForm();
-            setFilteredMahsulot([]);
-            modalRef.current.showModal();
-          }}
-        >
-          <MdOutlineAddCard className="mr-1 w-4 h-auto" />
-          Qo'shish
-        </button>
+        <p className="text-xl font-semibold text-[#004269]">
+          Kiritilgan mahsulotlar
+        </p>
       </div>
 
-      {/* Modal for adding/editing items */}
-      <dialog ref={modalRef} className="modal">
-        <div className="modal-box">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-semibold text-gray-900 text-xl">
-              {editingId ? "Tahrirlash" : "Qo'shish"}
-            </h2>
-            <button
-              type="button"
-              className="text-lg font-bold w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center"
-              onClick={() => modalRef.current.close()}
-            >
-              X
-            </button>
-          </div>
-          <form
-            onSubmit={formik.handleSubmit}
-            className="flex flex-col w-full gap-3"
-          >
-            <select
-              name="category"
-              onChange={handleCategoryChange}
-              value={formik.values.category || ""}
-              className="select select-bordered w-full"
-            >
-              <option value="" disabled>
-                Kategoriya
-              </option>
-              {category.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-
-            <select
-              name="mahsulot"
-              onChange={formik.handleChange}
-              value={formik.values.mahsulot || ""}
-              className="select select-bordered w-full"
-            >
-              <option value="" disabled>
-                Mahsulot
-              </option>
-              {filteredMahsulot.map((prod) => (
-                <option key={prod.id} value={prod.id}>
-                  {prod.name}
-                </option>
-              ))}
-            </select>
-
-            <label className="input input-bordered flex items-center gap-2">
-              Miqdor:
-              <input
-                type="number"
-                name="qiymat"
-                value={formik.values.qiymat}
-                onChange={formik.handleChange}
-                className="grow"
-                placeholder="..."
-              />
-            </label>
-
-            <select
-              name="birlik"
-              onChange={formik.handleChange}
-              value={formik.values.birlik || ""}
-              className="select select-bordered w-full"
-            >
-              <option value="" disabled>
-                O'lchov birlik
-              </option>
-              {birlik.map((unit) => (
-                <option key={unit.id} value={unit.id}>
-                  {unit.name}
-                </option>
-              ))}
-            </select>
-
-            <div className="modal-action w-full">
+      {/* Modal for editing items */}
+      {modalOpen && (
+        <dialog open className="modal">
+          <div className="modal-box">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-semibold text-gray-900 text-xl">
+                Tahrirlash
+              </h2>
               <button
-                type="submit"
-                className="btn w-full bg-blue-400 hover:bg-blue-500 text-white"
+                type="button"
+                className="text-lg font-bold w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center"
+                onClick={() => setModalOpen(false)}
               >
-                {editingId ? "Saqlash" : "Qo'shish"}
+                X
               </button>
             </div>
-          </form>
-        </div>
-      </dialog>
+            <form
+              onSubmit={formik.handleSubmit}
+              className="flex flex-col w-full gap-3"
+            >
+              <select
+                name="category"
+                onChange={handleCategoryChange}
+                value={formik.values.category || ""}
+                className="select select-bordered w-full"
+              >
+                <option value="" disabled>
+                  Kategoriya
+                </option>
+                {category.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
 
-      <div>
-        {category.map((item) => (
-          <div key={item.id} className="p-2">
-            <h2 className="text-lg font-semibold text-[#004269]">
-              {item.name}
-            </h2>
-            <table className="table table-zebra w-full">
-              <thead>
-                <tr className="grid grid-cols-3">
-                  <th>Mahsulot</th>
-                  <th>Miqdor</th>
-                  <th>Amallar</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ombor
-                  .filter((o) =>
-                    mahsulot
-                      .filter((k) => k.kategoriya === item.id)
-                      .map((item) => item.id)
-                      .includes(o.maxsulot)
-                  )
-                  .map((omborItem) => {
-                    const mahsulotNomi =
-                      mahsulot.find((prod) => prod.id === omborItem.maxsulot)
-                        ?.name || "Noma'lum";
-                    const birlikNomi =
-                      birlik.find((unit) => unit.id === omborItem.birlik)
-                        ?.name || "Noma'lum";
+              <select
+                name="mahsulot"
+                onChange={handleProductChange}
+                value={formik.values.mahsulot || ""}
+                className="select select-bordered w-full"
+              >
+                <option value="" disabled>
+                  Mahsulot
+                </option>
+                {filteredMahsulot.map((prod) => (
+                  <option key={prod.id} value={prod.id}>
+                    {prod.name}
+                  </option>
+                ))}
+              </select>
 
-                    return (
-                      <tr
-                        key={omborItem.id}
-                        className="grid grid-cols-3 w-full"
-                      >
-                        {console.log(omborItem)}
-                        <td>{mahsulotNomi}</td>
-                        <td>
-                          {omborItem.qiymat}
-                          {birlikNomi}
-                        </td>
-                        <td className="flex items-center">
-                          <CiEdit
-                            className="w-5 h-auto text-green-400 hover:text-green-600 cursor-pointer mr-4"
-                            onClick={() => handleEdit(omborItem)}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
+              <label className="input input-bordered flex items-center gap-2">
+                Miqdor:
+                <input
+                  type="number"
+                  name="qiymat"
+                  value={formik.values.qiymat}
+                  onChange={formik.handleChange}
+                  className="grow"
+                  placeholder="..."
+                />
+              </label>
+
+              <select
+                name="birlik"
+                onChange={formik.handleChange}
+                value={formik.values.birlik || ""}
+                className="select select-bordered w-full"
+              >
+                <option value="" disabled>
+                  O'lchov birlik
+                </option>
+                {birlik.map((unit) => (
+                  <option key={unit.id} value={unit.id}>
+                    {unit.name}
+                  </option>
+                ))}
+              </select>
+
+              <div className="modal-action w-full">
+                <button
+                  type="submit"
+                  className="btn w-full bg-blue-400 hover:bg-blue-500 text-white"
+                >
+                  Saqlash
+                </button>
+              </div>
+            </form>
           </div>
-        ))}
+        </dialog>
+      )}
+
+      <div className="flex items-center gap-3 px-4">
+        <select
+          name="category"
+          onChange={handleCategoryChange}
+          value={formik.values.category || ""}
+          className="select select-bordered w-full max-w-xs"
+        >
+          <option value="" disabled>
+            Kategoriya
+          </option>
+          {category.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
+
+        <select
+          name="mahsulot"
+          onChange={handleProductChange}
+          value={formik.values.mahsulot || ""}
+          className="select select-bordered w-full max-w-xs"
+        >
+          <option value="" disabled>
+            Mahsulot
+          </option>
+          {filteredMahsulot.map((prod) => (
+            <option key={prod.id} value={prod.id}>
+              {prod.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Filtered Ombor Items */}
+      <div className="overflow-x-auto my-4">
+        <table className="table table-zebra w-full">
+          <thead>
+            <tr>
+              <th>Mahsulot</th>
+              <th>Miqdori</th>
+              <th className="text-center">Tahrirlash</th>
+              <th className="text-center">Sana</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredOmbor
+              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+              .map((omborItem) => (
+                <tr key={omborItem.id}>
+                  <td>
+                    {mahsulot.find((item) => item.id === omborItem.maxsulot)
+                      ?.name || "N/A"}
+                  </td>
+                  <td>
+                    {omborItem.qiymat}{" "}
+                    {birlik.find((b) => b.id === omborItem.birlik)?.name ||
+                      "N/A"}
+                  </td>
+                  <td className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => handleEdit(omborItem)}
+                      className="text-xl text-green-400 hover:text-green-500"
+                    >
+                      <CiEdit />
+                    </button>
+                  </td>
+                  <td className="text-center">{omborItem.created_at}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

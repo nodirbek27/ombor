@@ -1,35 +1,70 @@
 import React, { useEffect, useState } from "react";
-import APIOmbor from "../../services/ombor";
+import APIJami from "../../services/jami";
 import APICategory from "../../services/category";
 import APIMahsulot from "../../services/mahsulot";
 import APIBirlik from "../../services/birlik";
+import APIOmborYopish from "../../services/omborYopish";
 
 const SuperadminOmbor = () => {
-  const [ombor, setOmbor] = useState([]);
+  const [jami, setJami] = useState([]);
   const [category, setCategory] = useState([]);
   const [mahsulot, setMahsulot] = useState([]);
   const [birlik, setBirlik] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isOmborClosed, setIsOmborClosed] = useState(false);
+  const [omborYopishId, setOmborYopishId] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [omborData, categoryData, mahsulotData, birlikData] =
-        await Promise.all([
-          APIOmbor.get(),
-          APICategory.get(),
-          APIMahsulot.get(),
-          APIBirlik.get(),
-        ]);
+      const [
+        jamiData,
+        categoryData,
+        mahsulotData,
+        birlikData,
+        omborYopishData,
+      ] = await Promise.all([
+        APIJami.get(),
+        APICategory.get(),
+        APIMahsulot.get(),
+        APIBirlik.get(),
+        APIOmborYopish.get(),
+      ]);
 
-      setOmbor(omborData?.data || []);
+      setJami(jamiData?.data || []);
       setCategory(categoryData?.data || []);
       setMahsulot(mahsulotData?.data || []);
       setBirlik(birlikData?.data || []);
+
+      if (omborYopishData?.data && omborYopishData.data.length > 0) {
+        setIsOmborClosed(omborYopishData.data[0].yopish);
+        setOmborYopishId(omborYopishData.data[0].id);
+      } else {
+        setIsOmborClosed(false);
+        const response = await APIOmborYopish.post({ yopish: false });
+        setOmborYopishId(response.data.id);
+      }
     } catch (error) {
       console.error("Failed to fetch data", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleOmbor = async () => {
+    const newStatus = !isOmborClosed;
+    setIsOmborClosed(newStatus);
+
+    try {
+      if (omborYopishId) {
+        await APIOmborYopish.put(`/${omborYopishId}/`, { yopish: newStatus });
+      } else {
+        const response = await APIOmborYopish.post({ yopish: newStatus });
+        setOmborYopishId(response.data.id);
+      }
+    } catch (error) {
+      console.error("Failed to update ombor status", error);
+      setIsOmborClosed(!newStatus);
     }
   };
 
@@ -54,58 +89,56 @@ const SuperadminOmbor = () => {
             <span className="label-text text-md font-semibold">
               Omborni yopish
             </span>
-            <input type="checkbox" className="toggle toggle-success" />
+            <input
+              type="checkbox"
+              className="toggle toggle-success"
+              checked={!!isOmborClosed}
+              onChange={handleToggleOmbor} // Toggle state
+            />
           </label>
         </div>
       </div>
 
-      <div>
-        {category.map((item) => (
-          <div key={item.id} className="p-2">
-            <h2 className="text-lg font-semibold text-[#004269]">
-              {item.name}
-            </h2>
-            <table className="table table-zebra w-full">
-              <thead>
-                <tr className="grid grid-cols-3">
-                  <th>Mahsulot</th>
-                  <th>Miqdor</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ombor
+      {/* Display items only if the warehouse is open (isOmborClosed is false) */}
+      {!isOmborClosed && (
+        <div>
+          {category.map((item) => (
+            <div key={item.id} className="p-2">
+              <h2 className="text-lg font-semibold text-[#004269]">
+                {item.name}
+              </h2>
+              <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
+                {jami
                   .filter((o) =>
                     mahsulot
                       .filter((k) => k.kategoriya === item.id)
                       .map((item) => item.id)
                       .includes(o.maxsulot)
                   )
-                  .map((omborItem) => {
+                  .map((jamiItem) => {
                     const mahsulotNomi =
-                      mahsulot.find((prod) => prod.id === omborItem.maxsulot)
+                      mahsulot.find((prod) => prod.id === jamiItem.maxsulot)
                         ?.name || "Noma'lum";
                     const birlikNomi =
-                      birlik.find((unit) => unit.id === omborItem.birlik)
+                      birlik.find((unit) => unit.id === jamiItem.birlik)
                         ?.name || "Noma'lum";
-
                     return (
-                      <tr
-                        key={omborItem.id}
-                        className="grid grid-cols-3 w-full"
+                      <div
+                        key={jamiItem.id}
+                        className="border rounded p-2 flex items-center justify-between bg-slate-50"
                       >
-                        <td>{mahsulotNomi}</td>
-                        <td>
-                          {omborItem.qiymat}
-                          {birlikNomi}
-                        </td>
-                      </tr>
+                        <div>{mahsulotNomi}</div>
+                        <div>
+                          {jamiItem.qiymat} {birlikNomi}
+                        </div>
+                      </div>
                     );
                   })}
-              </tbody>
-            </table>
-          </div>
-        ))}
-      </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

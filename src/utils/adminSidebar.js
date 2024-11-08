@@ -12,6 +12,8 @@ import AdminOmbor from "../pages/AdminDashboard/Ombor";
 import AdminBirlik from "../pages/AdminDashboard/Birlik";
 import AdminKategoriya from "../pages/AdminDashboard/Kategoriya";
 import AdminArxiv from "../pages/AdminDashboard/ArxivPage";
+import KiritilganMahsulotlar from "../pages/AdminDashboard/ArxivPage/KiritilganMahsulotlar";
+import ChiqganMahsulotlar from "../pages/AdminDashboard/ArxivPage/ChiqganMahsulotlar";
 import AdminMahsulotYaratish from "../pages/AdminDashboard/MahsulotlarYaratish";
 
 const sidebar = [
@@ -59,6 +61,24 @@ const sidebar = [
     isPrivate: true,
     element: AdminArxiv,
     role: ["admin"],
+    children: [
+      {
+        id: 5 - 1,
+        title: "Kiritilgan mahsulotlar",
+        path: "/admin/arxiv/kiritilgan-mahsulotlar",
+        isPrivate: true,
+        element: KiritilganMahsulotlar,
+        role: ["admin"],
+      },
+      {
+        id: 5 - 2,
+        title: "Chiqarilgan mahsulotlar",
+        path: "/admin/arxiv/chiqgan-mahsulotlar",
+        isPrivate: true,
+        element: ChiqganMahsulotlar,
+        role: ["admin"],
+      },
+    ],
   },
   {
     id: 11,
