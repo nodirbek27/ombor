@@ -138,7 +138,7 @@ const KomendantNavbar = () => {
           </div>
         </div>
       </div>
-      <div className="p-4 max-w-7xl mx-auto">
+      <div className="p-4 max-w-7xl mx-auto bg-white">
         <Outlet />
       </div>
     </div>
