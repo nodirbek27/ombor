@@ -4,14 +4,23 @@ const storeInLocalStorage = (data) => {
   localStorage.setItem("cart", JSON.stringify(data));
 };
 
+const initialState = {
+  data: JSON.parse(localStorage.getItem("cart")) || [],
+  totalAmount: 0,
+  totalItems: 0,
+};
+
+if (initialState.data.length > 0) {
+  initialState.totalAmount = initialState.data.reduce(
+    (total, item) => total + item.totalPrice,
+    0
+  );
+  initialState.totalItems = initialState.data.length;
+}
+
 const cartSlice = createSlice({
   name: "cart",
-  initialState: {
-    data: [],
-    totalAmount: 0,
-    totalItems: 0,
-  },
-
+  initialState,
   reducers: {
     addToCart(state, action) {
       const existingProduct = state.data.find(
@@ -71,6 +80,13 @@ const cartSlice = createSlice({
       }, 0);
 
       state.totalItems = state.data.length;
+    },
+
+    RESET: (state) => {
+      state.data = [];
+      state.totalAmount = 0;
+      state.totalItems = 0;
+      storeInLocalStorage(state.data); // reset localStorage as well
     },
   },
 });

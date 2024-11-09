@@ -1,15 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import APIUsers from "../../services/user";
+import APISavat from "../../services/savat";
 import menus from "../../utils/komendantNavbar";
 import { MdOutlineLocalGroceryStore } from "react-icons/md";
 import { RiMenu2Fill } from "react-icons/ri";
 import { CgClose } from "react-icons/cg";
 
 const KomendantNavbar = () => {
-  const { totalItems } = useSelector((state) => state.cart);
   const [user, setUser] = useState([]);
+  const [savat, setSavat] = useState([]);
+
+  const getSavat = async () => {
+    try {
+      const response = await APISavat.get();
+      setSavat(response.data || []);
+    } catch (error) {
+      console.error("Failed to fetch savat", error);
+    }
+  };
+
+  useEffect(() => {
+    getSavat();
+  }, []);
 
   const navigate = useNavigate();
 
@@ -59,7 +72,7 @@ const KomendantNavbar = () => {
           </div>
 
           <div className="flex items-center">
-            {/* navbar menu */}
+            {/* Navbar menu */}
             <ul className="hidden md:flex items-center mr-3">
               {menus.map((menu) => {
                 return !menu.hidden ? (
@@ -82,12 +95,13 @@ const KomendantNavbar = () => {
               })}
             </ul>
 
-            {/* Savat va menu */}
+            {/* Cart and menu */}
             <div className="flex items-center">
-              <Link to="savatcha" className="relative  mr-5 text-2xl">
+              <Link to="savatcha" className="relative mr-5 text-2xl">
                 <MdOutlineLocalGroceryStore />
                 <div className="items_count absolute -top-3 -right-4 bg-yellow-500 rounded-full w-6 h-6 flex items-center justify-center">
-                  <span className="text-white text-sm">{totalItems}</span>
+                  <span className="text-white text-sm">0</span>{" "}
+                  {/* Displaying cart count */}
                 </div>
               </Link>
               <Link className="mr-5 text-2xl" onClick={() => setOpen(!open)}>
@@ -125,7 +139,7 @@ const KomendantNavbar = () => {
                   ) : null;
                 })}
                 <li>
-                  {/* Chiqish */}
+                  {/* Logout */}
                   <button
                     className="p-1 rounded-md cursor-pointer hover:bg-gray-400 transition-colors duration-300 text-[#004269] font-semibold text-md items-center gap-x-4"
                     onClick={onLogOut}
