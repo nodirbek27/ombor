@@ -32,7 +32,6 @@ const Modal = ({ selectedItem, mahsulot, birlik, buyurtmaId, onClose }) => {
         active: true,
       };
       await APISavat.post(newCartItem);
-      console.log("Added to cart:", newCartItem);
       onClose();
     } catch (err) {
       console.error("Error adding to cart:", err);
@@ -67,7 +66,7 @@ const Modal = ({ selectedItem, mahsulot, birlik, buyurtmaId, onClose }) => {
         </div>
         {error && <p className="text-red-500">{error}</p>}
         <div className="modal-action">
-          <button className="btn" onClick={handleAddToCart}>
+          <button className="btn w-full bg-blue-400 hover:bg-blue-500 transition-colors duration-300 text-white" onClick={handleAddToCart}>
             Savatga qo'shish
           </button>
         </div>

@@ -20,6 +20,7 @@ const KomendantOmbor = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [buyurtmaId, setBuyurtmaId] = useState(null);
 
+  // Fetch main data
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -43,6 +44,27 @@ const KomendantOmbor = () => {
     }
   };
 
+  // Fetch buyurtma data and check if active buyurtma exists
+  useEffect(() => {
+    const getBuyurtma = async () => {
+      try {
+        const userId = Number(localStorage.getItem("userId"));
+        const response = await APIBuyurtma.get();
+        const filteredBuyurtma = response?.data?.filter(
+          (item) => item.user === userId && item.active
+        );
+
+        // Set buyurtmaId if an active buyurtma exists
+        if (filteredBuyurtma.length > 0) {
+          setBuyurtmaId(filteredBuyurtma[0].id);
+        }
+      } catch (error) {
+        console.error("Failed to fetch buyurtma", error);
+      }
+    };
+    getBuyurtma();
+  }, []);
+
   useEffect(() => {
     if (yopish && yopish.length > 0) {
       setIsClose(yopish[0].yopish);
@@ -59,15 +81,18 @@ const KomendantOmbor = () => {
 
   const handleAddToCart = async (jamiItem) => {
     setSelectedItem(jamiItem);
-    try {
-      const userId = localStorage.getItem("userId");
-      const response = await APIBuyurtma.post({
-        active: true,
-        user: userId,
-      });
-      setBuyurtmaId(response.data.id);
-    } catch (error) {
-      console.error("Error posting Buyurtma:", error);
+    const userId = Number(localStorage.getItem("userId"));
+    if (buyurtmaId) {
+    } else {
+      try {
+        const response = await APIBuyurtma.post({
+          active: true,
+          user: userId,
+        });
+        setBuyurtmaId(response.data.id);
+      } catch (error) {
+        console.error("Error posting Buyurtma:", error);
+      }
     }
   };
 
@@ -106,7 +131,7 @@ const KomendantOmbor = () => {
           )
           .map((item) => (
             <div key={item.id} className="p-2">
-              <h2 className="text-lg font-semibold text-[#004269]">
+              <h2 className="text-lg font-semibold text-[#004269] underline mb-3">
                 {item.name}
               </h2>
               <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
