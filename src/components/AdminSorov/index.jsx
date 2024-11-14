@@ -12,7 +12,6 @@ const AdminSorov = () => {
   const [mahsulot, setMahsulot] = useState([]);
   const [birlik, setBirlik] = useState([]);
   const [users, setUsers] = useState({});
-  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     const getBuyurtmalar = async () => {
@@ -27,7 +26,6 @@ const AdminSorov = () => {
         const userPromises = filteredBuyurtmalar.map((buyurtma) =>
           APIUsers.getbyId(`/${buyurtma.user}`).then((response) => {
             const user = response?.data;
-            setUserId(user.id);
             return {
               [buyurtma.user]: `${user?.first_name || "Noma'lum"} ${
                 user?.last_name || ""
@@ -111,7 +109,7 @@ const AdminSorov = () => {
 
       // Update the buyurtma status based on action
       const updatedBuyurtma = {
-        user: userId,
+        user: buyurtmalar.find((b) => b.id === buyurtmaId)?.user,
         sorov: false,
         active: false,
         tasdiq: action === "approve",

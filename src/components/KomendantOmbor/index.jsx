@@ -53,7 +53,6 @@ const KomendantOmbor = () => {
         const filteredBuyurtma = response?.data?.filter(
           (item) => item.user === userId && item.active
         );
-
         // Set buyurtmaId if an active buyurtma exists
         if (filteredBuyurtma.length > 0) {
           setBuyurtmaId(filteredBuyurtma[0].id);
@@ -82,8 +81,7 @@ const KomendantOmbor = () => {
   const handleAddToCart = async (jamiItem) => {
     setSelectedItem(jamiItem);
     const userId = Number(localStorage.getItem("userId"));
-    if (buyurtmaId) {
-    } else {
+    if (!buyurtmaId) {
       try {
         const response = await APIBuyurtma.post({
           active: true,
