@@ -3,7 +3,6 @@ import APISavat from "../../services/savat";
 import APIBuyurtma from "../../services/buyurtma";
 import APIMahsulot from "../../services/mahsulot";
 import APIBirlik from "../../services/birlik";
-import APIArxiv from "../../services/arxiv";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
@@ -104,28 +103,26 @@ const KomendantSavatcha = () => {
 
   const handleSumbit = async () => {
     try {
-      const postData = savat.map((item) => ({
-        qiymat: item.qiymat,
-        active: true,
-        buyurtma: buyurtma.id,
-        maxsulot: item.maxsulot,
-        birlik: item.birlik,
-        tasdiq: false,
-        rad: false,
-      }));
+      if (buyurtma?.id) {
+        const postData = {
+          ...buyurtma,
+          active: true,
+          sorov: true,
+          tasdiq: false,
+          rad: false,
+        };
 
-      // Posting each item individually
-      await Promise.all(
-        postData.map(async (data, index) => {
-          await APIArxiv.post(data);
-          await APISavat.del(savat[index].id);
-        })
-      );
-
-      setSavat([]);
-      console.log(
-        "All items successfully posted to the archive and removed from cart."
-      );
+        // Update the specific buyurtma by ID
+        await APIBuyurtma.put(`/${buyurtma.id}`, postData);
+        // Update the state to reflect the changes
+        setBuyurtma((prevBuyurtma) => ({
+          ...prevBuyurtma,
+          sorov: true,
+        }));
+        console.log("Buyurtma edited successfully");
+      } else {
+        console.error("No active buyurtma found to submit");
+      }
     } catch (error) {
       console.error("Failed to submit and clear items", error);
     }
@@ -167,7 +164,8 @@ const KomendantSavatcha = () => {
                           <label className="max-w-[200px] flex items-center gap-2 mb-2">
                             Miqdori:
                             <input
-                              type="text"
+                              type="number"
+                              min="0"
                               className="p-1"
                               value={editedQuantity}
                               onChange={(e) =>
@@ -213,7 +211,10 @@ const KomendantSavatcha = () => {
               </div>
               <button
                 onClick={handleSumbit}
-                className="btn w-full bg-blue-400 hover:bg-blue-500 transition-colors duration-300 text-white"
+                disabled={buyurtma?.sorov}
+                className={`btn w-full bg-blue-400 hover:bg-blue-500 transition-colors duration-300 text-white ${
+                  buyurtma?.sorov ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
                 So'rov yuborish
               </button>

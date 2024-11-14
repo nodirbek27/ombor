@@ -88,6 +88,9 @@ const KomendantOmbor = () => {
         const response = await APIBuyurtma.post({
           active: true,
           user: userId,
+          sorov: false,
+          tasdiq: false,
+          rad: false,
         });
         setBuyurtmaId(response.data.id);
       } catch (error) {
