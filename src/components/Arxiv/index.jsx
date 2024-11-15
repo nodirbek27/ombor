@@ -7,6 +7,8 @@ import APIBuyurtma from "../../services/buyurtma";
 import APIArxiv from "../../services/arxiv";
 import APIMahsulot from "../../services/mahsulot";
 import APIBirlik from "../../services/birlik";
+import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
+import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 
 const Arxiv = () => {
   const [arxiv, setArxiv] = useState([]);
@@ -15,6 +17,8 @@ const Arxiv = () => {
   const [birlik, setBirlik] = useState([]);
   const [users, setUsers] = useState({});
   const [admin, setAdmin] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(1); // Number of items per page
 
   useEffect(() => {
     const getBuyurtmalar = async () => {
@@ -104,58 +108,49 @@ const Arxiv = () => {
     }
 
     const doc = new jsPDF();
+    const orderDate = buyurtma.created_at.split("T")[0];
 
-    // Add Buyurtma ID (top left)
     doc.setFontSize(12);
     doc.text(`Buyurtma ID: ${buyurtma.id}`, 14, 10);
-
-    // Add Date (top right) in italic
-    const orderDate = buyurtma.created_at.split("T")[0]; // Format as yyyy-mm-dd
     doc.setFontSize(12);
-    doc.setFont("helvetica", "italic"); // Set font to italic
-    doc.text(`${orderDate}`, 180, 10); // Adjust the X position for right alignment
+    doc.setFont("helvetica", "italic");
+    doc.text(`${orderDate}`, 180, 10);
 
-    // Admin information at the bottom left
     if (admin) {
       doc.setFontSize(14);
-      doc.setFont("helvetica", "normal"); // Set font to normal
+      doc.setFont("helvetica", "normal");
       doc.text(
         `${admin.first_name} ${admin.last_name}`,
         14,
         doc.internal.pageSize.height - 50
-      ); // Admin name at the bottom left
+      );
     }
 
-    // User information at the bottom left
     const userName = users[buyurtma.user] || "Noma'lum";
     doc.setFontSize(14);
-    doc.setFont("helvetica", "normal"); // Set font to normal
-    doc.text(`${userName}`, 14, doc.internal.pageSize.height - 40); // User name at the bottom left
+    doc.setFont("helvetica", "normal");
+    doc.text(`${userName}`, 14, doc.internal.pageSize.height - 40);
 
-    // Signature label (bottom right) with underline for admin
-    const signatureX = doc.internal.pageSize.width - 100; // Right side
-    doc.text("Imzo (Omborchi):", signatureX, doc.internal.pageSize.height - 52); // Admin signature label
+    const signatureX = doc.internal.pageSize.width - 100;
+    doc.text("Imzo (Omborchi):", signatureX, doc.internal.pageSize.height - 52);
     doc.line(
       signatureX,
       doc.internal.pageSize.height - 50,
       signatureX + 80,
       doc.internal.pageSize.height - 50
-    ); // Underline for admin's signature
-
-    // Signature label (bottom right) with underline for user
+    );
     doc.text(
       "Imzo (Komendant):",
       signatureX,
       doc.internal.pageSize.height - 42
-    ); // User signature label
+    );
     doc.line(
       signatureX,
       doc.internal.pageSize.height - 40,
       signatureX + 80,
       doc.internal.pageSize.height - 40
-    ); // Underline for user's signature
+    );
 
-    // Add table for products (below user name)
     const tableColumn = ["Mahsulot", "Miqdor"];
     const tableRows = arxiv
       .filter((item) => item.buyurtma === buyurtma.id)
@@ -164,15 +159,35 @@ const Arxiv = () => {
         `${item.qiymat} ${getBirlikName(item.birlik)}`,
       ]);
 
-    // Start table below user name and add table
     doc.autoTable({
-      startY: doc.internal.pageSize.height - 275, // Adjust the start Y position to fit the table below the user name
+      startY: doc.internal.pageSize.height - 275,
       head: [tableColumn],
       body: tableRows,
     });
 
-    // Save the PDF
     doc.save("OlinganMaxsulotlar.pdf");
+  };
+
+  // Pagination logic
+  const indexOfLastBuyurtma = currentPage * itemsPerPage;
+  const indexOfFirstBuyurtma = indexOfLastBuyurtma - itemsPerPage;
+  const currentBuyurtmalar = buyurtmalar.slice(
+    indexOfFirstBuyurtma,
+    indexOfLastBuyurtma
+  );
+
+  const totalPages = Math.ceil(buyurtmalar.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
   return (
@@ -181,7 +196,7 @@ const Arxiv = () => {
         <p className="text-xl font-semibold text-[#004269]">Arxiv</p>
       </div>
       <div className="p-4 min-w-full bg-white">
-        {buyurtmalar.map((buyurtma) => (
+        {currentBuyurtmalar.map((buyurtma) => (
           <div
             key={buyurtma.id}
             className="collapse collapse-arrow join-item border-base-300 border mb-3"
@@ -228,6 +243,32 @@ const Arxiv = () => {
             </div>
           </div>
         ))}
+
+        {/* Pagination Controls */}
+        <div className="flex justify-center mt-4 items-center">
+          <MdKeyboardDoubleArrowLeft
+            className="w-5 h-auto mr-4 cursor-pointer"
+            onClick={handlePrevPage}
+            disabled={currentPage === totalPages}
+          />
+          {/* Page Numbers */}
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => handlePageChange(index + 1)}
+              className={`mx-1 text-gray-400 ${
+                currentPage === index + 1 ? "text-blue-800" : ""
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+          <MdKeyboardDoubleArrowRight
+            className="w-5 h-auto ml-4 cursor-pointer"
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+          />
+        </div>
       </div>
     </div>
   );
