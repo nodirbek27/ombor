@@ -18,7 +18,7 @@ const Arxiv = () => {
   const [users, setUsers] = useState({});
   const [admin, setAdmin] = useState();
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(1); // Number of items per page
+  const [itemsPerPage] = useState(10); // Number of items per page
 
   useEffect(() => {
     const getBuyurtmalar = async () => {
