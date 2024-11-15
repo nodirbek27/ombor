@@ -1,10 +1,10 @@
 import React from 'react'
-import AdminChiqganMahsulotlar from '../../../../components/AdminChiqganMahsulotlar'
+import Arxiv from '../../../../components/Arxiv'
 
 const ChiqganMahsulotlar = () => {
   return (
     <div>
-        <AdminChiqganMahsulotlar />
+        <Arxiv />
     </div>
   )
 }
