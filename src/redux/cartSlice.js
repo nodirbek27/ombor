@@ -1,34 +1,36 @@
 // src/redux/cartSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-import APISavat from "../services/savat";
 
+// Initial state for the cart
+const initialState = {
+  items: [],
+};
+
+// Create a slice for cart
 const cartSlice = createSlice({
   name: "cart",
-  initialState: {
-    items: [],
-  },
+  initialState,
   reducers: {
-    setCartItems(state, action) {
-      state.items = action.payload;
+    addToCart: (state, action) => {
+      // Check if item already exists in cart
+      const existingItem = state.items.find(item => item.id === action.payload.id);
+      if (existingItem) {
+        existingItem.quantity += 1;  // Increment quantity if item exists
+      } else {
+        state.items.push({ ...action.payload, quantity: 1 });  // Add new item with quantity 1
+      }
     },
-    addItemToCart(state, action) {
-      state.items.push(action.payload);
+    removeFromCart: (state, action) => {
+      state.items = state.items.filter(item => item.id !== action.payload.id);
+    },
+    clearCart: (state) => {
+      state.items = [];
     },
   },
 });
 
-export const { setCartItems, addItemToCart } = cartSlice.actions;
+// Export actions
+export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
 
-export const fetchCartItems = (buyurtmaId) => async (dispatch) => {
-  try {
-    const response = await APISavat.get();
-    const filteredSavat = response.data.filter(
-      (item) => item.buyurtma === buyurtmaId
-    );
-    dispatch(setCartItems(filteredSavat));
-  } catch (error) {
-    console.error("Failed to fetch cart items", error);
-  }
-};
-
+// Export the reducer to be added to the store
 export default cartSlice.reducer;
