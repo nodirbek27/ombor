@@ -125,6 +125,7 @@ const AdminSorov = () => {
         error
       );
     }
+    window.location.reload();
   };
 
   return (

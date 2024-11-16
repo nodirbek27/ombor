@@ -20,7 +20,6 @@ const KomendantOmbor = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [buyurtmaId, setBuyurtmaId] = useState(null);
 
-  // Fetch main data
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -32,11 +31,17 @@ const KomendantOmbor = () => {
           APIBirlik.get(),
           APIOmborYopish.get(),
         ]);
+
       setJami(jamiData?.data);
       setCategory(categoryData?.data);
-      setMahsulot(mahsulotData?.data);
       setBirlik(birlikData?.data);
       setYopish(yopishData?.data);
+
+      // Filter mahsulot by maxviylik
+      const filteredMahsulot = mahsulotData?.data.filter(
+        (item) => !item.maxviylik
+      );
+      setMahsulot(filteredMahsulot); // Set filtered mahsulot
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {

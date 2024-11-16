@@ -67,7 +67,7 @@ const KomendantArxiv = () => {
       }
     };
     getSavat();
-  }, [buyurtmalar]);
+  }, [buyurtmalar]);  
 
   useEffect(() => {
     const fetchData = async () => {
