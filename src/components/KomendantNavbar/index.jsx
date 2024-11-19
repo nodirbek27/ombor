@@ -1,33 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import APIUsers from "../../services/user";
-import APISavat from "../../services/savat";
 import APIBuyurtma from "../../services/buyurtma";
 import menus from "../../utils/komendantNavbar";
 import { MdOutlineLocalGroceryStore } from "react-icons/md";
 import { RiMenu2Fill } from "react-icons/ri";
 import { CgClose } from "react-icons/cg";
 import logo from "../../assets/images/logo.png";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCartLength } from "../../redux/cartSlice";
 
 const KomendantNavbar = () => {
   const [user, setUser] = useState([]);
-  const [buyurtma, setBuyurtma] = useState(null);
-  const [savat, setSavat] = useState(null);
-  const [showModal, setShowModal] = useState(false); // State to control the modal visibility
-  const [rejectedBuyurtma, setRejectedBuyurtma] = useState(null); // Store the rejected buyurtma to be deleted
+  const [showModal, setShowModal] = useState(false);
+  const [rejectedBuyurtma, setRejectedBuyurtma] = useState(null);
+  const dispatch = useDispatch();
+  const cartLength = useSelector((state) => state.cart.cartLength);
+
+  useEffect(() => {
+    dispatch(fetchCartLength());
+  }, [dispatch]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getBuyurtma = async () => {
       try {
         const userId = Number(localStorage.getItem("userId"));
         const response = await APIBuyurtma.get();
-        const filteredBuyurtma = response?.data?.filter(
-          (item) => item.user === userId && item.active
-        );
         const filteredRadBuyurtma = response?.data?.filter(
           (item) => item.user === userId && !item.active && item.rad
         );
-        setBuyurtma(filteredBuyurtma);
         if (filteredRadBuyurtma.length > 0) {
           setRejectedBuyurtma(filteredRadBuyurtma[0]); // Set the rejected buyurtma to show in the modal
           setShowModal(true); // Show the modal when there is a rejected buyurtma
@@ -38,25 +41,6 @@ const KomendantNavbar = () => {
     };
     getBuyurtma();
   }, []);
-
-  useEffect(() => {
-    const getSavat = async () => {
-      try {
-        if (buyurtma && buyurtma[0]?.id) {
-          const response = await APISavat.get();
-          const filteredSavat = response?.data?.filter(
-            (item) => item.buyurtma === buyurtma[0].id
-          );
-          setSavat(filteredSavat?.length);
-        }
-      } catch (error) {
-        console.error("Failed to fetch savat", error);
-      }
-    };
-    getSavat();
-  }, [buyurtma]);
-
-  const navigate = useNavigate();
 
   const getUserProfile = async () => {
     try {
@@ -147,7 +131,7 @@ const KomendantNavbar = () => {
               <Link to="savatcha" className="relative mr-5 text-2xl">
                 <MdOutlineLocalGroceryStore />
                 <div className="items_count absolute -top-3 -right-4 bg-yellow-500 rounded-full w-6 h-6 flex items-center justify-center">
-                  <span className="text-white text-sm">{savat ? savat : "0"}</span>
+                  <span className="text-white text-sm">{cartLength}</span>
                 </div>
               </Link>
               <Link className="mr-5 text-2xl" onClick={() => setOpen(!open)}>

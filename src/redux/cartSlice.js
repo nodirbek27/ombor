@@ -1,36 +1,67 @@
 // src/redux/cartSlice.js
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import APISavat from "../services/savat";
+import APIBuyurtma from "../services/buyurtma";
 
-// Initial state for the cart
-const initialState = {
-  items: [],
-};
+// Async action to add item to the cart
+export const addToCart = createAsyncThunk(
+  "cart/addToCart",
+  async (newCartItem, { rejectWithValue }) => {
+    try {
+      await APISavat.post(newCartItem);
+      return newCartItem;
+    } catch (error) {
+      return rejectWithValue("Failed to add item to the cart");
+    }
+  }
+);
 
-// Create a slice for cart
+// Async action to fetch cart length
+export const fetchCartLength = createAsyncThunk(
+  "cart/fetchCartLength",
+  async (_, { rejectWithValue }) => {
+    try {
+      const userId = Number(localStorage.getItem("userId"));
+      const responseBuyurtma = await APIBuyurtma.get();
+      const filteredBuyurtma = responseBuyurtma?.data?.filter(
+        (item) => item.user === userId && item.active
+      );
+      if (filteredBuyurtma && filteredBuyurtma[0]?.id) {
+        const response = await APISavat.get();  
+        const filteredSavat = response?.data?.filter(
+          (item) => item.buyurtma === filteredBuyurtma[0].id
+        );    
+        return filteredSavat?.length;
+      }
+    } catch (error) {
+      return rejectWithValue("Failed to fetch cart length");
+    }
+  }
+);
+
 const cartSlice = createSlice({
   name: "cart",
-  initialState,
-  reducers: {
-    addToCart: (state, action) => {
-      // Check if item already exists in cart
-      const existingItem = state.items.find(item => item.id === action.payload.id);
-      if (existingItem) {
-        existingItem.quantity += 1;  // Increment quantity if item exists
-      } else {
-        state.items.push({ ...action.payload, quantity: 1 });  // Add new item with quantity 1
-      }
-    },
-    removeFromCart: (state, action) => {
-      state.items = state.items.filter(item => item.id !== action.payload.id);
-    },
-    clearCart: (state) => {
-      state.items = [];
-    },
+  initialState: {
+    items: [],
+    cartLength: 0,
+    error: null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(addToCart.fulfilled, (state, action) => {
+        state.items.push(action.payload);
+      })
+      .addCase(fetchCartLength.fulfilled, (state, action) => {
+        state.cartLength = action.payload;
+      })
+      .addCase(addToCart.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+      .addCase(fetchCartLength.rejected, (state, action) => {
+        state.error = action.payload;
+      });
   },
 });
 
-// Export actions
-export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
-
-// Export the reducer to be added to the store
 export default cartSlice.reducer;

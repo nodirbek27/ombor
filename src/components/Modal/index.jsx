@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import APISavat from "../../services/savat";
+import { useDispatch } from "react-redux";
+import { addToCart, fetchCartLength } from "../../redux/cartSlice";
 
 const Modal = ({ selectedItem, mahsulot, birlik, buyurtmaId, onClose }) => {
   const [quantity, setQuantity] = useState("");
   const [error, setError] = useState(null);
+  const dispatch = useDispatch();
 
   const mahsulotName =
     mahsulot.find((prod) => prod.id === selectedItem?.maxsulot)?.name ||
@@ -23,15 +25,18 @@ const Modal = ({ selectedItem, mahsulot, birlik, buyurtmaId, onClose }) => {
       setError("Miqdorni kiriting!");
       return;
     }
+
+    const newCartItem = {
+      qiymat: quantity,
+      buyurtma: buyurtmaId,
+      maxsulot: mahsulotId,
+      birlik: birlikId,
+      active: true,
+    };
+
     try {
-      const newCartItem = {
-        qiymat: quantity,
-        buyurtma: buyurtmaId,
-        maxsulot: mahsulotId,
-        birlik: birlikId,
-        active: true,
-      };
-      await APISavat.post(newCartItem);
+      await dispatch(addToCart(newCartItem));
+      await dispatch(fetchCartLength());
       onClose();
     } catch (err) {
       console.error("Error adding to cart:", err);
@@ -66,7 +71,10 @@ const Modal = ({ selectedItem, mahsulot, birlik, buyurtmaId, onClose }) => {
         </div>
         {error && <p className="text-red-500">{error}</p>}
         <div className="modal-action">
-          <button className="btn w-full bg-blue-400 hover:bg-blue-500 transition-colors duration-300 text-white" onClick={handleAddToCart}>
+          <button
+            className="btn w-full bg-blue-400 hover:bg-blue-500 transition-colors duration-300 text-white"
+            onClick={handleAddToCart}
+          >
             Savatga qo'shish
           </button>
         </div>
