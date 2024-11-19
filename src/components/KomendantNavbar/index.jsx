@@ -92,9 +92,9 @@ const KomendantNavbar = () => {
   const handleDelete = async () => {
     try {
       if (rejectedBuyurtma) {
-        await APIBuyurtma.del(rejectedBuyurtma.id); // Delete the rejected buyurtma
-        setShowModal(false); // Hide the modal after deletion
-        setRejectedBuyurtma(null); // Clear the rejected buyurtma state
+        await APIBuyurtma.del(rejectedBuyurtma.id);
+        setShowModal(false);
+        setRejectedBuyurtma(null);
       }
     } catch (error) {
       console.error("Failed to delete buyurtma", error);
@@ -106,7 +106,10 @@ const KomendantNavbar = () => {
       <div className="bg-white header sticky top-0 z-50 shadow-xl border-b-2">
         <div className="max-w-7xl mx-auto flex justify-between items-center p-4 relative">
           <div>
-            <a href="/komendant" className="logo flex items-start text-xl font-semibold">
+            <a
+              href="/komendant"
+              className="logo flex items-start text-xl font-semibold"
+            >
               <img className="mr-3" src={logo} alt="" />
               QDPI <br /> Ombor
             </a>
@@ -115,21 +118,28 @@ const KomendantNavbar = () => {
           <div className="flex items-center">
             {/* Navbar menu */}
             <ul className="hidden md:flex items-center mr-3">
-              {menus.map((menu) => (
-                !menu.hidden && (
-                  <li key={menu.id} className="mr-3">
-                    <Link
-                      to={menu.link}
-                      className={`flex rounded-md p-2 cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md items-center gap-x-4
-                        ${location.pathname === menu.link ? "text-blue-700" : ""}`}
-                    >
-                      <span className={`${!open && "hidden"} md:block origin-left duration-200`}>
-                        {menu.title}
-                      </span>
-                    </Link>
-                  </li>
-                )
-              ))}
+              {menus.map(
+                (menu) =>
+                  !menu.hidden && (
+                    <li key={menu.id} className="mr-3">
+                      <Link
+                        to={menu.link}
+                        className={`flex rounded-md p-2 cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md items-center gap-x-4
+                        ${
+                          location.pathname === menu.link ? "text-blue-700" : ""
+                        }`}
+                      >
+                        <span
+                          className={`${
+                            !open && "hidden"
+                          } md:block origin-left duration-200`}
+                        >
+                          {menu.title}
+                        </span>
+                      </Link>
+                    </li>
+                  )
+              )}
             </ul>
 
             {/* Cart and menu */}
@@ -145,7 +155,11 @@ const KomendantNavbar = () => {
               </Link>
 
               {/* Mobile menu */}
-              <ul className={`absolute border-2 top-14 right-8 rounded-md p-3 bg-white ${!open && "hidden"}`}>
+              <ul
+                className={`absolute border-2 top-14 right-8 rounded-md p-3 bg-white ${
+                  !open && "hidden"
+                }`}
+              >
                 <li className="p-1 rounded-md cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md items-center gap-x-4">
                   {user.first_name} {user.last_name}
                 </li>
