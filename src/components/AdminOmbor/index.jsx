@@ -108,7 +108,7 @@ const AdminOmbor = () => {
 
       {/* Modal for adding/editing items */}
       <dialog ref={modalRef} className="modal">
-        <div className="modal-box">
+        <div className="modal-box bg-white">
           <div className="flex items-center justify-between mb-5">
             <h2 className="font-semibold text-gray-900 text-xl">Qo'shish</h2>
             <button
@@ -127,7 +127,7 @@ const AdminOmbor = () => {
               name="category"
               onChange={handleCategoryChange}
               value={formik.values.category || ""}
-              className="select select-bordered w-full"
+              className="select select-bordered w-full bg-white text-[#000]"
             >
               <option value="" disabled>
                 Kategoriya
@@ -143,7 +143,7 @@ const AdminOmbor = () => {
               name="mahsulot"
               onChange={formik.handleChange}
               value={formik.values.mahsulot || ""}
-              className="select select-bordered w-full"
+              className="select select-bordered w-full bg-white text-[#000]"
             >
               <option value="" disabled>
                 Mahsulot
@@ -155,7 +155,7 @@ const AdminOmbor = () => {
               ))}
             </select>
 
-            <label className="input input-bordered flex items-center gap-2">
+            <label className="input input-bordered flex items-center gap-2 bg-white text-[#000]">
               Miqdor:
               <input
                 type="number"
@@ -171,7 +171,7 @@ const AdminOmbor = () => {
               name="birlik"
               onChange={formik.handleChange}
               value={formik.values.birlik || ""}
-              className="select select-bordered w-full"
+              className="select select-bordered w-full bg-white text-[#000]"
             >
               <option value="" disabled>
                 O'lchov birlik
@@ -218,8 +218,8 @@ const AdminOmbor = () => {
                     "Noma'lum";
                   return (
                     <div key={jamiItem.id} className="border rounded p-2 flex items-center justify-between bg-slate-50">
-                      <div>{mahsulotNomi}</div>
-                      <div>
+                      <div className="text-[#000]">{mahsulotNomi}</div>
+                      <div className="text-[#000]">
                         {jamiItem.yakuniy_qiymat} {birlikNomi}
                       </div>
                     </div>

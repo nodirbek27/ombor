@@ -139,7 +139,7 @@ const AdminMahsulotYaratish = () => {
                     onSubmit={formik.handleSubmit}
                     className="flex items-center gap-3"
                   >
-                    <label className="input input-bordered flex items-center gap-2">
+                    <label className="input input-bordered flex items-center gap-2 bg-white text-[#000]">
                       Nomi:
                       <input
                         type="text"
@@ -152,7 +152,7 @@ const AdminMahsulotYaratish = () => {
                       />
                     </label>
                     <label className="cursor-pointer label">
-                      <span className="label-text mr-2">Maxfiylik:</span>
+                      <span className="label-text mr-2 text-[#000]">Maxfiylik:</span>
                       <input
                         type="checkbox"
                         name="maxviylik"
@@ -169,7 +169,7 @@ const AdminMahsulotYaratish = () => {
                     </button>
                     <button
                       type="button"
-                      className="btn flex items-center bg-red-400 hover:bg-red-500"
+                      className="btn flex items-center bg-red-400 hover:bg-red-500 text-[#000]"
                       onClick={() => handleClick(item.id)}
                     >
                       X

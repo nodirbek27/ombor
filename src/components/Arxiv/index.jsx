@@ -203,17 +203,17 @@ const Arxiv = () => {
           >
             <input type="radio" name="my-accordion-4" />
             <div className="flex items-center justify-between collapse-title text-md font-medium">
-              <h2 className="text-md font-medium">
+              <h2 className="text-md font-medium text-[#000]">
                 {users[buyurtma.user] || "Noma'lum"}
               </h2>
-              <div className="italic">{buyurtma.created_at}</div>
+              <div className="italic text-[#000]">{buyurtma.created_at}</div>
             </div>
             <div className="collapse-content">
-              <table className="table table-zebra w-full border-collapse border mb-3">
+              <table className="table table-zebra w-full border-collapse border mb-3 text-[#000]">
                 <thead>
                   <tr>
-                    <th className="py-2 px-4 border">Mahsulot</th>
-                    <th className="py-2 px-4 border">Miqdor</th>
+                    <th className="py-2 px-4 border text-[#000]">Mahsulot</th>
+                    <th className="py-2 px-4 border text-[#000]">Miqdor</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -133,7 +133,7 @@ const SuperadminAdminlar = () => {
 
         {/* MODAL FOR ADDING/EDITING ADMIN */}
         <dialog id="my_modal_2" className="modal">
-          <div className="modal-box">
+          <div className="modal-box bg-white">
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-semibold text-gray-900 text-xl">
                 {editingId
@@ -158,7 +158,7 @@ const SuperadminAdminlar = () => {
                     id="username"
                     name="username"
                     type="text"
-                    className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                    className="block w-full rounded-md border-0 bg-white p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.username}
@@ -180,7 +180,7 @@ const SuperadminAdminlar = () => {
                     id="name"
                     name="name"
                     type="text"
-                    className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                    className="block w-full rounded-md border-0 bg-white p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.name}
@@ -202,7 +202,7 @@ const SuperadminAdminlar = () => {
                     id="first_name"
                     name="first_name"
                     type="text"
-                    className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                    className="block w-full rounded-md border-0 bg-white p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.first_name}
@@ -226,7 +226,7 @@ const SuperadminAdminlar = () => {
                     id="last_name"
                     name="last_name"
                     type="text"
-                    className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                    className="block w-full rounded-md border-0 bg-white p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.last_name}
@@ -247,7 +247,7 @@ const SuperadminAdminlar = () => {
                     name="role"
                     value={formik.values.role}
                     onChange={formik.handleChange}
-                    className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                    className="block w-full rounded-md border-0 bg-white p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                   >
                     <option value="admin">Admin</option>
                     <option value="komendant">Komendant</option>
@@ -266,7 +266,7 @@ const SuperadminAdminlar = () => {
                     id="password"
                     name="password"
                     type="password"
-                    className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                    className="block w-full rounded-md border-0 bg-white p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.password}
@@ -292,7 +292,7 @@ const SuperadminAdminlar = () => {
         <table className="table">
           {/* head */}
           <thead>
-            <tr>
+            <tr className="text-[#000]">
               <th>Ism/Familiya</th>
               <th>Username/Parol</th>
               <th>Lavozim</th>
@@ -303,25 +303,25 @@ const SuperadminAdminlar = () => {
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
-                <td>
+                <td className="font-semibold text-[#000]">
                   <div className="flex items-center gap-3">
                     <div>
                       <div className="font-bold">{user.last_name}</div>
-                      <div className="text-sm opacity-50">
+                      <div className="text-sm">
                         {user.first_name}
                       </div>
                     </div>
                   </div>
                 </td>
-                <td>
+                <td className="font-semibold text-[#000]">
                   {user.username}
                   <br />
-                  <span className="badge badge-ghost badge-sm">
+                  <span className="badge badge-outline badge-sm">
                     {user.parol}
                   </span>
                 </td>
-                <td>{user.name}</td>
-                <td>{user.admin === true ? "Admin" : "Komendant"}</td>
+                <td className="font-semibold text-[#000]">{user.name}</td>
+                <td className="font-semibold text-[#000]">{user.admin === true ? "Admin" : "Komendant"}</td>
                 <th>
                   <button
                     className="mr-5 cursor-pointer"

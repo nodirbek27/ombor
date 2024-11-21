@@ -131,14 +131,14 @@ const AdminKiritilganMahsulotlar = () => {
       {/* Modal for editing items */}
       {modalOpen && (
         <dialog open className="modal">
-          <div className="modal-box">
+          <div className="modal-box bg-white">
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-semibold text-gray-900 text-xl">
                 Tahrirlash
               </h2>
               <button
                 type="button"
-                className="text-lg font-bold w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center"
+                className="text-lg text-[#000] font-bold w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center"
                 onClick={() => setModalOpen(false)}
               >
                 X
@@ -152,7 +152,7 @@ const AdminKiritilganMahsulotlar = () => {
                 name="category"
                 onChange={handleCategoryChange}
                 value={formik.values.category || ""}
-                className="select select-bordered w-full"
+                className="select select-bordered w-full bg-white text-[#000]"
               >
                 <option value="" disabled>
                   Kategoriya
@@ -168,7 +168,7 @@ const AdminKiritilganMahsulotlar = () => {
                 name="mahsulot"
                 onChange={handleProductChange}
                 value={formik.values.mahsulot || ""}
-                className="select select-bordered w-full"
+                className="select select-bordered w-full bg-white text-[#000]"
               >
                 <option value="" disabled>
                   Mahsulot
@@ -180,7 +180,7 @@ const AdminKiritilganMahsulotlar = () => {
                 ))}
               </select>
 
-              <label className="input input-bordered flex items-center gap-2">
+              <label className="input input-bordered flex items-center gap-2 bg-white text-[#000]">
                 Miqdor:
                 <input
                   type="number"
@@ -196,7 +196,7 @@ const AdminKiritilganMahsulotlar = () => {
                 name="birlik"
                 onChange={formik.handleChange}
                 value={formik.values.birlik || ""}
-                className="select select-bordered w-full"
+                className="select select-bordered w-full bg-white text-[#000]"
               >
                 <option value="" disabled>
                   O'lchov birlik
@@ -226,7 +226,7 @@ const AdminKiritilganMahsulotlar = () => {
           name="category"
           onChange={handleCategoryChange}
           value={formik.values.category || ""}
-          className="select select-bordered w-full max-w-xs"
+          className="select select-bordered w-full max-w-xs bg-white text-[#000]"
         >
           <option value="" disabled>
             Kategoriya
@@ -242,7 +242,7 @@ const AdminKiritilganMahsulotlar = () => {
           name="mahsulot"
           onChange={handleProductChange}
           value={formik.values.mahsulot || ""}
-          className="select select-bordered w-full max-w-xs"
+          className="select select-bordered w-full max-w-xs bg-white text-[#000]"
         >
           <option value="" disabled>
             Mahsulot
@@ -260,10 +260,10 @@ const AdminKiritilganMahsulotlar = () => {
         <table className="table table-zebra w-full">
           <thead>
             <tr>
-              <th>Mahsulot</th>
-              <th>Miqdori</th>
-              <th className="text-center">Tahrirlash</th>
-              <th className="text-center">Sana</th>
+              <th className="text-[#333]">Mahsulot</th>
+              <th className="text-[#333]">Miqdori</th>
+              <th className="text-center text-[#333]">Tahrirlash</th>
+              <th className="text-center text-[#333]">Sana</th>
             </tr>
           </thead>
           <tbody>

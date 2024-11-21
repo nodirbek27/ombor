@@ -98,14 +98,14 @@ const AdminKategoriya = () => {
 
         {/* MODAL FOR ADDING/EDITING ADMIN */}
         <dialog id="my_modal_2" className="modal">
-          <div className="modal-box">
+          <div className="modal-box bg-white">
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-semibold text-gray-900 text-xl">
                 {editingId ? "Kategoriyani tahrirlash" : "Kategoriya yaratish"}
               </h2>
               <button
                 type="button"
-                className="text-lg font-bold w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center"
+                className="text-lg font-bold w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center text-[#000]"
                 onClick={resetForm}
               >
                 X
@@ -115,7 +115,7 @@ const AdminKategoriya = () => {
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-gray-900"
+                  className="block text-sm font-medium text-gray-900 bg-white"
                 >
                   Nom
                 </label>
@@ -123,7 +123,7 @@ const AdminKategoriya = () => {
                   id="name"
                   name="name"
                   type="text"
-                  className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                  className="block w-full rounded-md border-0 p-2 text-gray-900 bg-white shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.name}

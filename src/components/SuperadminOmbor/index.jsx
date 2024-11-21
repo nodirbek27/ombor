@@ -127,8 +127,8 @@ const SuperadminOmbor = () => {
                         key={jamiItem.id}
                         className="border rounded p-2 flex items-center justify-between bg-slate-50"
                       >
-                        <div>{mahsulotNomi}</div>
-                        <div>
+                        <div className="text-[#000]">{mahsulotNomi}</div>
+                        <div className="text-[#000]">
                           {jamiItem.yakuniy_qiymat} {birlikNomi}
                         </div>
                       </div>
