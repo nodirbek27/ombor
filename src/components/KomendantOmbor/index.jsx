@@ -163,7 +163,7 @@ const KomendantOmbor = () => {
                         <div>{mahsulotNomi}</div>
                         <div className="flex items-center gap-3 xl:gap-8">
                           <div>
-                            {jamiItem.qiymat} {birlikNomi}
+                            {jamiItem.yakuniy_qiymat} {birlikNomi}
                           </div>
                           <MdOutlineLocalGroceryStore
                             className="w-5 md:w-6 h-auto cursor-pointer"

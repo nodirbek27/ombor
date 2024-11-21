@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 
 // Superadmin
 import SuperadminDashboard from "../pages/SuperadminDashboard";
@@ -52,7 +52,11 @@ const Root = () => {
       <Route
         path="/superadmin"
         element={
-          isAuthenticated && role === "superadmin" && <SuperadminDashboard />
+          isAuthenticated && role === "superadmin" ? (
+            <SuperadminDashboard />
+          ) : (
+            <Navigate to="/not-found" />
+          )
         }
       >
         <Route index element={<SuperadminOmbor />} />
@@ -65,7 +69,11 @@ const Root = () => {
       <Route
         path="/admin"
         element={
-          isAuthenticated && role === "admin" && <AdminDashboard />
+          isAuthenticated && role === "admin" ? (
+            <AdminDashboard />
+          ) : (
+            <Navigate to="/not-found" />
+          )
         }
       >
         <Route index element={<AdminOmbor />} />
@@ -82,15 +90,16 @@ const Root = () => {
       <Route
         path="/komendant"
         element={
-          isAuthenticated && role === "komendant" && <KomendantDashboard />
+          isAuthenticated && role === "komendant" ? (
+            <KomendantDashboard />
+          ) : (
+            <Navigate to="/not-found" />
+          )
         }
       >
         <Route index element={<KomendantOmbor />} />
         <Route path="ombor" element={<KomendantOmbor />} />
-        <Route
-          path="arxiv"
-          element={<KomendantArxiv />}
-        />
+        <Route path="arxiv" element={<KomendantArxiv />} />
         <Route path="savatcha" element={<KomendantSavatcha />} />
       </Route>
 

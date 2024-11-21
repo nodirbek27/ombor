@@ -129,7 +129,7 @@ const SuperadminOmbor = () => {
                       >
                         <div>{mahsulotNomi}</div>
                         <div>
-                          {jamiItem.qiymat} {birlikNomi}
+                          {jamiItem.yakuniy_qiymat} {birlikNomi}
                         </div>
                       </div>
                     );

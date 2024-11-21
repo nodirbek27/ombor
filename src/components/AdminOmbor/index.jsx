@@ -220,7 +220,7 @@ const AdminOmbor = () => {
                     <div key={jamiItem.id} className="border rounded p-2 flex items-center justify-between bg-slate-50">
                       <div>{mahsulotNomi}</div>
                       <div>
-                        {jamiItem.qiymat} {birlikNomi}
+                        {jamiItem.yakuniy_qiymat} {birlikNomi}
                       </div>
                     </div>
                   );
