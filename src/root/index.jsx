@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+import PrivateRoute from "./PrivateRoute";
 
 // Superadmin
 import SuperadminDashboard from "../pages/SuperadminDashboard";
@@ -30,14 +31,16 @@ import Login from "../components/Login";
 const Root = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const storedRole = localStorage.getItem("role");
-    if (token) {
+    if (token && storedRole) {
       setIsAuthenticated(true);
       setRole(storedRole);
     }
+    setIsLoading(false);
   }, []);
 
   const handleLogin = (userRole) => {
@@ -46,17 +49,23 @@ const Root = () => {
     localStorage.setItem("role", userRole);
   };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Routes>
       {/* SUPERADMIN */}
       <Route
-        path="/superadmin"
+        path="/superadmin/*"
         element={
-          isAuthenticated && role === "superadmin" ? (
+          <PrivateRoute
+            isAuthenticated={isAuthenticated}
+            role={role}
+            requiredRole="superadmin"
+          >
             <SuperadminDashboard />
-          ) : (
-            <Navigate to="/not-found" />
-          )
+          </PrivateRoute>
         }
       >
         <Route index element={<SuperadminOmbor />} />
@@ -67,13 +76,15 @@ const Root = () => {
 
       {/* ADMIN */}
       <Route
-        path="/admin"
+        path="/admin/*"
         element={
-          isAuthenticated && role === "admin" ? (
+          <PrivateRoute
+            isAuthenticated={isAuthenticated}
+            role={role}
+            requiredRole="admin"
+          >
             <AdminDashboard />
-          ) : (
-            <Navigate to="/not-found" />
-          )
+          </PrivateRoute>
         }
       >
         <Route index element={<AdminOmbor />} />
@@ -88,13 +99,15 @@ const Root = () => {
 
       {/* KOMENDANT */}
       <Route
-        path="/komendant"
+        path="/komendant/*"
         element={
-          isAuthenticated && role === "komendant" ? (
+          <PrivateRoute
+            isAuthenticated={isAuthenticated}
+            role={role}
+            requiredRole="komendant"
+          >
             <KomendantDashboard />
-          ) : (
-            <Navigate to="/not-found" />
-          )
+          </PrivateRoute>
         }
       >
         <Route index element={<KomendantOmbor />} />
