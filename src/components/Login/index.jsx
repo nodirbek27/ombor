@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import APILogin from "../../services/login";
 import APIUsers from "../../services/user";
+import logo from "../../assets/images/logo.png"
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState("");
@@ -55,7 +56,11 @@ const Login = ({ onLogin }) => {
       <form
         className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
         onSubmit={handleSubmit}
-      >
+        >
+        <div className="flex items-center mb-3">
+          <img src={logo} className="flex w-12 h-auto object-cover mr-2" alt="QDPI logo" />
+          <p className="font-semibold text-md w-[200px] h-15">Qo'qon davlat pedagogika instituti ombori</p>
+        </div>
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
