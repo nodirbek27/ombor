@@ -24,6 +24,18 @@ import KomendantOmbor from "../pages/KomendantDashboard/Ombor";
 import KomendantSavatcha from "../pages/KomendantDashboard/Savat";
 import KomendantArxiv from "../pages/KomendantDashboard/Arxiv";
 
+// Prorektor
+import ProrektorDashboard from "../pages/ProrektorDashboard";
+
+// Prorektor
+import BugalterDashboard from "../pages/BugalterDashboard";
+
+// Prorektor
+import XojalikDashboard from "../pages/XojalikDashboard";
+
+// Prorektor
+import ItParkDashboard from "../pages/ItParkDashboard";
+
 // Login and NotFoundPage
 import NotFoundPage from "../pages/NotFoundPage";
 import Login from "../components/Login";
@@ -76,12 +88,12 @@ const Root = () => {
 
       {/* ADMIN */}
       <Route
-        path="/admin/*"
+        path="/omborchi/*"
         element={
           <PrivateRoute
             isAuthenticated={isAuthenticated}
             role={role}
-            requiredRole="admin"
+            requiredRole="omborchi"
           >
             <AdminDashboard />
           </PrivateRoute>
@@ -92,8 +104,14 @@ const Root = () => {
         <Route path="kategoriya" element={<AdminKategoriya />} />
         <Route path="birlik" element={<AdminBirlik />} />
         <Route path="mahsulot" element={<AdminMahsulotlarYaratish />} />
-        <Route path="arxiv/kiritilgan-mahsulotlar" element={<KiritilganMahsulotlar />} />
-        <Route path="arxiv/chiqgan-mahsulotlar" element={<ChiqganMahsulotlar />} />
+        <Route
+          path="arxiv/kiritilgan-mahsulotlar"
+          element={<KiritilganMahsulotlar />}
+        />
+        <Route
+          path="arxiv/chiqgan-mahsulotlar"
+          element={<ChiqganMahsulotlar />}
+        />
         <Route path="so'rovlar" element={<AdminSorovlar />} />
       </Route>
 
@@ -107,6 +125,82 @@ const Root = () => {
             requiredRole="komendant"
           >
             <KomendantDashboard />
+          </PrivateRoute>
+        }
+      >
+        <Route index element={<KomendantOmbor />} />
+        <Route path="ombor" element={<KomendantOmbor />} />
+        <Route path="arxiv" element={<KomendantArxiv />} />
+        <Route path="savatcha" element={<KomendantSavatcha />} />
+      </Route>
+
+      {/* PROREKTOR */}
+      <Route
+        path="/prorektor/*"
+        element={
+          <PrivateRoute
+            isAuthenticated={isAuthenticated}
+            role={role}
+            requiredRole="prorektor"
+          >
+            <ProrektorDashboard />
+          </PrivateRoute>
+        }
+      >
+        <Route index element={<KomendantOmbor />} />
+        <Route path="ombor" element={<KomendantOmbor />} />
+        <Route path="arxiv" element={<KomendantArxiv />} />
+        <Route path="savatcha" element={<KomendantSavatcha />} />
+      </Route>
+
+      {/* BUGALTER */}
+      <Route
+        path="/bugalter/*"
+        element={
+          <PrivateRoute
+            isAuthenticated={isAuthenticated}
+            role={role}
+            requiredRole="bugalter"
+          >
+            <BugalterDashboard />
+          </PrivateRoute>
+        }
+      >
+        <Route index element={<KomendantOmbor />} />
+        <Route path="ombor" element={<KomendantOmbor />} />
+        <Route path="arxiv" element={<KomendantArxiv />} />
+        <Route path="savatcha" element={<KomendantSavatcha />} />
+      </Route>
+
+      {/* XOJALIK */}
+      <Route
+        path="/xojalik_bolimi/*"
+        element={
+          <PrivateRoute
+            isAuthenticated={isAuthenticated}
+            role={role}
+            requiredRole="xojalik_bolimi"
+          >
+            <XojalikDashboard />
+          </PrivateRoute>
+        }
+      >
+        <Route index element={<KomendantOmbor />} />
+        <Route path="ombor" element={<KomendantOmbor />} />
+        <Route path="arxiv" element={<KomendantArxiv />} />
+        <Route path="savatcha" element={<KomendantSavatcha />} />
+      </Route>
+
+      {/* IT Park */}
+      <Route
+        path="/it_park/*"
+        element={
+          <PrivateRoute
+            isAuthenticated={isAuthenticated}
+            role={role}
+            requiredRole="it_park  "
+          >
+            <ItParkDashboard />
           </PrivateRoute>
         }
       >

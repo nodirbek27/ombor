@@ -12,6 +12,8 @@ const SuperadminAdminlar = () => {
   const getUsers = async () => {
     try {
       const response = await APIUsers.get();
+      console.log(response);
+      
       const sortedData = response.data.filter((item) => !item.superadmin);
       setUsers(sortedData);
     } catch (error) {
@@ -49,7 +51,7 @@ const SuperadminAdminlar = () => {
       last_name: "",
       password: "",
       name: "",
-      role: "admin",
+      role: "prorektor",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -61,7 +63,11 @@ const SuperadminAdminlar = () => {
         password: values.password,
         name: values.name,
         superadmin: values.role === "superadmin",
-        admin: values.role === "admin",
+        prorektor: values.role === "prorektor",
+        bugalter: values.role === "bugalter",
+        xojalik_bolimi: values.role === "xojalik_bolimi",
+        it_park: values.role === "it_park",
+        omborchi: values.role === "omborchi",
         komendant: values.role === "komendant",
       };
 
@@ -91,7 +97,7 @@ const SuperadminAdminlar = () => {
       last_name: user.last_name,
       name: user.name,
       password: user.parol,
-      role: user.admin ? "admin" : "komendant",
+      role: user.omborchi ? "omborchi" : "komendant",
     });
     document.getElementById("my_modal_2").showModal();
   };
@@ -118,7 +124,7 @@ const SuperadminAdminlar = () => {
     <div>
       <div className="flex items-center justify-between p-4">
         <p className="text-xl font-semibold text-[#004269]">
-          Admin va komendantlar
+          Foydalanuvchilar
         </p>
         <button
           className="btn flex items-center bg-blue-400 hover:bg-blue-500 text-white"
@@ -128,7 +134,7 @@ const SuperadminAdminlar = () => {
           }}
         >
           <RiUserAddLine className="mr-1 w-4 h-auto" />
-          Admin qo'shish
+          Qo'shish
         </button>
 
         {/* MODAL FOR ADDING/EDITING ADMIN */}
@@ -138,7 +144,7 @@ const SuperadminAdminlar = () => {
               <h2 className="font-semibold text-gray-900 text-xl">
                 {editingId
                   ? "Foydalanuvchini tahrirlash"
-                  : "Admin va komendant qo'shish"}
+                  : "Foydalanuvchi qo'shish"}
               </h2>
               <button type="button" className="text-lg font-bold w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center" onClick={resetForm}>
                   X
@@ -249,7 +255,11 @@ const SuperadminAdminlar = () => {
                     onChange={formik.handleChange}
                     className="block w-full rounded-md border-0 bg-white p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                   >
-                    <option value="admin">Admin</option>
+                    <option value="prorektor">Prorektor</option>
+                    <option value="bugalter">Bugalter</option>
+                    <option value="xojalik_bolimi">Xo'jalik bo'limi</option>
+                    <option value="it_park">IT Park</option>
+                    <option value="omborchi">Omborchi</option>
                     <option value="komendant">Komendant</option>
                   </select>
                 </div>
@@ -321,7 +331,7 @@ const SuperadminAdminlar = () => {
                   </span>
                 </td>
                 <td className="font-semibold text-[#000]">{user.name}</td>
-                <td className="font-semibold text-[#000]">{user.admin === true ? "Admin" : "Komendant"}</td>
+                <td className="font-semibold text-[#000]">{user.omborchi === true ? "Omborchi" : "Komendant"}</td>
                 <th>
                   <button
                     className="mr-5 cursor-pointer"
