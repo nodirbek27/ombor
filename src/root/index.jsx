@@ -26,15 +26,19 @@ import KomendantArxiv from "../pages/KomendantDashboard/Arxiv";
 
 // Prorektor
 import ProrektorDashboard from "../pages/ProrektorDashboard";
+import ProrektorTalabnoma from "../pages/ProrektorDashboard/Talabnoma";
 
 // Prorektor
 import BugalterDashboard from "../pages/BugalterDashboard";
+import BugalterTalabnoma from "../pages/BugalterDashboard/Talabnoma";
 
 // Prorektor
 import XojalikDashboard from "../pages/XojalikDashboard";
+import XojalikTalabnoma from "../pages/XojalikDashboard/Talabnoma";
 
 // Prorektor
 import ItParkDashboard from "../pages/ItParkDashboard";
+import ItParkTalabnoma from "../pages/ItParkDashboard/Talabnoma";
 
 // Login and NotFoundPage
 import NotFoundPage from "../pages/NotFoundPage";
@@ -86,7 +90,7 @@ const Root = () => {
         <Route path="arxiv" element={<Arxiv />} />
       </Route>
 
-      {/* ADMIN */}
+      {/* Omborchi */}
       <Route
         path="/omborchi/*"
         element={
@@ -147,10 +151,9 @@ const Root = () => {
           </PrivateRoute>
         }
       >
-        <Route index element={<KomendantOmbor />} />
-        <Route path="ombor" element={<KomendantOmbor />} />
+        <Route index element={<ProrektorTalabnoma />} />
+        <Route path="talabnoma" element={<ProrektorTalabnoma />} />
         <Route path="arxiv" element={<KomendantArxiv />} />
-        <Route path="savatcha" element={<KomendantSavatcha />} />
       </Route>
 
       {/* BUGALTER */}
@@ -166,10 +169,9 @@ const Root = () => {
           </PrivateRoute>
         }
       >
-        <Route index element={<KomendantOmbor />} />
-        <Route path="ombor" element={<KomendantOmbor />} />
+        <Route index element={<BugalterTalabnoma />} />
+        <Route path="talabnoma" element={<BugalterTalabnoma />} />
         <Route path="arxiv" element={<KomendantArxiv />} />
-        <Route path="savatcha" element={<KomendantSavatcha />} />
       </Route>
 
       {/* XOJALIK */}
@@ -185,10 +187,9 @@ const Root = () => {
           </PrivateRoute>
         }
       >
-        <Route index element={<KomendantOmbor />} />
-        <Route path="ombor" element={<KomendantOmbor />} />
+        <Route index element={<XojalikTalabnoma />} />
+        <Route path="talabnoma" element={<XojalikTalabnoma />} />
         <Route path="arxiv" element={<KomendantArxiv />} />
-        <Route path="savatcha" element={<KomendantSavatcha />} />
       </Route>
 
       {/* IT Park */}
@@ -204,10 +205,9 @@ const Root = () => {
           </PrivateRoute>
         }
       >
-        <Route index element={<KomendantOmbor />} />
-        <Route path="ombor" element={<KomendantOmbor />} />
+        <Route index element={<ItParkTalabnoma />} />
+        <Route path="talabnoma" element={<ItParkTalabnoma />} />
         <Route path="arxiv" element={<KomendantArxiv />} />
-        <Route path="savatcha" element={<KomendantSavatcha />} />
       </Route>
 
       {/* LOGIN and * */}

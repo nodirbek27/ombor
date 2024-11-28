@@ -53,6 +53,7 @@ const AdminMahsulotYaratish = () => {
       name: "",
       kategoriya: "",
       maxviylik: false,
+      it_park: false,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -60,6 +61,7 @@ const AdminMahsulotYaratish = () => {
         name: values.name,
         kategoriya: values.kategoriya,
         maxviylik: values.maxviylik,
+        it_park: values.it_park,
       };
 
       try {
@@ -95,7 +97,8 @@ const AdminMahsulotYaratish = () => {
     formik.setValues({
       name: item.name,
       kategoriya: item.kategoriya,
-      maxviylik: item.maxviylik
+      maxviylik: item.maxviylik,
+      it_park: item.it_park
     });
     setOpenCategoryId(item.kategoriya);
   };
@@ -158,6 +161,16 @@ const AdminMahsulotYaratish = () => {
                         name="maxviylik"
                         onChange={formik.handleChange}
                         checked={formik.values.maxviylik}
+                        className="checkbox checkbox-success"
+                      />
+                    </label>
+                    <label className="cursor-pointer label">
+                      <span className="label-text mr-2 text-[#000]">RTTM:</span>
+                      <input
+                        type="checkbox"
+                        name="it_park"
+                        onChange={formik.handleChange}
+                        checked={formik.values.it_park}
                         className="checkbox checkbox-success"
                       />
                     </label>

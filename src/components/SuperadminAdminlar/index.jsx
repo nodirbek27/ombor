@@ -12,8 +12,6 @@ const SuperadminAdminlar = () => {
   const getUsers = async () => {
     try {
       const response = await APIUsers.get();
-      console.log(response);
-      
       const sortedData = response.data.filter((item) => !item.superadmin);
       setUsers(sortedData);
     } catch (error) {
@@ -55,7 +53,6 @@ const SuperadminAdminlar = () => {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      // Prepare the data for posting
       const dataToPost = {
         username: values.username,
         first_name: values.first_name,
@@ -97,7 +94,21 @@ const SuperadminAdminlar = () => {
       last_name: user.last_name,
       name: user.name,
       password: user.parol,
-      role: user.omborchi ? "omborchi" : "komendant",
+      role: user.superadmin
+        ? "superadmin"
+        : user.prorektor
+        ? "prorektor"
+        : user.bugalter
+        ? "bugalter"
+        : user.xojalik_bolimi
+        ? "xojalik_bolimi"
+        : user.it_park
+        ? "it_park"
+        : user.omborchi
+        ? "omborchi"
+        : user.komendant
+        ? "komendant"
+        : "prorektor", // Default if no role matches
     });
     document.getElementById("my_modal_2").showModal();
   };
@@ -123,9 +134,7 @@ const SuperadminAdminlar = () => {
   return (
     <div>
       <div className="flex items-center justify-between p-4">
-        <p className="text-xl font-semibold text-[#004269]">
-          Foydalanuvchilar
-        </p>
+        <p className="text-xl font-semibold text-[#004269]">Foydalanuvchilar</p>
         <button
           className="btn flex items-center bg-blue-400 hover:bg-blue-500 text-white"
           onClick={() => {
@@ -146,9 +155,13 @@ const SuperadminAdminlar = () => {
                   ? "Foydalanuvchini tahrirlash"
                   : "Foydalanuvchi qo'shish"}
               </h2>
-              <button type="button" className="text-lg font-bold w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center" onClick={resetForm}>
-                  X
-                </button>
+              <button
+                type="button"
+                className="text-lg font-bold w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center"
+                onClick={resetForm}
+              >
+                X
+              </button>
             </div>
             <form onSubmit={formik.handleSubmit}>
               <div className="grid grid-cols-2 gap-3">
@@ -170,7 +183,9 @@ const SuperadminAdminlar = () => {
                     value={formik.values.username}
                   />
                   {formik.touched.username && formik.errors.username ? (
-                    <div className="text-red-500 text-sm">{formik.errors.username}</div>
+                    <div className="text-red-500 text-sm">
+                      {formik.errors.username}
+                    </div>
                   ) : null}
                 </div>
 
@@ -192,7 +207,9 @@ const SuperadminAdminlar = () => {
                     value={formik.values.name}
                   />
                   {formik.touched.name && formik.errors.name ? (
-                    <div className="text-red-500 text-sm">{formik.errors.name}</div>
+                    <div className="text-red-500 text-sm">
+                      {formik.errors.name}
+                    </div>
                   ) : null}
                 </div>
 
@@ -282,14 +299,19 @@ const SuperadminAdminlar = () => {
                     value={formik.values.password}
                   />
                   {formik.touched.password && formik.errors.password ? (
-                    <div className="text-red-500 text-sm">{formik.errors.password}</div>
+                    <div className="text-red-500 text-sm">
+                      {formik.errors.password}
+                    </div>
                   ) : null}
                 </div>
               </div>
 
               {/* Buttons */}
               <div className="modal-action w-full">
-                <button type="submit" className="btn w-full bg-blue-400 hover:bg-blue-500 text-white">
+                <button
+                  type="submit"
+                  className="btn w-full bg-blue-400 hover:bg-blue-500 text-white"
+                >
                   {editingId ? "Saqlash" : "Qo'shish"}
                 </button>
               </div>
@@ -317,9 +339,7 @@ const SuperadminAdminlar = () => {
                   <div className="flex items-center gap-3">
                     <div>
                       <div className="font-bold">{user.last_name}</div>
-                      <div className="text-sm">
-                        {user.first_name}
-                      </div>
+                      <div className="text-sm">{user.first_name}</div>
                     </div>
                   </div>
                 </td>
@@ -331,7 +351,24 @@ const SuperadminAdminlar = () => {
                   </span>
                 </td>
                 <td className="font-semibold text-[#000]">{user.name}</td>
-                <td className="font-semibold text-[#000]">{user.omborchi === true ? "Omborchi" : "Komendant"}</td>
+                <td className="font-semibold text-[#000]">
+                  {user.superadmin
+                    ? "Superadmin"
+                    : user.prorektor
+                    ? "Prorektor"
+                    : user.bugalter
+                    ? "Bugalter"
+                    : user.xojalik_bolimi
+                    ? "Xo'jalik bo'limi"
+                    : user.it_park
+                    ? "IT Park"
+                    : user.omborchi
+                    ? "Omborchi"
+                    : user.komendant
+                    ? "Komendant"
+                    : "Noma'lum"}{" "}
+                </td>
+
                 <th>
                   <button
                     className="mr-5 cursor-pointer"

@@ -41,16 +41,16 @@ const Login = ({ onLogin }) => {
           navigate("/komendant/ombor");
         } else if (currentUser.prorektor) {
           onLogin("prorektor");
-          navigate("/prorektor/ombor");
+          navigate("/prorektor/talabnoma");
         } else if (currentUser.bugalter) {
           onLogin("bugalter");
-          navigate("/bugalter/ombor");
+          navigate("/bugalter/talabnoma");
         } else if (currentUser.xojalik_bolimi) {
           onLogin("xojalik_bolimi");
-          navigate("/xojalik_bolimi/ombor");
+          navigate("/xojalik_bolimi/talabnoma");
         } else if (currentUser.it_park) {
           onLogin("it_park");
-          navigate("/it_park/ombor");
+          navigate("/it_park/talabnoma");
         } else {
           setErrorMessage("No access level assigned");
         }

@@ -29,7 +29,7 @@ const KomendantNavbar = () => {
         const userId = Number(localStorage.getItem("userId"));
         const response = await APIBuyurtma.get();
         const filteredRadBuyurtma = response?.data?.filter(
-          (item) => item.user === userId && !item.active && item.rad
+          (item) => item.user === userId && !item.active && (item.prorektor || item.bugalter || item.xojalik_bolimi || item.it_park)
         );
         if (filteredRadBuyurtma.length > 0) {
           setRejectedBuyurtma(filteredRadBuyurtma[0]); // Set the rejected buyurtma to show in the modal
@@ -76,7 +76,7 @@ const KomendantNavbar = () => {
   const handleDelete = async () => {
     try {
       if (rejectedBuyurtma) {
-        await APIBuyurtma.del(rejectedBuyurtma.id);
+        // await APIBuyurtma.del(rejectedBuyurtma.id);
         setShowModal(false);
         setRejectedBuyurtma(null);
       }
