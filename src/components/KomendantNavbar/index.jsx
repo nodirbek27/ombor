@@ -29,11 +29,17 @@ const KomendantNavbar = () => {
         const userId = Number(localStorage.getItem("userId"));
         const response = await APIBuyurtma.get();
         const filteredRadBuyurtma = response?.data?.filter(
-          (item) => item.user === userId && !item.active && (item.prorektor || item.bugalter || item.xojalik_bolimi || item.it_park)
+          (item) =>
+            item.user === userId &&
+            !item.active &&
+            (item.prorektor ||
+              item.bugalter ||
+              item.xojalik_bolimi ||
+              item.it_park)
         );
         if (filteredRadBuyurtma.length > 0) {
-          setRejectedBuyurtma(filteredRadBuyurtma[0]); // Set the rejected buyurtma to show in the modal
-          setShowModal(true); // Show the modal when there is a rejected buyurtma
+          setRejectedBuyurtma(filteredRadBuyurtma[0]);
+          setShowModal(true);
         }
       } catch (error) {
         console.error("Failed to fetch buyurtma", error);
@@ -147,21 +153,30 @@ const KomendantNavbar = () => {
                 <li className="p-1 rounded-md cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md items-center gap-x-4">
                   {user.first_name} {user.last_name}
                 </li>
-                {menus.map((menu) => (
-                  !menu.hidden && (
-                    <li key={menu.id}>
-                      <Link
-                        to={menu.link}
-                        className={`w-full p-1 rounded-md cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md items-center gap-x-4 md:hidden
-                          ${location.pathname === menu.link && open ? "text-blue-700" : ""}`}
-                      >
-                        <span className={`${!open && "hidden"} md:block origin-left duration-200`}>
-                          {menu.title}
-                        </span>
-                      </Link>
-                    </li>
-                  )
-                ))}
+                {menus.map(
+                  (menu) =>
+                    !menu.hidden && (
+                      <li key={menu.id}>
+                        <Link
+                          to={menu.link}
+                          className={`w-full p-1 rounded-md cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md items-center gap-x-4 md:hidden
+                          ${
+                            location.pathname === menu.link && open
+                              ? "text-blue-700"
+                              : ""
+                          }`}
+                        >
+                          <span
+                            className={`${
+                              !open && "hidden"
+                            } md:block origin-left duration-200`}
+                          >
+                            {menu.title}
+                          </span>
+                        </Link>
+                      </li>
+                    )
+                )}
                 <li>
                   <button
                     className="p-1 rounded-md cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md items-center gap-x-4"
@@ -183,10 +198,7 @@ const KomendantNavbar = () => {
             <p className="text-red-500 italic md:text-lg mb-3 text-center">
               Sizning {rejectedBuyurtma.id} raqamli buyurtmangiz rad etildi!
             </p>
-            <button
-              onClick={handleDelete}
-              className="btn btn-warning w-full"
-            >
+            <button onClick={handleDelete} className="btn btn-warning w-full">
               OK
             </button>
           </div>

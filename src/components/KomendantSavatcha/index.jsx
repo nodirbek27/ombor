@@ -11,6 +11,11 @@ const KomendantSavatcha = () => {
   const [savat, setSavat] = useState([]);
   const [buyurtma, setBuyurtma] = useState(null);
   const [mahsulot, setMahsulot] = useState([]);
+  const [prorektor, setProrektor] = useState(null);
+  const [bugalter, setBugalter] = useState(null);
+  const [xojalik, setXojalik] = useState(null);
+  const [itPark, setItPark] = useState([]);
+  const [omborchi, setOmborchi] = useState([]);
   const [birlik, setBirlik] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
   const [editedQuantity, setEditedQuantity] = useState("");
@@ -24,14 +29,59 @@ const KomendantSavatcha = () => {
         const filteredBuyurtma = response?.data?.filter(
           (item) => item.user === userId && item.active
         );
-
+        const filteredProrektorBuyurtma = response?.data?.filter(
+          (item) =>
+            item.user === userId && item.active && item.sorov && item.prorektor
+        );
+        const filteredBugalterBuyurtma = response?.data?.filter(
+          (item) =>
+            item.user === userId &&
+            item.active &&
+            item.sorov &&
+            item.prorektor &&
+            item.bugalter
+        );
+        const filteredXojalikBuyurtma = response?.data?.filter(
+          (item) =>
+            item.user === userId &&
+            item.active &&
+            item.sorov &&
+            item.prorektor &&
+            item.bugalter &&
+            item.xojalik_bolimi
+        );
+        const filteredItParkBuyurtma = response?.data?.filter(
+          (item) =>
+            item.user === userId &&
+            item.active &&
+            item.sorov &&
+            item.prorektor &&
+            item.bugalter &&
+            item.it_park
+        );
+        const filteredOmborchiBuyurtma = response?.data?.filter(
+          (item) =>
+            item.user === userId &&
+            item.active &&
+            item.sorov &&
+            item.prorektor &&
+            item.bugalter &&
+            item.omborchi
+        );
         setBuyurtma(filteredBuyurtma?.[0] || null);
+        setProrektor(filteredProrektorBuyurtma?.[0] || null);
+        setBugalter(filteredBugalterBuyurtma?.[0] || null);
+        setXojalik(filteredXojalikBuyurtma?.[0] || null);
+        setItPark(filteredItParkBuyurtma?.[0] || null);
+        setOmborchi(filteredOmborchiBuyurtma?.[0] || null);
       } catch (error) {
         console.error("Failed to fetch buyurtma", error);
       }
     };
     getBuyurtma();
   }, []);
+  console.log(buyurtma);
+  
 
   useEffect(() => {
     const getSavat = async () => {
@@ -119,7 +169,6 @@ const KomendantSavatcha = () => {
           ...prevBuyurtma,
           sorov: true,
         }));
-        console.log("Buyurtma edited successfully");
       } else {
         console.error("No active buyurtma found to submit");
       }
@@ -223,67 +272,43 @@ const KomendantSavatcha = () => {
         </div>
       </div>
       {/* Tasdiqlanish jarayonida */}
-      <div className="flex flex-col text-center my-3">
-        <h2 className="text-xl text-gray-700 font-medium italic mb-3">Tasdiqlanish jarayonida</h2>
+      <div
+        className={`flex flex-col text-center my-4 ${!buyurtma && "hidden"}`}
+      >
+        <h2 className="text-xl text-gray-700 font-medium italic my-4">
+          Tasdiqlanish jarayonida
+        </h2>
         {/* Timeline */}
-        <ul className="timeline mx-auto">
-          <li>
-            <div className="timeline-start timeline-box">Prorektor</div>
-            <div className="timeline-middle">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="text-primary h-5 w-5"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <hr className="bg-primary" />
+        <ul className="steps steps-vertical md:steps-horizontal">
+          <li
+            data-content={`${prorektor ? "✓" : "?"}`}
+            className={`step ${prorektor && "step-accent"}`}
+          >
+            Prorektor
           </li>
-          <li>
-            <hr className="bg-primary" />
-            <div className="timeline-middle">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="text-primary h-5 w-5"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div className="timeline-end timeline-box">Bugalter</div>
-            <hr className="bg-primary" />
+          <li
+            data-content={`${bugalter ? "✓" : "?"}`}
+            className={`step ${bugalter && "step-accent"}`}
+          >
+            Bugalter
           </li>
-          <li>
-            <hr className="bg-primary" />
-            <div className="timeline-start timeline-box">
-              Xo'jalik bo'limi <br />
-              IT Park
-            </div>
-            <div className="timeline-middle">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="text-primary h-5 w-5"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
+          <li
+            data-content={`${xojalik ? "✓" : "?"}`}
+            className={`step ${xojalik && "step-accent"}`}
+          >
+            Xo'jalik bo'limi
+          </li>
+          <li
+            data-content={`${itPark ? "✓" : "?"}`}
+            className={`step ${itPark && "step-accent"}`}
+          >
+            IT Park
+          </li>
+          <li
+            data-content={`${omborchi ? "✓" : "?"}`}
+            className={`step ${omborchi && "step-accent"}`}
+          >
+            Omborchi
           </li>
         </ul>
       </div>
