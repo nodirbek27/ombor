@@ -25,7 +25,7 @@ export const AdminNavbar = () => {
   return (
     <Container>
       <Section>
-        <Link to="/admin/so'rovlar" style={{ position: "relative" }}>
+        <Link to="/omborchi/so'rovlar" style={{ position: "relative" }}>
           <IoNotificationsOutline className="w-6 h-auto" />
           {buyurtmalar.length > 0 && (
             <span

@@ -4,7 +4,6 @@ import APIBuyurtma from "../../services/buyurtma";
 import APIMahsulot from "../../services/mahsulot";
 import APIBirlik from "../../services/birlik";
 import APIUsers from "../../services/user";
-import APIArxiv from "../../services/arxiv";
 import APIArxivRad from "../../services/arxivRad";
 
 const BugalterTalabnoma = () => {
@@ -19,7 +18,8 @@ const BugalterTalabnoma = () => {
       try {
         const response = await APIBuyurtma.get();
         const filteredBuyurtmalar = response?.data?.filter(
-          (item) => item.sorov && item.active && item.prorektor && !item.bugalter
+          (item) =>
+            item.sorov && item.active && item.prorektor && !item.bugalter
         );
         setBuyurtmalar(filteredBuyurtmalar);
         // Fetch user data for each buyurtma
@@ -47,7 +47,6 @@ const BugalterTalabnoma = () => {
       try {
         const response = await APISavat.get();
         if (buyurtmalar.length > 0) {
-          
           const filteredSavat = response?.data?.filter((item) =>
             buyurtmalar.some((buyurtma) => item.buyurtma === buyurtma.id)
           );
@@ -60,7 +59,6 @@ const BugalterTalabnoma = () => {
     getSavat();
   }, [buyurtmalar]);
   // console.log(buyurtmalar);
-  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,30 +84,23 @@ const BugalterTalabnoma = () => {
   const handleSumbit = async (action, buyurtmaId) => {
     try {
       const postData = savat
-      .filter((item) => item.buyurtma === buyurtmaId)
-      .map((item) => ({
-        qiymat: item.qiymat,
-        active: true,
-        buyurtma: buyurtmaId,
-        maxsulot: item.maxsulot,
-        birlik: item.birlik,
-      }));
+        .filter((item) => item.buyurtma === buyurtmaId)
+        .map((item) => ({
+          qiymat: item.qiymat,
+          active: true,
+          buyurtma: buyurtmaId,
+          maxsulot: item.maxsulot,
+          birlik: item.birlik,
+        }));
 
-    if (action === "approve") {
-      await Promise.all(
-        postData.map(async (data, index) => {
-          await APIArxiv.post(data);
-          await APISavat.del(savat[index].id);
-        })
-      );
-    } else if (action === "reject") {
-      await Promise.all(
-        postData.map(async (data, index) => {
-          await APIArxivRad.post(data);
-          await APISavat.del(savat[index].id);
-        })
-      );
-    }
+        if (action === "reject") {
+          await Promise.all(
+            postData.map(async (data, index) => {
+              await APIArxivRad.post(data);
+              await APISavat.del(savat[index].id);
+            })
+          );
+      }
       // Update buyurtma status
       const updatedBuyurtma = {
         user: buyurtmalar.find((b) => b.id === buyurtmaId)?.user,

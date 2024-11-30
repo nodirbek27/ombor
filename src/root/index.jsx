@@ -17,6 +17,7 @@ import AdminMahsulotlarYaratish from "../pages/AdminDashboard/MahsulotlarYaratis
 import AdminSorovlar from "../pages/AdminDashboard/Sorovlar";
 import KiritilganMahsulotlar from "../pages/AdminDashboard/ArxivPage/KiritilganMahsulotlar";
 import ChiqganMahsulotlar from "../pages/AdminDashboard/ArxivPage/ChiqganMahsulotlar";
+import RadEtilganMahsulotlar from "../pages/AdminDashboard/ArxivPage/RadEtilganMahsulotlar";
 
 // Komendant
 import KomendantDashboard from "../pages/KomendantDashboard";
@@ -116,6 +117,10 @@ const Root = () => {
           path="arxiv/chiqgan-mahsulotlar"
           element={<ChiqganMahsulotlar />}
         />
+        <Route
+          path="arxiv/rad-etilgan-mahsulotlar"
+          element={<RadEtilganMahsulotlar />}
+        />
         <Route path="so'rovlar" element={<AdminSorovlar />} />
       </Route>
 
@@ -199,7 +204,7 @@ const Root = () => {
           <PrivateRoute
             isAuthenticated={isAuthenticated}
             role={role}
-            requiredRole="it_park  "
+            requiredRole="it_park"
           >
             <ItParkDashboard />
           </PrivateRoute>

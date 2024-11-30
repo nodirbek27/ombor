@@ -1,6 +1,6 @@
 import axiosInstance from "./index";
 
-const ep = "ombor/rad_maxsulotlar/";
+const ep = "ombor/rad_etilgan_maxsulotlar/";
 
 const get = () => axiosInstance.get(ep);
 const getbyId = (id) => {
@@ -17,6 +17,6 @@ const put = (id, item) => {
     return axiosInstance.delete(`${ep}${id}/`);
   };
 
-const APIArxiv = { get, getbyId, post, put, del };
+const APIArxivRad = { get, getbyId, post, put, del };
 
-export default APIArxiv;
+export default APIArxivRad;

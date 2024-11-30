@@ -72,8 +72,16 @@ const sidebar = [
       },
       {
         id: 5 - 2,
-        title: "Chiqarilgan mahsulotlar",
+        title: "Tasdiqlangan buyurtmalar",
         path: "/omborchi/arxiv/chiqgan-mahsulotlar",
+        isPrivate: true,
+        element: ChiqganMahsulotlar,
+        role: ["omborchi"],
+      },
+      {
+        id: 5 - 3,
+        title: "Rad etilgan buyurtmalar",
+        path: "/omborchi/arxiv/rad-etilgan-mahsulotlar",
         isPrivate: true,
         element: ChiqganMahsulotlar,
         role: ["omborchi"],

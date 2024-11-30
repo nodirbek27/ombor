@@ -97,13 +97,13 @@ const XojalikTalabnoma = () => {
           birlik: item.birlik,
         }));
 
-      if (action === "reject") {
-        await Promise.all(
-          postData.map(async (data, index) => {
-            await APIArxivRad.post(data);
-            await APISavat.del(savat[index].id);
-          })
-        );
+        if (action === "reject") {
+          await Promise.all(
+            postData.map(async (data, index) => {
+              await APIArxivRad.post(data);
+              await APISavat.del(savat[index].id);
+            })
+          );
       }
       // Update buyurtma status
       const updatedBuyurtma = {

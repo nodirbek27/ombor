@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 const KomendantSavatcha = () => {
   const [savat, setSavat] = useState([]);
   const [buyurtma, setBuyurtma] = useState(null);
+  const [sorov, setSorov] = useState(null);
   const [mahsulot, setMahsulot] = useState([]);
   const [prorektor, setProrektor] = useState(null);
   const [bugalter, setBugalter] = useState(null);
@@ -20,68 +21,71 @@ const KomendantSavatcha = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [editedQuantity, setEditedQuantity] = useState("");
 
-  useEffect(() => {
-    const getBuyurtma = async () => {
-      try {
-        const userId = Number(localStorage.getItem("userId"));
-        const response = await APIBuyurtma.get();
+  const getBuyurtma = async () => {
+    try {
+      const userId = Number(localStorage.getItem("userId"));
+      const response = await APIBuyurtma.get();
 
-        const filteredBuyurtma = response?.data?.filter(
-          (item) => item.user === userId && item.active
-        );
-        const filteredProrektorBuyurtma = response?.data?.filter(
-          (item) =>
-            item.user === userId && item.active && item.sorov && item.prorektor
-        );
-        const filteredBugalterBuyurtma = response?.data?.filter(
-          (item) =>
-            item.user === userId &&
-            item.active &&
-            item.sorov &&
-            item.prorektor &&
-            item.bugalter
-        );
-        const filteredXojalikBuyurtma = response?.data?.filter(
-          (item) =>
-            item.user === userId &&
-            item.active &&
-            item.sorov &&
-            item.prorektor &&
-            item.bugalter &&
-            item.xojalik_bolimi
-        );
-        const filteredItParkBuyurtma = response?.data?.filter(
-          (item) =>
-            item.user === userId &&
-            item.active &&
-            item.sorov &&
-            item.prorektor &&
-            item.bugalter &&
-            item.it_park
-        );
-        const filteredOmborchiBuyurtma = response?.data?.filter(
-          (item) =>
-            item.user === userId &&
-            item.active &&
-            item.sorov &&
-            item.prorektor &&
-            item.bugalter &&
-            item.omborchi
-        );
-        setBuyurtma(filteredBuyurtma?.[0] || null);
-        setProrektor(filteredProrektorBuyurtma?.[0] || null);
-        setBugalter(filteredBugalterBuyurtma?.[0] || null);
-        setXojalik(filteredXojalikBuyurtma?.[0] || null);
-        setItPark(filteredItParkBuyurtma?.[0] || null);
-        setOmborchi(filteredOmborchiBuyurtma?.[0] || null);
-      } catch (error) {
-        console.error("Failed to fetch buyurtma", error);
-      }
-    };
+      const filteredBuyurtma = response?.data?.filter(
+        (item) => item.user === userId && item.active
+      );
+      const filteredSorovBuyurtma = response?.data?.filter(
+        (item) => item.user === userId && item.active && item.sorov
+      );
+      const filteredProrektorBuyurtma = response?.data?.filter(
+        (item) =>
+          item.user === userId && item.active && item.sorov && item.prorektor
+      );
+      const filteredBugalterBuyurtma = response?.data?.filter(
+        (item) =>
+          item.user === userId &&
+          item.active &&
+          item.sorov &&
+          item.prorektor &&
+          item.bugalter
+      );
+      const filteredXojalikBuyurtma = response?.data?.filter(
+        (item) =>
+          item.user === userId &&
+          item.active &&
+          item.sorov &&
+          item.prorektor &&
+          item.bugalter &&
+          item.xojalik_bolimi
+      );
+      const filteredItParkBuyurtma = response?.data?.filter(
+        (item) =>
+          item.user === userId &&
+          item.active &&
+          item.sorov &&
+          item.prorektor &&
+          item.bugalter &&
+          item.it_park
+      );
+      const filteredOmborchiBuyurtma = response?.data?.filter(
+        (item) =>
+          item.user === userId &&
+          item.active &&
+          item.sorov &&
+          item.prorektor &&
+          item.bugalter &&
+          item.omborchi
+      );
+      setBuyurtma(filteredBuyurtma?.[0] || null);
+      setSorov(filteredSorovBuyurtma?.[0] || null);
+      setProrektor(filteredProrektorBuyurtma?.[0] || null);
+      setBugalter(filteredBugalterBuyurtma?.[0] || null);
+      setXojalik(filteredXojalikBuyurtma?.[0] || null);
+      setItPark(filteredItParkBuyurtma?.[0] || null);
+      setOmborchi(filteredOmborchiBuyurtma?.[0] || null);
+    } catch (error) {
+      console.error("Failed to fetch buyurtma", error);
+    }
+  };
+
+  useEffect(() => {
     getBuyurtma();
   }, []);
-  console.log(buyurtma);
-  
 
   useEffect(() => {
     const getSavat = async () => {
@@ -169,6 +173,7 @@ const KomendantSavatcha = () => {
           ...prevBuyurtma,
           sorov: true,
         }));
+        await getBuyurtma();
       } else {
         console.error("No active buyurtma found to submit");
       }
@@ -272,9 +277,7 @@ const KomendantSavatcha = () => {
         </div>
       </div>
       {/* Tasdiqlanish jarayonida */}
-      <div
-        className={`flex flex-col text-center my-4 ${!buyurtma && "hidden"}`}
-      >
+      <div className={`flex flex-col text-center my-4 ${!sorov && "hidden"}`}>
         <h2 className="text-xl text-gray-700 font-medium italic my-4">
           Tasdiqlanish jarayonida
         </h2>

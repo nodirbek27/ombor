@@ -4,13 +4,13 @@ import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import APIUsers from "../../services/user";
 import APIBuyurtma from "../../services/buyurtma";
-import APIArxiv from "../../services/arxiv";
+import APIArxivRad from "../../services/arxivRad";
 import APIMahsulot from "../../services/mahsulot";
 import APIBirlik from "../../services/birlik";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 
-const Arxiv = () => {
+const ArxivRadEtilgan = () => {
   const [arxiv, setArxiv] = useState([]);
   const [buyurtmalar, setBuyurtmalar] = useState([]);
   const [mahsulot, setMahsulot] = useState([]);
@@ -54,7 +54,9 @@ const Arxiv = () => {
     const getSavat = async () => {
       try {
         if (buyurtmalar.length > 0) {
-          const response = await APIArxiv.get();
+          const response = await APIArxivRad.get();
+          console.log(response);
+          
           const filteredArxiv = response?.data?.filter((item) =>
             buyurtmalar.some((buyurtma) => item.buyurtma === buyurtma.id)
           );
@@ -193,7 +195,7 @@ const Arxiv = () => {
   return (
     <div>
       <div className="flex items-center justify-between p-4">
-        <p className="text-xl font-semibold text-[#004269]">Arxiv</p>
+        <p className="text-xl font-semibold text-[#004269]">Rad etilgan buyurtmalar</p>
       </div>
       <div className="p-4 min-w-full bg-white">
         {currentBuyurtmalar.map((buyurtma) => (
@@ -274,4 +276,4 @@ const Arxiv = () => {
   );
 };
 
-export default Arxiv;
+export default ArxivRadEtilgan;
