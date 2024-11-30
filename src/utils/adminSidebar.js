@@ -11,9 +11,9 @@ import Login from "../components/Login";
 import AdminOmbor from "../pages/AdminDashboard/Ombor";
 import AdminBirlik from "../pages/AdminDashboard/Birlik";
 import AdminKategoriya from "../pages/AdminDashboard/Kategoriya";
-import AdminArxiv from "../pages/AdminDashboard/ArxivPage";
 import KiritilganMahsulotlar from "../pages/AdminDashboard/ArxivPage/KiritilganMahsulotlar";
 import ChiqganMahsulotlar from "../pages/AdminDashboard/ArxivPage/ChiqganMahsulotlar";
+import RadEtilganMahsulotlar from "../pages/AdminDashboard/ArxivPage/RadEtilganMahsulotlar";
 import AdminMahsulotYaratish from "../pages/AdminDashboard/MahsulotlarYaratish";
 
 const sidebar = [
@@ -59,7 +59,7 @@ const sidebar = [
     path: "/omborchi/arxiv",
     icon: Arxiv,
     isPrivate: true,
-    element: AdminArxiv,
+    element: "",
     role: ["omborchi"],
     children: [
       {
@@ -83,7 +83,7 @@ const sidebar = [
         title: "Rad etilgan buyurtmalar",
         path: "/omborchi/arxiv/rad-etilgan-mahsulotlar",
         isPrivate: true,
-        element: ChiqganMahsulotlar,
+        element: RadEtilganMahsulotlar,
         role: ["omborchi"],
       },
     ],

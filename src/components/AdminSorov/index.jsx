@@ -14,38 +14,38 @@ const AdminSorov = () => {
   const [birlik, setBirlik] = useState([]);
   const [users, setUsers] = useState({});
 
-  useEffect(() => {
-    const getBuyurtmalar = async () => {
-      try {
-        const response = await APIBuyurtma.get();
-        const filteredBuyurtmalar = response?.data?.filter(
-          (item) =>
-            item.sorov &&
-            item.active &&
-            item.prorektor &&
-            item.bugalter &&
-            (item.it_park || item.xojalik_bolimi) &&
-            !item.omborchi
-        );
-        setBuyurtmalar(filteredBuyurtmalar);
+  const getBuyurtmalar = async () => {
+    try {
+      const response = await APIBuyurtma.get();
+      const filteredBuyurtmalar = response?.data?.filter(
+        (item) =>
+          item.sorov &&
+          item.active &&
+          item.prorektor &&
+          item.bugalter &&
+          (item.it_park || item.xojalik_bolimi) &&
+          !item.omborchi
+      );
+      setBuyurtmalar(filteredBuyurtmalar);
 
-        // Fetch user data for each buyurtma
-        const userPromises = filteredBuyurtmalar.map((buyurtma) =>
-          APIUsers.getbyId(`/${buyurtma.user}`).then((response) => {
-            const user = response?.data;
-            return {
-              [buyurtma.user]: `${user?.first_name || "Noma'lum"} ${
-                user?.last_name || ""
-              }`.trim(),
-            };
-          })
-        );
-        const usersData = await Promise.all(userPromises);
-        setUsers(Object.assign({}, ...usersData));
-      } catch (error) {
-        console.error("Failed to fetch buyurtmalar or users", error);
-      }
-    };
+      // Fetch user data for each buyurtma
+      const userPromises = filteredBuyurtmalar.map((buyurtma) =>
+        APIUsers.getbyId(`/${buyurtma.user}`).then((response) => {
+          const user = response?.data;
+          return {
+            [buyurtma.user]: `${user?.first_name || "Noma'lum"} ${
+              user?.last_name || ""
+            }`.trim(),
+          };
+        })
+      );
+      const usersData = await Promise.all(userPromises);
+      setUsers(Object.assign({}, ...usersData));
+    } catch (error) {
+      console.error("Failed to fetch buyurtmalar or users", error);
+    }
+  };
+  useEffect(() => {
     getBuyurtmalar();
   }, []);
 
@@ -125,6 +125,7 @@ const AdminSorov = () => {
       };
 
       await APIBuyurtma.put(`/${buyurtmaId}`, updatedBuyurtma);
+      await getBuyurtmalar();
       setBuyurtmalar(buyurtmalar.filter((b) => b.id !== buyurtmaId));
       setSavat(savat.filter((item) => item.buyurtma !== buyurtmaId));
     } catch (error) {
@@ -133,57 +134,65 @@ const AdminSorov = () => {
         error
       );
     }
-    window.location.reload();
   };
 
   return (
     <div>
-      <div className="grid xl:grid-cols-2 gap-3">
-        {buyurtmalar.map((buyurtma) => (
-          <div
-            key={buyurtma.id}
-            className={`p-3 ${buyurtmalar ? "" : "hidden"}`}
-          >
-            <h2 className="text-xl p-4 font-medium">
-              {users[buyurtma.user] || "Noma'lum"}
-            </h2>
-            <table className="table table-zebra">
-              <thead>
-                <tr>
-                  <th>Mahsulot</th>
-                  <th>Miqdor</th>
-                </tr>
-              </thead>
-              <tbody>
-                {savat
-                  .filter((item) => item.buyurtma === buyurtma.id)
-                  .map((item) => (
-                    <tr key={item.id}>
-                      <td>{getMahsulotName(item.maxsulot)}</td>
-                      <td>
-                        {item.qiymat} {getBirlikName(item.birlik)}
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-            <div className="flex items-center justify-end gap-3 mt-3">
-              <button
-                onClick={() => handleSumbit("approve", buyurtma.id)}
-                className="btn bg-green-400 hover:bg-green-500 transition-colors duration-300 text-white"
-              >
-                Tasdiqlash
-              </button>
-              <button
-                onClick={() => handleSumbit("reject", buyurtma.id)}
-                className="btn bg-red-400 hover:bg-red-500 transition-colors duration-300 text-white"
-              >
-                Rad etish
-              </button>
+      <h2 className="font-semibold text-xl text-center text-gray-700">
+        Talabnomalar
+      </h2>
+      {buyurtmalar.length > 0 ? (
+        <div className="grid xl:grid-cols-2 gap-3">
+          {buyurtmalar.map((buyurtma) => (
+            <div
+              key={buyurtma.id}
+              className={`p-3 ${buyurtmalar ? "" : "hidden"}`}
+            >
+              <h2 className="text-xl p-4 font-medium text-gray-700">
+                {users[buyurtma.user] || "Noma'lum"}
+              </h2>
+              <table className="table table-zebra">
+                <thead>
+                  <tr className="text-gray-700">
+                    <th>Mahsulot</th>
+                    <th>Miqdor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {savat
+                    .filter((item) => item.buyurtma === buyurtma.id)
+                    .map((item) => (
+                      <tr key={item.id}>
+                        <td>{getMahsulotName(item.maxsulot)}</td>
+                        <td>
+                          {item.qiymat} {getBirlikName(item.birlik)}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+              <div className="flex items-center justify-end gap-3 mt-3">
+                <button
+                  onClick={() => handleSumbit("approve", buyurtma.id)}
+                  className="btn bg-green-400 hover:bg-green-500 transition-colors duration-300 text-white"
+                >
+                  Tasdiqlash
+                </button>
+                <button
+                  onClick={() => handleSumbit("reject", buyurtma.id)}
+                  className="btn bg-red-400 hover:bg-red-500 transition-colors duration-300 text-white"
+                >
+                  Rad etish
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex justify-center italic text-red-600 text-lg font-medium my-5">
+          Sizda talabnomalar mavjud emas.!
+        </div>
+      )}
     </div>
   );
 };

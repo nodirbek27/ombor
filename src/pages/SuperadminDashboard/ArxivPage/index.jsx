@@ -1,10 +1,10 @@
 import React from 'react'
-import Arxiv from '../../../components/Arxiv';
+import ArxivTasdiqlangan from '../../../components/ArxivTasdiqlangan';
 
 const ArxivPage = () => {
   return (
     <div>
-      <Arxiv />
+      <ArxivTasdiqlangan />
     </div>
   )
 }

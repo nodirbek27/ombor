@@ -137,7 +137,7 @@ const KomendantNavbar = () => {
               <Link to="savatcha" className="relative mr-5 text-2xl">
                 <MdOutlineLocalGroceryStore />
                 <div className="items_count absolute -top-3 -right-4 bg-yellow-500 rounded-full w-6 h-6 flex items-center justify-center">
-                  <span className="text-white text-sm">{cartLength}</span>
+                  <span className="text-white text-sm">{cartLength ? cartLength : "0"}</span>
                 </div>
               </Link>
               <Link className="mr-5 text-2xl" onClick={() => setOpen(!open)}>

@@ -13,6 +13,8 @@ import Login from "../components/Login";
 import SuperadminOmbor from "../pages/SuperadminDashboard/Ombor";
 import SuperadminAdminlar from "../pages/SuperadminDashboard/Adminlar";
 import SuperadminKategoriya from "../pages/SuperadminDashboard/ArxivPage";
+import ChiqganMahsulotlar from "../pages/AdminDashboard/ArxivPage/ChiqganMahsulotlar";
+import RadEtilganMahsulotlar from "../pages/AdminDashboard/ArxivPage/RadEtilganMahsulotlar";
 
 const sidebar = [
   {
@@ -41,6 +43,24 @@ const sidebar = [
     isPrivate: true,
     element: SuperadminKategoriya,
     role: ["admin"],
+    children: [
+      {
+        id: 4 - 1,
+        title: "Tasdiqlangan buyurtmalar",
+        path: "/superadmin/arxiv/chiqgan-mahsulotlar",
+        isPrivate: true,
+        element: ChiqganMahsulotlar,
+        role: ["omborchi"],
+      },
+      {
+        id: 4 - 2,
+        title: "Rad etilgan buyurtmalar",
+        path: "/superadmin/arxiv/rad-etilgan-mahsulotlar",
+        isPrivate: true,
+        element: RadEtilganMahsulotlar,
+        role: ["omborchi"],
+      },
+    ],
   },
   {
     id: 11,

@@ -6,7 +6,6 @@ import PrivateRoute from "./PrivateRoute";
 import SuperadminDashboard from "../pages/SuperadminDashboard";
 import SuperadminOmbor from "../pages/SuperadminDashboard/Ombor";
 import Adminlar from "../pages/SuperadminDashboard/Adminlar";
-import Arxiv from "../pages/SuperadminDashboard/ArxivPage";
 
 // Admin
 import AdminDashboard from "../pages/AdminDashboard";
@@ -16,6 +15,8 @@ import AdminBirlik from "../pages/AdminDashboard/Birlik";
 import AdminMahsulotlarYaratish from "../pages/AdminDashboard/MahsulotlarYaratish";
 import AdminSorovlar from "../pages/AdminDashboard/Sorovlar";
 import KiritilganMahsulotlar from "../pages/AdminDashboard/ArxivPage/KiritilganMahsulotlar";
+
+// Superadmin, Omborchi,
 import ChiqganMahsulotlar from "../pages/AdminDashboard/ArxivPage/ChiqganMahsulotlar";
 import RadEtilganMahsulotlar from "../pages/AdminDashboard/ArxivPage/RadEtilganMahsulotlar";
 
@@ -88,7 +89,14 @@ const Root = () => {
         <Route index element={<SuperadminOmbor />} />
         <Route path="ombor" element={<SuperadminOmbor />} />
         <Route path="adminlar" element={<Adminlar />} />
-        <Route path="arxiv" element={<Arxiv />} />
+        <Route
+          path="arxiv/chiqgan-mahsulotlar"
+          element={<ChiqganMahsulotlar />}
+        />
+        <Route
+          path="arxiv/rad-etilgan-mahsulotlar"
+          element={<RadEtilganMahsulotlar />}
+        />
       </Route>
 
       {/* Omborchi */}
