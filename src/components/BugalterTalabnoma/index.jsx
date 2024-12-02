@@ -17,7 +17,7 @@ const BugalterTalabnoma = () => {
     try {
       const response = await APIBuyurtma.get();
       const filteredBuyurtmalar = response?.data?.filter(
-        (item) => item.sorov && item.active && item.prorektor && !item.bugalter
+        (item) => item.sorov && item.active && (item.it_park || item.xojalik_bolimi) && item.prorektor && !item.bugalter
       );
       setBuyurtmalar(filteredBuyurtmalar);
       // Fetch user data for each buyurtma

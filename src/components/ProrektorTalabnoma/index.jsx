@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import APISavat from "../../services/savat";
 import APIBuyurtma from "../../services/buyurtma";
 import APIMahsulot from "../../services/mahsulot";
@@ -13,16 +13,35 @@ const ProrekktorTalabnoma = () => {
   const [birlik, setBirlik] = useState([]);
   const [users, setUsers] = useState({});
 
-  const getBuyurtmalar = async () => {
+  const getBuyurtmalar = useCallback(async () => {
     try {
       const response = await APIBuyurtma.get();
       const filteredBuyurtmalar = response?.data?.filter(
         (item) => item.sorov && item.active && !item.prorektor
       );
-      setBuyurtmalar(filteredBuyurtmalar);
 
-      // Fetch user data for each buyurtma
-      const userPromises = filteredBuyurtmalar.map((buyurtma) =>
+      const filteredByMahsulot = filteredBuyurtmalar.filter((item) => {
+        const relatedItems = savat.filter(
+          (savatItem) => savatItem.buyurtma === item.id
+        );
+
+        const relatedMahsulot = relatedItems.filter(
+          (item) => item.maxsulot === mahsulot.id
+        );
+
+        const itParkValues = relatedMahsulot.map(
+          (savatItem) => savatItem.it_park
+        );
+
+        if (itParkValues[0]) return item.it_park;
+        if (!itParkValues[0]) return item.xojalik_bolimi;
+        return item.it_park && item.xojalik_bolimi;
+      });
+
+      setBuyurtmalar(filteredByMahsulot);
+
+      // Fetch users
+      const userPromises = filteredByMahsulot.map((buyurtma) =>
         APIUsers.getbyId(`/${buyurtma.user}`).then((response) => {
           const user = response?.data;
           return {
@@ -36,11 +55,13 @@ const ProrekktorTalabnoma = () => {
       setUsers(Object.assign({}, ...usersData));
     } catch (error) {
       console.error("Failed to fetch buyurtmalar or users", error);
+    } finally {
     }
-  };
+  }, [savat, mahsulot.id]);
+
   useEffect(() => {
     getBuyurtmalar();
-  }, []);
+  }, [getBuyurtmalar]);
 
   useEffect(() => {
     const getSavat = async () => {
@@ -100,6 +121,7 @@ const ProrekktorTalabnoma = () => {
           })
         );
       }
+
       // Update buyurtma status
       const updatedBuyurtma = {
         user: buyurtmalar.find((b) => b.id === buyurtmaId)?.user,
@@ -176,7 +198,7 @@ const ProrekktorTalabnoma = () => {
         </div>
       ) : (
         <div className="flex justify-center italic text-red-600 text-lg font-medium my-5">
-          Sizda talabnomalar mavjud emas.!
+          Sizda talabnoma yo'q.
         </div>
       )}
     </div>

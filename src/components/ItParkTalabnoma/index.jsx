@@ -13,6 +13,7 @@ const ItParkTalabnoma = () => {
   const [birlik, setBirlik] = useState([]);
   const [users, setUsers] = useState({});
 
+  // Fetch buyurtmalar and related users
   const getBuyurtmalar = async () => {
     try {
       const response = await APIBuyurtma.get();
@@ -20,8 +21,6 @@ const ItParkTalabnoma = () => {
         (item) =>
           item.sorov &&
           item.active &&
-          item.prorektor &&
-          item.bugalter &&
           !item.it_park
       );
       setBuyurtmalar(filteredBuyurtmalar);
@@ -42,6 +41,8 @@ const ItParkTalabnoma = () => {
       console.error("Failed to fetch buyurtmalar or users", error);
     }
   };
+
+  // Fetch savat data based on buyurtmalar
   useEffect(() => {
     getBuyurtmalar();
   }, []);
@@ -62,8 +63,8 @@ const ItParkTalabnoma = () => {
     };
     getSavat();
   }, [buyurtmalar]);
-  // console.log(buyurtmalar);
 
+  // Fetch mahsulot and birlik data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -80,11 +81,13 @@ const ItParkTalabnoma = () => {
     fetchData();
   }, []);
 
+  // Get mahsulot and birlik names
   const getMahsulotName = (id) =>
     mahsulot.find((item) => item.id === id)?.name || "Noma'lum";
   const getBirlikName = (id) =>
     birlik.find((item) => item.id === id)?.name || "Noma'lum";
 
+  // Handle approve or reject actions
   const handleSumbit = async (action, buyurtmaId) => {
     try {
       const postData = savat
@@ -127,6 +130,13 @@ const ItParkTalabnoma = () => {
     }
   };
 
+  const shouldHideBuyurtma = (buyurtmaId) => {
+    const relatedSavat = savat.filter((item) => item.buyurtma === buyurtmaId);
+    return relatedSavat.every(
+      (item) => mahsulot.find((m) => m.id === item.maxsulot)?.it_park === false
+    );
+  };
+
   return (
     <div>
       <h2 className="font-semibold text-xl text-center text-gray-700">
@@ -134,50 +144,52 @@ const ItParkTalabnoma = () => {
       </h2>
       {buyurtmalar.length > 0 ? (
         <div className="grid xl:grid-cols-2 gap-3">
-          {buyurtmalar.map((buyurtma) => (
-            <div
-              key={buyurtma.id}
-              className={`p-3 ${buyurtmalar ? "" : "hidden"}`}
-            >
-              <h2 className="text-xl p-4 font-medium text-gray-700">
-                {users[buyurtma.user] || "Noma'lum"}
-              </h2>
-              <table className="table table-zebra">
-                <thead>
-                  <tr className="text-gray-700">
-                    <th>Mahsulot</th>
-                    <th>Miqdor</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {savat
-                    .filter((item) => item.buyurtma === buyurtma.id)
-                    .map((item) => (
-                      <tr key={item.id}>
-                        <td>{getMahsulotName(item.maxsulot)}</td>
-                        <td>
-                          {item.qiymat} {getBirlikName(item.birlik)}
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-              <div className="flex items-center justify-end gap-3 mt-3">
-                <button
-                  onClick={() => handleSumbit("approve", buyurtma.id)}
-                  className="btn bg-green-400 hover:bg-green-500 transition-colors duration-300 text-white"
-                >
-                  Tasdiqlash
-                </button>
-                <button
-                  onClick={() => handleSumbit("reject", buyurtma.id)}
-                  className="btn bg-red-400 hover:bg-red-500 transition-colors duration-300 text-white"
-                >
-                  Rad etish
-                </button>
+          {buyurtmalar.map((buyurtma) =>
+            shouldHideBuyurtma(buyurtma.id) ? null : (
+              <div
+                key={buyurtma.id}
+                className={`p-3 ${buyurtmalar ? "" : "hidden"}`}
+              >
+                <h2 className="text-xl p-4 font-medium text-gray-700">
+                  {users[buyurtma.user] || "Noma'lum"}
+                </h2>
+                <table className="table table-zebra">
+                  <thead>
+                    <tr className="text-gray-700">
+                      <th>Mahsulot</th>
+                      <th>Miqdor</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {savat
+                      .filter((item) => item.buyurtma === buyurtma.id)
+                      .map((item) => (
+                        <tr key={item.id}>
+                          <td>{getMahsulotName(item.maxsulot)}</td>
+                          <td>
+                            {item.qiymat} {getBirlikName(item.birlik)}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+                <div className="flex items-center justify-end gap-3 mt-3">
+                  <button
+                    onClick={() => handleSumbit("approve", buyurtma.id)}
+                    className="btn bg-green-400 hover:bg-green-500 transition-colors duration-300 text-white"
+                  >
+                    Tasdiqlash
+                  </button>
+                  <button
+                    onClick={() => handleSumbit("reject", buyurtma.id)}
+                    className="btn bg-red-400 hover:bg-red-500 transition-colors duration-300 text-white"
+                  >
+                    Rad etish
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          )}
         </div>
       ) : (
         <div className="flex justify-center italic text-red-600 text-lg font-medium my-5">
