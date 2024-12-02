@@ -32,41 +32,43 @@ const KomendantSavatcha = () => {
       const filteredSorovBuyurtma = response?.data?.filter(
         (item) => item.user === userId && item.active && item.sorov
       );
+      const filteredXojalikBuyurtma = response?.data?.filter(
+        (item) =>
+          item.user === userId &&
+          item.active &&
+          item.sorov &&
+          item.xojalik_bolimi
+      );
+      const filteredItParkBuyurtma = response?.data?.filter(
+        (item) =>
+          item.user === userId && item.active && item.sorov && item.it_park
+      );
       const filteredProrektorBuyurtma = response?.data?.filter(
         (item) =>
-          item.user === userId && item.active && item.sorov && item.prorektor
+          item.user === userId &&
+          item.active &&
+          item.sorov &&
+          item.it_park &&
+          item.xojalik_bolimi &&
+          item.prorektor
       );
       const filteredBugalterBuyurtma = response?.data?.filter(
         (item) =>
           item.user === userId &&
           item.active &&
           item.sorov &&
+          item.it_park &&
+          item.xojalik_bolimi &&
           item.prorektor &&
           item.bugalter
-      );
-      const filteredXojalikBuyurtma = response?.data?.filter(
-        (item) =>
-          item.user === userId &&
-          item.active &&
-          item.sorov &&
-          item.prorektor &&
-          item.bugalter &&
-          item.xojalik_bolimi
-      );
-      const filteredItParkBuyurtma = response?.data?.filter(
-        (item) =>
-          item.user === userId &&
-          item.active &&
-          item.sorov &&
-          item.prorektor &&
-          item.bugalter &&
-          item.it_park
       );
       const filteredOmborchiBuyurtma = response?.data?.filter(
         (item) =>
           item.user === userId &&
           item.active &&
           item.sorov &&
+          item.it_park &&
+          item.xojalik_bolimi &&
           item.prorektor &&
           item.bugalter &&
           item.omborchi
@@ -162,8 +164,7 @@ const KomendantSavatcha = () => {
           ...buyurtma,
           active: true,
           sorov: true,
-          tasdiq: false,
-          rad: false,
+          omborchi: false,
         };
 
         // Update the specific buyurtma by ID
@@ -284,18 +285,6 @@ const KomendantSavatcha = () => {
         {/* Timeline */}
         <ul className="steps steps-vertical md:steps-horizontal">
           <li
-            data-content={`${prorektor ? "✓" : "?"}`}
-            className={`step ${prorektor && "step-accent"}`}
-          >
-            Prorektor
-          </li>
-          <li
-            data-content={`${bugalter ? "✓" : "?"}`}
-            className={`step ${bugalter && "step-accent"}`}
-          >
-            Bugalter
-          </li>
-          <li
             data-content={`${xojalik ? "✓" : "?"}`}
             className={`step ${xojalik && "step-accent"}`}
           >
@@ -306,6 +295,18 @@ const KomendantSavatcha = () => {
             className={`step ${itPark && "step-accent"}`}
           >
             IT Park
+          </li>
+          <li
+            data-content={`${prorektor ? "✓" : "?"}`}
+            className={`step ${prorektor && "step-accent"}`}
+          >
+            Prorektor
+          </li>
+          <li
+            data-content={`${bugalter ? "✓" : "?"}`}
+            className={`step ${bugalter && "step-accent"}`}
+          >
+            Bugalter
           </li>
           <li
             data-content={`${omborchi ? "✓" : "?"}`}

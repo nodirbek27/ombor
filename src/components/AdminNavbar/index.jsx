@@ -12,7 +12,13 @@ export const AdminNavbar = () => {
       try {
         const response = await APIBuyurtma.get();
         const filteredBuyurtmalar = response?.data?.filter(
-          (item) => item.sorov && item.active
+          (item) =>
+            item.sorov &&
+            item.active &&
+            item.prorektor &&
+            item.bugalter &&
+            (item.it_park || item.xojalik_bolimi) &&
+            !item.omborchi
         );
         setBuyurtmalar(filteredBuyurtmalar);
       } catch (error) {

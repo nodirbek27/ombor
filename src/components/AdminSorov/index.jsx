@@ -120,8 +120,7 @@ const AdminSorov = () => {
         user: buyurtmalar.find((b) => b.id === buyurtmaId)?.user,
         sorov: false,
         active: false,
-        tasdiq: action === "approve",
-        rad: action === "reject",
+        omborchi: action === "approve",
       };
 
       await APIBuyurtma.put(`/${buyurtmaId}`, updatedBuyurtma);

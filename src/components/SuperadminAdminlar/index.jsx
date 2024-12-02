@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import APIUsers from "../../services/user";
-import { RiDeleteBin5Line, RiUserAddLine } from "react-icons/ri";
+import { RiUserAddLine } from "react-icons/ri";
 import { CiEdit } from "react-icons/ci";
 
 const SuperadminAdminlar = () => {
@@ -16,6 +16,19 @@ const SuperadminAdminlar = () => {
       setUsers(sortedData);
     } catch (error) {
       console.error("Failed to fetch admins", error);
+    }
+  };
+
+  const toggleIsActive = async (userId, currentStatus) => {
+    try {
+      const response = await APIUsers.patch(`${userId}`, {
+        is_active: !currentStatus,
+      });
+      getUsers();
+      return response;
+    } catch (error) {
+      console.error("Error updating user status:", error);
+      throw error;
     }
   };
 
@@ -50,6 +63,7 @@ const SuperadminAdminlar = () => {
       password: "",
       name: "",
       role: "prorektor",
+      is_active: true,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -66,6 +80,7 @@ const SuperadminAdminlar = () => {
         it_park: values.role === "it_park",
         omborchi: values.role === "omborchi",
         komendant: values.role === "komendant",
+        is_active: values.is_active,
       };
 
       try {
@@ -113,17 +128,17 @@ const SuperadminAdminlar = () => {
     document.getElementById("my_modal_2").showModal();
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("O'chirishga ishonchingiz komilmi.??")) {
-      try {
-        await APIUsers.del(id);
-        alert("Muvaffaqiyatli o'chirildi.!");
-        getUsers();
-      } catch (error) {
-        console.error("Failed to delete user", error);
-      }
-    }
-  };
+  // const handleDelete = async (id) => {
+  //   if (window.confirm("O'chirishga ishonchingiz komilmi.??")) {
+  //     try {
+  //       await APIUsers.del(id);
+  //       alert("Muvaffaqiyatli o'chirildi.!");
+  //       getUsers();
+  //     } catch (error) {
+  //       console.error("Failed to delete user", error);
+  //     }
+  //   }
+  // };
 
   const resetForm = () => {
     setEditingId(null);
@@ -329,7 +344,8 @@ const SuperadminAdminlar = () => {
               <th>Username/Parol</th>
               <th>Lavozim</th>
               <th>Holat</th>
-              <th>Actions</th>
+              <th className="text-center">Tahrirlash</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -369,19 +385,21 @@ const SuperadminAdminlar = () => {
                     : "Noma'lum"}{" "}
                 </td>
 
-                <th>
+                <th className="text-center">
                   <button
                     className="mr-5 cursor-pointer"
                     onClick={() => handleEdit(user)}
                   >
                     <CiEdit className="w-5 h-auto text-green-400" />
                   </button>
-                  <button
-                    className="cursor-pointer"
-                    onClick={() => handleDelete(user.id)}
-                  >
-                    <RiDeleteBin5Line className="w-5 h-auto text-red-400" />
-                  </button>
+                </th>
+                <th>
+                  <input
+                    type="checkbox"
+                    checked={user.is_active}
+                    onChange={() => toggleIsActive(user.id, user.is_active)}
+                    className="toggle toggle-success"
+                  />
                 </th>
               </tr>
             ))}
