@@ -146,54 +146,86 @@ const ProrekktorTalabnoma = () => {
 
   return (
     <div>
-      <h2 className="font-semibold text-xl text-center text-gray-700">
+      <h2 className="mb-5 font-semibold text-xl text-center text-gray-700">
         Talabnomalar
       </h2>
       {buyurtmalar.length > 0 ? (
-        <div className="grid xl:grid-cols-4 gap-3">
+        <div className="grid gap-3">
           {buyurtmalar.map((buyurtma) => (
-            <div
-              key={buyurtma.id}
-              className={`p-3 ${buyurtmalar ? "" : "hidden"}`}
-            >
-              <h2 className="text-xl p-4 font-medium text-gray-700">
-                {users[buyurtma.user] || "Noma'lum"}
-              </h2>
+            <div className="grid gap-2">
+            <div className="collapse collapse-arrow bg-base-200">
+              <input type="radio" name="my-accordion-2" />
+              <div className="collapse-title text-xl font-medium">
+              <h2 className="text-xl font-medium text-gray-700">
+                 {users[buyurtma.user] || "Noma'lum"}
+             </h2>
+              </div>
+              <div className="collapse-content">
               <table className="table table-zebra">
-                <thead>
-                  <tr className="text-gray-700">
-                    <th>Mahsulot</th>
-                    <th>Miqdor</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {savat
-                    .filter((item) => item.buyurtma === buyurtma.id)
-                    .map((item) => (
-                      <tr key={item.id}>
-                        <td>{getMahsulotName(item.maxsulot)}</td>
-                        <td>
-                          {item.qiymat} {getBirlikName(item.birlik)}
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-              <div className="flex items-center justify-end gap-3 mt-3">
-                <button
-                  onClick={() => handleSumbit("approve", buyurtma.id)}
-                  className="btn bg-green-400 hover:bg-green-500 transition-colors duration-300 text-white"
-                >
-                  Tasdiqlash
-                </button>
-                <button
-                  onClick={() => handleSumbit("reject", buyurtma.id)}
-                  className="btn bg-red-400 hover:bg-red-500 transition-colors duration-300 text-white"
-                >
-                  Rad etish
-                </button>
+                 <thead>
+                   <tr className="text-gray-700">
+                     <th>Mahsulot</th>
+                     <th>Miqdor</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   {savat
+                     .filter((item) => item.buyurtma === buyurtma.id)
+                     .map((item) => (
+                       <tr key={item.id}>
+                         <td>{getMahsulotName(item.maxsulot)}</td>
+                         <td>
+                           {item.qiymat} {getBirlikName(item.birlik)}
+                         </td>
+                       </tr>
+                     ))}
+                 </tbody>
+               </table>
               </div>
             </div>
+          </div>
+            // <div
+            //   key={buyurtma.id}
+            //   className={`p-3 ${buyurtmalar ? "" : "hidden"}`}
+            // >
+            //   <h2 className="text-xl p-4 font-medium text-gray-700">
+            //     {users[buyurtma.user] || "Noma'lum"}
+            //   </h2>
+            //   <table className="table table-zebra">
+            //     <thead>
+            //       <tr className="text-gray-700">
+            //         <th>Mahsulot</th>
+            //         <th>Miqdor</th>
+            //       </tr>
+            //     </thead>
+            //     <tbody>
+            //       {savat
+            //         .filter((item) => item.buyurtma === buyurtma.id)
+            //         .map((item) => (
+            //           <tr key={item.id}>
+            //             <td>{getMahsulotName(item.maxsulot)}</td>
+            //             <td>
+            //               {item.qiymat} {getBirlikName(item.birlik)}
+            //             </td>
+            //           </tr>
+            //         ))}
+            //     </tbody>
+            //   </table>
+            //   <div className="flex items-center justify-end gap-3 mt-3">
+            //     <button
+            //       onClick={() => handleSumbit("approve", buyurtma.id)}
+            //       className="btn bg-green-400 hover:bg-green-500 transition-colors duration-300 text-white"
+            //     >
+            //       <i></i>
+            //     </button>
+            //     <button
+            //       onClick={() => handleSumbit("reject", buyurtma.id)}
+            //       className="btn bg-red-400 hover:bg-red-500 transition-colors duration-300 text-white"
+            //     >
+            //       <i></i>
+            //     </button>
+            //   </div>
+            // </div>
           ))}
         </div>
       ) : (
@@ -206,3 +238,16 @@ const ProrekktorTalabnoma = () => {
 };
 
 export default ProrekktorTalabnoma;
+{
+  /* <div className="grid gap-2">
+  <div className="collapse collapse-arrow bg-base-200">
+    <input type="radio" name="my-accordion-2" />
+    <div className="collapse-title text-xl font-medium">
+      Click to open this one and close others
+    </div>
+    <div className="collapse-content">
+      <p>hello</p>
+    </div>
+  </div>
+</div> */
+}
