@@ -77,10 +77,10 @@ const ProrektorNavbar = () => {
               <div className="z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 absolute top-12 right-0">
                 <div className="px-4 py-3">
                   <span className="block text-sm text-gray-900 truncate dark:text-white">
-                    {user}
+                    {user.first_name} {user.last_name}
                   </span>
                   <span className="block text-sm text-gray-500 truncate dark:text-gray-400">
-                    Komendant
+                    {user.name}
                   </span>
                 </div>
                 <ul className="py-2">
