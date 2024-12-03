@@ -158,7 +158,7 @@ const ProrektorNavbar = () => {
         </div>
       </nav>
       {/* Outlet */}
-      <div className="flex-1 bg-white max-w-7xl mx-auto p-4">
+      <div className="flex-1 bg-[#FAFAFA] max-w-7xl mx-auto p-4">
         <Outlet />
       </div>
     </div>

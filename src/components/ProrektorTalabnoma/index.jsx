@@ -141,7 +141,8 @@ const ProrekktorTalabnoma = () => {
       );
     }
   };
-
+ console.log(users);
+ 
   return (
     <div>
       <h2 className="mb-5 font-semibold text-xl text-center text-gray-700">
