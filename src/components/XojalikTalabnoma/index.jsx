@@ -128,10 +128,11 @@ const XojalikTalabnoma = () => {
         error
       );
     }
-  };
+  };  
 
   const shouldHideBuyurtma = (buyurtmaId) => {
     const relatedSavat = savat.filter((item) => item.buyurtma === buyurtmaId);
+    
     return relatedSavat.every(
       (item) => mahsulot.find((m) => m.id === item.maxsulot)?.it_park === true
     );

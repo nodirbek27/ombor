@@ -21,19 +21,34 @@ const ProrekktorTalabnoma = () => {
       );
 
       const filteredByMahsulot = filteredBuyurtmalar.filter((item) => {
-        const shouldHideBuyurtma = (buyurtmaId) => {
-          const relatedSavat = savat.filter(
-            (item) => item.buyurtma === buyurtmaId
-          );
-          return relatedSavat.every(
-            (item) =>
-              mahsulot.find((m) => m.id === item.maxsulot)?.it_park === true
-          );
-        };
+        const relatedSavat = savat.filter((s) => s.buyurtma === item.id);
 
-        if (shouldHideBuyurtma(item.id)) return item.it_park;
-        if (!shouldHideBuyurtma(item.id)) return item.xojalik_bolimi;
-        return item.it_park && item.xojalik_bolimi;
+        const allItParkTrue = relatedSavat.every(
+          (s) => mahsulot.find((m) => m.id === s.maxsulot)?.it_park === true
+        );
+
+        const allItParkFalse = relatedSavat.every(
+          (s) => mahsulot.find((m) => m.id === s.maxsulot)?.it_park === false
+        );
+
+        const hasItParkTrue = relatedSavat.some(
+          (s) => mahsulot.find((m) => m.id === s.maxsulot)?.it_park === true
+        );
+
+        const hasItParkFalse = relatedSavat.some(
+          (s) => mahsulot.find((m) => m.id === s.maxsulot)?.it_park === false
+        );
+
+        if (allItParkFalse) {
+          return item.xojalik_bolimi; // Hammasi `it_park: false` bo'lsa, `item.xojalik_bolimi`ni qaytaradi
+        }
+        if (allItParkTrue) {
+          return item.it_park; // Hammasi `it_park: true` bo'lsa, `item.it_park`ni qaytaradi
+        }
+        // Aralash bo'lsa, ikkisini birga qaytaradi
+        if (hasItParkTrue && hasItParkFalse) {
+          return item.it_park && item.xojalik_bolimi;
+        }
       });
 
       setBuyurtmalar(filteredByMahsulot);
@@ -59,7 +74,7 @@ const ProrekktorTalabnoma = () => {
 
   useEffect(() => {
     getBuyurtmalar();
-  }, [getBuyurtmalar]);
+  }, []);
 
   useEffect(() => {
     const getSavat = async () => {
@@ -141,8 +156,8 @@ const ProrekktorTalabnoma = () => {
       );
     }
   };
- console.log(users);
- 
+  console.log(users);
+
   return (
     <div>
       <h2 className="mb-5 font-semibold text-xl text-center text-gray-700">
@@ -152,37 +167,37 @@ const ProrekktorTalabnoma = () => {
         <div className="grid gap-3">
           {buyurtmalar.map((buyurtma) => (
             <div className="grid gap-2">
-            <div className="collapse collapse-arrow bg-base-200">
-              <input type="radio" name="my-accordion-2" />
-              <div className="collapse-title text-xl font-medium">
-              <h2 className="text-xl font-medium text-gray-700">
-                 {users[buyurtma.user] || "Noma'lum"}
-             </h2>
-              </div>
-              <div className="collapse-content">
-              <table className="table table-zebra">
-                 <thead>
-                   <tr className="text-gray-700">
-                     <th>Mahsulot</th>
-                     <th>Miqdor</th>
-                   </tr>
-                 </thead>
-                 <tbody>
-                   {savat
-                     .filter((item) => item.buyurtma === buyurtma.id)
-                     .map((item) => (
-                       <tr key={item.id}>
-                         <td>{getMahsulotName(item.maxsulot)}</td>
-                         <td>
-                           {item.qiymat} {getBirlikName(item.birlik)}
-                         </td>
-                       </tr>
-                     ))}
-                 </tbody>
-               </table>
+              <div className="collapse collapse-arrow bg-base-200">
+                <input type="radio" name="my-accordion-2" />
+                <div className="collapse-title text-xl font-medium">
+                  <h2 className="text-xl font-medium text-gray-700">
+                    {users[buyurtma.user] || "Noma'lum"}
+                  </h2>
+                </div>
+                <div className="collapse-content">
+                  <table className="table table-zebra">
+                    <thead>
+                      <tr className="text-gray-700">
+                        <th>Mahsulot</th>
+                        <th>Miqdor</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {savat
+                        .filter((item) => item.buyurtma === buyurtma.id)
+                        .map((item) => (
+                          <tr key={item.id}>
+                            <td>{getMahsulotName(item.maxsulot)}</td>
+                            <td>
+                              {item.qiymat} {getBirlikName(item.birlik)}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
             // <div
             //   key={buyurtma.id}
             //   className={`p-3 ${buyurtmalar ? "" : "hidden"}`}
