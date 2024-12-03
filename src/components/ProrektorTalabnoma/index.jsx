@@ -150,7 +150,7 @@ const ProrekktorTalabnoma = () => {
         Talabnomalar
       </h2>
       {buyurtmalar.length > 0 ? (
-        <div className="grid xl:grid-cols-2 gap-3">
+        <div className="grid xl:grid-cols-4 gap-3">
           {buyurtmalar.map((buyurtma) => (
             <div
               key={buyurtma.id}
