@@ -21,20 +21,18 @@ const ProrekktorTalabnoma = () => {
       );
 
       const filteredByMahsulot = filteredBuyurtmalar.filter((item) => {
-        const relatedItems = savat.filter(
-          (savatItem) => savatItem.buyurtma === item.id
-        );
+        const shouldHideBuyurtma = (buyurtmaId) => {
+          const relatedSavat = savat.filter(
+            (item) => item.buyurtma === buyurtmaId
+          );
+          return relatedSavat.every(
+            (item) =>
+              mahsulot.find((m) => m.id === item.maxsulot)?.it_park === true
+          );
+        };
 
-        const relatedMahsulot = relatedItems.filter(
-          (item) => item.maxsulot === mahsulot.id
-        );
-
-        const itParkValues = relatedMahsulot.map(
-          (savatItem) => savatItem.it_park
-        );
-
-        if (itParkValues[0]) return item.it_park;
-        if (!itParkValues[0]) return item.xojalik_bolimi;
+        if (shouldHideBuyurtma(item.id)) return item.it_park;
+        if (!shouldHideBuyurtma(item.id)) return item.xojalik_bolimi;
         return item.it_park && item.xojalik_bolimi;
       });
 
@@ -57,7 +55,7 @@ const ProrekktorTalabnoma = () => {
       console.error("Failed to fetch buyurtmalar or users", error);
     } finally {
     }
-  }, [savat, mahsulot.id]);
+  }, [savat, mahsulot]);
 
   useEffect(() => {
     getBuyurtmalar();
