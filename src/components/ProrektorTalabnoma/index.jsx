@@ -5,6 +5,7 @@ import APIMahsulot from "../../services/mahsulot";
 import APIBirlik from "../../services/birlik";
 import APIUsers from "../../services/user";
 import APIArxivRad from "../../services/arxivRad";
+import { RxCross2, RxCheck, RxDownload } from "react-icons/rx";
 
 const ProrekktorTalabnoma = () => {
   const [savat, setSavat] = useState([]);
@@ -166,13 +167,33 @@ const ProrekktorTalabnoma = () => {
       {buyurtmalar.length > 0 ? (
         <div className="grid gap-3">
           {buyurtmalar.map((buyurtma) => (
-            <div className="grid gap-2">
+            <div key={buyurtma.id} className={`${buyurtmalar ? "" : "hidden"}`}>
               <div className="collapse collapse-arrow bg-base-200">
                 <input type="radio" name="my-accordion-2" />
-                <div className="collapse-title text-xl font-medium">
+                <div className="collapse-title text-xl font-medium flex justify-between items-center">
                   <h2 className="text-xl font-medium text-gray-700">
                     {users[buyurtma.user] || "Noma'lum"}
                   </h2>
+                  <div className="hidden sm:flex gap-2 z-10">
+                    <button
+                      onClick={() => handleSumbit("approve", buyurtma.id)}
+                      className="bg-green-400 px-6 py-1 rounded-md hover:focus:bg-green-500 transition-colors duration-300 text-white"
+                    >
+                      <RxCheck className="font-bold" />
+                    </button>
+                    <button
+                      onClick={() => handleSumbit("reject", buyurtma.id)}
+                      className="bg-red-400 px-6 py-1 rounded-md hover:bg-red-500 transition-colors duration-300 text-white"
+                    >
+                      <RxCross2 />
+                    </button>
+                    <button
+                      onClick={() => handleSumbit("reject", buyurtma.id)}
+                      className="bg-gray-400 px-6 py-1 rounded-md focus:bg-blue-500 transition-colors duration-300 text-white"
+                    >
+                      <RxDownload />
+                    </button>
+                  </div>
                 </div>
                 <div className="collapse-content">
                   <table className="table table-zebra">
@@ -195,6 +216,28 @@ const ProrekktorTalabnoma = () => {
                         ))}
                     </tbody>
                   </table>
+                  <div className="flex justify-end">
+                    <div className="flex gap-2 sm:hidden">
+                      <button
+                        onClick={() => handleSumbit("approve", buyurtma.id)}
+                        className="bg-green-400 px-6 py-1 rounded-md hover:bg-green-500 transition-colors duration-300 text-white"
+                      >
+                        <RxCheck className="font-bold" />
+                      </button>
+                      <button
+                        onClick={() => handleSumbit("reject", buyurtma.id)}
+                        className="bg-red-400 px-6 py-1 rounded-md hover:bg-red-500 transition-colors duration-300 text-white"
+                      >
+                        <RxCross2 />
+                      </button>
+                      <button
+                        onClick={() => handleSumbit("reject", buyurtma.id)}
+                        className="bg-gray-400 px-6 py-1 rounded-md focus:bg-blue-500 transition-colors duration-300 text-white"
+                      >
+                        <RxDownload />
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
