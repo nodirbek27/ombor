@@ -39,19 +39,19 @@ const ProrekktorTalabnoma = () => {
           (s) => mahsulot.find((m) => m.id === s.maxsulot)?.it_park === false
         );
 
-        if (allItParkFalse) {
-          return item.xojalik_bolimi; // Hammasi `it_park: false` bo'lsa, `item.xojalik_bolimi`ni qaytaradi
-        }
         if (allItParkTrue) {
           return item.it_park; // Hammasi `it_park: true` bo'lsa, `item.it_park`ni qaytaradi
+        } else if (allItParkFalse) {
+          return item.xojalik_bolimi; // Hammasi `it_park: false` bo'lsa, `item.xojalik_bolimi`ni qaytaradi
         }
         // Aralash bo'lsa, ikkisini birga qaytaradi
-        if (hasItParkTrue && hasItParkFalse) {
+        else if (hasItParkTrue && hasItParkFalse) {
           return item.it_park && item.xojalik_bolimi;
         }
       });
 
       setBuyurtmalar(filteredByMahsulot);
+      console.log(buyurtmalar);
 
       // Fetch users
       const userPromises = filteredByMahsulot.map((buyurtma) =>
@@ -70,7 +70,7 @@ const ProrekktorTalabnoma = () => {
       console.error("Failed to fetch buyurtmalar or users", error);
     } finally {
     }
-  }, [savat, mahsulot]);
+  }, [mahsulot, savat, buyurtmalar]);
 
   useEffect(() => {
     getBuyurtmalar();
