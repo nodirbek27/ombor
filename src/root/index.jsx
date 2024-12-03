@@ -166,7 +166,11 @@ const Root = () => {
       >
         <Route index element={<ProrektorTalabnoma />} />
         <Route path="talabnoma" element={<ProrektorTalabnoma />} />
-        <Route path="arxiv" element={<KomendantArxiv />} />
+        <Route path="chiqgan-mahsulotlar" element={<ChiqganMahsulotlar />} />
+        <Route
+          path="rad-etilgan-mahsulotlar"
+          element={<RadEtilganMahsulotlar />}
+        />
       </Route>
 
       {/* BUGALTER */}
@@ -184,7 +188,11 @@ const Root = () => {
       >
         <Route index element={<BugalterTalabnoma />} />
         <Route path="talabnoma" element={<BugalterTalabnoma />} />
-        <Route path="arxiv" element={<KomendantArxiv />} />
+        <Route path="chiqgan-mahsulotlar" element={<ChiqganMahsulotlar />} />
+        <Route
+          path="rad-etilgan-mahsulotlar"
+          element={<RadEtilganMahsulotlar />}
+        />
       </Route>
 
       {/* XOJALIK */}
@@ -202,7 +210,11 @@ const Root = () => {
       >
         <Route index element={<XojalikTalabnoma />} />
         <Route path="talabnoma" element={<XojalikTalabnoma />} />
-        <Route path="arxiv" element={<KomendantArxiv />} />
+        <Route path="chiqgan-mahsulotlar" element={<ChiqganMahsulotlar />} />
+        <Route
+          path="rad-etilgan-mahsulotlar"
+          element={<RadEtilganMahsulotlar />}
+        />
       </Route>
 
       {/* IT Park */}
@@ -220,7 +232,11 @@ const Root = () => {
       >
         <Route index element={<ItParkTalabnoma />} />
         <Route path="talabnoma" element={<ItParkTalabnoma />} />
-        <Route path="arxiv" element={<KomendantArxiv />} />
+        <Route path="chiqgan-mahsulotlar" element={<ChiqganMahsulotlar />} />
+        <Route
+          path="rad-etilgan-mahsulotlar"
+          element={<RadEtilganMahsulotlar />}
+        />
       </Route>
 
       {/* LOGIN and * */}
