@@ -49,10 +49,10 @@ const ProrektorNavbar = () => {
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
             {/* <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" /> */}
-            <span className="self-center text-2xl font-semibold whitespace-nowrap text-emerald-600 dark:text-white">
+            <span className="self-center text-xl sm:text-2xl font-semibold whitespace-nowrap text-emerald-600 dark:text-white">
               QDPI
             </span>
-            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+            <span className="self-center text-lg sm:text-2xl font-semibold whitespace-nowrap dark:text-white">
               ombor
             </span>
           </a>
@@ -64,7 +64,7 @@ const ProrektorNavbar = () => {
               className="flex text-sm rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
               onClick={toggleUserMenu}
             >
-              <span className="sr-only">Open user menu</span>
+              <span className="sr-only">Faydalanuvchi menusini ochish</span>
               <img
                 className="w-8 h-8 rounded-full"
                 src={profilePicture}

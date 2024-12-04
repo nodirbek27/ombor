@@ -151,7 +151,7 @@ const ProrekktorTalabnoma = () => {
 
   return (
     <div>
-      <h2 className="mb-5 font-semibold text-xl text-center text-gray-700">
+      <h2 className="mb-5 font-semibold text-xl md:text-2xl text-center text-gray-700">
         Talabnomalar
       </h2>
       {buyurtmalar.length > 0 ? (
@@ -166,19 +166,19 @@ const ProrekktorTalabnoma = () => {
                   </h2>
                   <div className="hidden sm:flex gap-2 z-10">
                     <button
-                      onClick={() => handleSumbit("approve", buyurtma.id)}
-                      className="bg-green-400 px-6 py-1 rounded-md hover:focus:bg-green-500 transition-colors duration-300 text-white"
+                      // onClick={() => handleSumbit("approve", buyurtma.id)}
+                      className="bg-green-400 px-6 py-1 rounded-md hover:bg-green-500 transition-colors duration-300 text-white"
                     >
                       <RxCheck className="font-bold" />
                     </button>
                     <button
-                      onClick={() => handleSumbit("reject", buyurtma.id)}
-                      className="bg-red-400 px-6 py-1 rounded-md hover:bg-red-500 transition-colors duration-300 text-white"
+                      // onClick={() => handleSumbit("reject", buyurtma.id)}
+                      className="bg-red-400 px-6 py-1 rounded-md focus:bg-red-500 transition-colors duration-300 text-white"
                     >
                       <RxCross2 />
                     </button>
                     <button
-                      onClick={() => handleSumbit("reject", buyurtma.id)}
+                      // onClick={() => handleSumbit("reject", buyurtma.id)}
                       className="bg-gray-400 px-6 py-1 rounded-md focus:bg-blue-500 transition-colors duration-300 text-white"
                     >
                       <RxDownload />
@@ -186,9 +186,9 @@ const ProrekktorTalabnoma = () => {
                   </div>
                 </div>
                 <div className="collapse-content">
-                  <table className="table table-zebra">
-                    <thead>
-                      <tr className="text-gray-700">
+                  <table className="table relative overflow-x-auto shadow-md">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                      <tr className="text-gray-700 md:text-base">
                         <th>Mahsulot</th>
                         <th>Miqdor</th>
                       </tr>
@@ -197,7 +197,7 @@ const ProrekktorTalabnoma = () => {
                       {savat
                         .filter((item) => item.buyurtma === buyurtma.id)
                         .map((item) => (
-                          <tr key={item.id}>
+                          <tr key={item.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                             <td>{getMahsulotName(item.maxsulot)}</td>
                             <td>
                               {item.qiymat} {getBirlikName(item.birlik)}
@@ -207,21 +207,21 @@ const ProrekktorTalabnoma = () => {
                     </tbody>
                   </table>
                   <div className="flex justify-end">
-                    <div className="flex gap-2 sm:hidden">
+                    <div className="flex gap-2 sm:hidden mt-3">
                       <button
-                        onClick={() => handleSumbit("approve", buyurtma.id)}
-                        className="bg-green-400 px-6 py-1 rounded-md hover:bg-green-500 transition-colors duration-300 text-white"
+                        // onClick={() => handleSumbit("approve", buyurtma.id)}
+                        className="bg-green-400 px-6 py-1 rounded-md hover:bg-green-500 focus:ring-4 focus:ring-red-300 dark:focus:ring-gray-600 transition-colors duration-300 text-white"
                       >
                         <RxCheck className="font-bold" />
                       </button>
                       <button
-                        onClick={() => handleSumbit("reject", buyurtma.id)}
+                        // onClick={() => handleSumbit("reject", buyurtma.id)}
                         className="bg-red-400 px-6 py-1 rounded-md hover:bg-red-500 transition-colors duration-300 text-white"
                       >
                         <RxCross2 />
                       </button>
                       <button
-                        onClick={() => handleSumbit("reject", buyurtma.id)}
+                        // onClick={() => handleSumbit("reject", buyurtma.id)}
                         className="bg-gray-400 px-6 py-1 rounded-md focus:bg-blue-500 transition-colors duration-300 text-white"
                       >
                         <RxDownload />
