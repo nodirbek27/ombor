@@ -12,6 +12,7 @@ const KomendantOmbor = () => {
   const [jami, setJami] = useState([]);
   const [category, setCategory] = useState([]);
   const [mahsulot, setMahsulot] = useState([]);
+  const [allMahsulot, setAllMahsulot] = useState([]);
   const [birlik, setBirlik] = useState([]);
   const [yopish, setYopish] = useState([]);
   const [isClose, setIsClose] = useState(false);
@@ -41,7 +42,7 @@ const KomendantOmbor = () => {
       const filteredMahsulot = mahsulotData?.data.filter(
         (item) => !item.maxviylik
       );
-      setMahsulot(filteredMahsulot); // Set filtered mahsulot
+      setAllMahsulot(filteredMahsulot);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -83,18 +84,38 @@ const KomendantOmbor = () => {
     setSelectedCategory(event.target.value);
   };
 
+  const handleMahsulotChange = (event) => {
+    const selectedValue = event.target.value;
+    if (selectedValue === "xojalik_bolimi") {
+      setMahsulot(allMahsulot.filter((item) => !item.it_park)); // Xo'jalik bo'limi mahsulotlari
+    } else if (selectedValue === "itpark") {
+      setMahsulot(allMahsulot.filter((item) => item.it_park)); // IT Park mahsulotlari
+    }
+  };
+
+  // Dastlabki holatda xojalik mahsulotlarini o'rnatamiz
+  useEffect(() => {
+    setMahsulot(allMahsulot.filter((item) => !item.it_park));
+  }, [allMahsulot]);
+
   const handleAddToCart = async (jamiItem) => {
     setSelectedItem(jamiItem);
     const userId = Number(localStorage.getItem("userId"));
+
+    // Mahsulotni topish va it_park qiymatini aniqlash
+    const mahsulotItem = mahsulot.find((item) => item.id === jamiItem.maxsulot);
+    const isItPark = mahsulotItem?.it_park || false;
+
     if (!buyurtmaId) {
       try {
         const response = await APIBuyurtma.post({
           active: true,
           user: userId,
           sorov: false,
-          tasdiq: false,
-          rad: false,
+          maxsulot_it_park: isItPark,
         });
+        console.log(response);
+        
         setBuyurtmaId(response.data.id);
       } catch (error) {
         console.error("Error posting Buyurtma:", error);
@@ -114,10 +135,20 @@ const KomendantOmbor = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <p className="text-2xl font-semibold text-[#004269]">Ombor</p>
+      <div className="md:flex md:items-center justify-between">
+        <div className="flex items-center justify-between mb-3 md:mb-0 w-full mr-3">
+          <p className="text-2xl font-semibold text-[#004269]">Ombor</p>
+          <select
+            className="select select-info sm:w-full max-w-xs"
+            onChange={handleMahsulotChange}
+            defaultValue="xojalik_bolimi" // Dastlabki tanlangan qiymat
+          >
+            <option value="xojalik_bolimi">Xo'jalik bo'limi</option>
+            <option value="itpark">IT Park</option>
+          </select>
+        </div>
         <select
-          className="select select-info sm:w-full max-w-xs"
+          className="select select-info w-full md:max-w-xs"
           value={selectedCategory}
           onChange={handleCategoryChange}
         >
