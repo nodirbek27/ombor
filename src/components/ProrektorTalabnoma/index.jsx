@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import APISavat from "../../services/savat";
 import APIBuyurtma from "../../services/buyurtma";
 import APIMahsulot from "../../services/mahsulot";
@@ -14,39 +14,19 @@ const ProrekktorTalabnoma = () => {
   const [birlik, setBirlik] = useState([]);
   const [users, setUsers] = useState({});
 
-  const getBuyurtmalar = useCallback(async () => {
+  const getBuyurtmalar = async () => {
     try {
       const response = await APIBuyurtma.get();
       const filteredBuyurtmalar = response?.data?.filter(
-        (item) => item.sorov && item.active && !item.prorektor
+        (item) =>
+          item.sorov &&
+          item.active &&
+          (item.it_park || item.xojalik_bolimi) &&
+          !item.prorektor
       );
-
-      const filteredByMahsulot = filteredBuyurtmalar.filter((item) => {
-        const relatedSavat = savat.filter((s) => s.buyurtma === item.id);
-
-        const allItParkTrue = relatedSavat.every(
-          (s) => mahsulot.find((m) => m.id === s.maxsulot)?.it_park === true
-        );
-
-        const allItParkFalse = relatedSavat.every(
-          (s) => mahsulot.find((m) => m.id === s.maxsulot)?.it_park === false
-        );
-
-        if (allItParkTrue) {
-          return item.it_park; // Hammasi `it_park: true` bo'lsa, `item.it_park`ni qaytaradi
-        } else if (allItParkFalse) {
-          return item.xojalik_bolimi; // Hammasi `it_park: false` bo'lsa, `item.xojalik_bolimi`ni qaytaradi
-        }
-        // Aralash bo'lsa, ikkisini birga qaytaradi
-        else {
-          return item.it_park && item.xojalik_bolimi;
-        }
-      });
-
-      setBuyurtmalar(filteredByMahsulot);
-
-      // Fetch users
-      const userPromises = filteredByMahsulot.map((buyurtma) =>
+      setBuyurtmalar(filteredBuyurtmalar);
+      // Fetch user data for each buyurtma
+      const userPromises = filteredBuyurtmalar.map((buyurtma) =>
         APIUsers.getbyId(`/${buyurtma.user}`).then((response) => {
           const user = response?.data;
           return {
@@ -60,10 +40,8 @@ const ProrekktorTalabnoma = () => {
       setUsers(Object.assign({}, ...usersData));
     } catch (error) {
       console.error("Failed to fetch buyurtmalar or users", error);
-    } finally {
     }
-  }, [mahsulot, savat]);
-
+  };
   useEffect(() => {
     getBuyurtmalar();
   }, []);
@@ -166,14 +144,14 @@ const ProrekktorTalabnoma = () => {
                   </h2>
                   <div className="hidden sm:flex gap-2 z-10">
                     <button
-                      // onClick={() => handleSumbit("approve", buyurtma.id)}
+                      onClick={() => handleSumbit("approve", buyurtma.id)}
                       className="bg-green-400 px-6 py-1 rounded-md hover:bg-green-500 transition-colors duration-300 text-white"
                     >
                       <RxCheck className="font-bold" />
                     </button>
                     <button
                       // onClick={() => handleSumbit("reject", buyurtma.id)}
-                      className="bg-red-400 px-6 py-1 rounded-md hover:outline-red-500 transition-colors duration-300 text-white"
+                      className="bg-red-400 px-6 py-1 rounded-md focus:bg-red-500 transition-colors duration-300 text-white"
                     >
                       <RxCross2 />
                     </button>
@@ -197,7 +175,10 @@ const ProrekktorTalabnoma = () => {
                       {savat
                         .filter((item) => item.buyurtma === buyurtma.id)
                         .map((item) => (
-                          <tr key={item.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                          <tr
+                            key={item.id}
+                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                          >
                             <td>{getMahsulotName(item.maxsulot)}</td>
                             <td>
                               {item.qiymat} {getBirlikName(item.birlik)}
@@ -209,13 +190,13 @@ const ProrekktorTalabnoma = () => {
                   <div className="flex justify-end">
                     <div className="flex gap-2 sm:hidden mt-3">
                       <button
-                        // onClick={() => handleSumbit("approve", buyurtma.id)}
+                        onClick={() => handleSumbit("approve", buyurtma.id)}
                         className="bg-green-400 px-6 py-1 rounded-md hover:bg-green-500 focus:ring-4 focus:ring-red-300 dark:focus:ring-gray-600 transition-colors duration-300 text-white"
                       >
                         <RxCheck className="font-bold" />
                       </button>
                       <button
-                        // onClick={() => handleSumbit("reject", buyurtma.id)}
+                        onClick={() => handleSumbit("reject", buyurtma.id)}
                         className="bg-red-400 px-6 py-1 rounded-md hover:bg-red-500 transition-colors duration-300 text-white"
                       >
                         <RxCross2 />
@@ -235,7 +216,7 @@ const ProrekktorTalabnoma = () => {
         </div>
       ) : (
         <div className="flex justify-center italic text-red-600 text-lg font-medium my-5">
-          Sizda talabnoma yo'q.
+          Sizda talabnomalar mavjud emas.!
         </div>
       )}
     </div>
@@ -243,3 +224,16 @@ const ProrekktorTalabnoma = () => {
 };
 
 export default ProrekktorTalabnoma;
+{
+  /* <div className="grid gap-2">
+  <div className="collapse collapse-arrow bg-base-200">
+    <input type="radio" name="my-accordion-2" />
+    <div className="collapse-title text-xl font-medium">
+      Click to open this one and close others
+    </div>
+    <div className="collapse-content">
+      <p>hello</p>
+    </div>
+  </div>
+</div> */
+}
