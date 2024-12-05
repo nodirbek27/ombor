@@ -13,10 +13,13 @@ const post = (item) => {
 const put = (id, item) => {
     return axiosInstance.put(`${ep}${id}/`, item);
   };
+  const patch = (id, item) => {
+    return axiosInstance.put(`${ep}${id}/`, item);
+  };
   const del = (id) => {
     return axiosInstance.delete(`${ep}${id}/`);
   };
 
-const APIBuyurtma = { get, getbyId, post, put, del };
+const APIBuyurtma = { get, getbyId, post, put, patch, del };
 
 export default APIBuyurtma;

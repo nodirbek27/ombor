@@ -5,10 +5,12 @@ import APIMahsulot from "../../services/mahsulot";
 import APIBirlik from "../../services/birlik";
 import APIOmborYopish from "../../services/omborYopish";
 import APIBuyurtma from "../../services/buyurtma";
+import APISavat from "../../services/savat";
 import { MdOutlineLocalGroceryStore } from "react-icons/md";
 import Modal from "../Modal";
 
 const KomendantOmbor = () => {
+  const [savat, setSavat] = useState([]);
   const [jami, setJami] = useState([]);
   const [category, setCategory] = useState([]);
   const [mahsulot, setMahsulot] = useState([]);
@@ -24,15 +26,27 @@ const KomendantOmbor = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [jamiData, categoryData, mahsulotData, birlikData, yopishData] =
-        await Promise.all([
-          APIJami.get(),
-          APICategory.get(),
-          APIMahsulot.get(),
-          APIBirlik.get(),
-          APIOmborYopish.get(),
-        ]);
+      const [
+        savatData,
+        jamiData,
+        categoryData,
+        mahsulotData,
+        birlikData,
+        yopishData,
+      ] = await Promise.all([
+        APISavat.get(),
+        APIJami.get(),
+        APICategory.get(),
+        APIMahsulot.get(),
+        APIBirlik.get(),
+        APIOmborYopish.get(),
+      ]);
+      // Filter savat by maxviylik
+      const filteredSavat = savatData?.data.filter(
+        (item) => item.buyurtma === buyurtmaId
+      );
 
+      setSavat(filteredSavat);
       setJami(jamiData?.data);
       setCategory(categoryData?.data);
       setBirlik(birlikData?.data);
@@ -59,6 +73,7 @@ const KomendantOmbor = () => {
         const filteredBuyurtma = response?.data?.filter(
           (item) => item.user === userId && item.active
         );
+        console.log(filteredBuyurtma);
         // Set buyurtmaId if an active buyurtma exists
         if (filteredBuyurtma.length > 0) {
           setBuyurtmaId(filteredBuyurtma[0].id);
@@ -115,10 +130,22 @@ const KomendantOmbor = () => {
           maxsulot_it_park: isItPark,
         });
         console.log(response);
-        
+
         setBuyurtmaId(response.data.id);
       } catch (error) {
         console.error("Error posting Buyurtma:", error);
+      }
+    } else {
+      // If savat length is 0, update the maxsulot_it_park value via PUT request
+      if (savat?.length === 0) {
+        try {
+          const response = await APIBuyurtma.patch(buyurtmaId, {
+            maxsulot_it_park: isItPark, // Update the maxsulot_it_park field
+          });
+          console.log(response);
+        } catch (error) {
+          console.error("Error updating Buyurtma:", error);
+        }
       }
     }
   };
