@@ -258,7 +258,7 @@ const ProrekktorTalabnoma = () => {
         </div>
       ) : (
         <div className="flex justify-center italic text-red-600 text-lg font-medium my-5">
-          Sizda talabnoma yo'q.
+          Sizda talabnomalar mavjud emas.!
         </div>
       )}
     </div>
