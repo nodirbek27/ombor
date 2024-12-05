@@ -150,7 +150,7 @@ const ProrekktorTalabnoma = () => {
                       <RxCheck className="font-bold" />
                     </button>
                     <button
-                      // onClick={() => handleSumbit("reject", buyurtma.id)}
+                      onClick={() => handleSumbit("reject", buyurtma.id)}
                       className="bg-red-400 px-6 py-1 rounded-md focus:bg-red-500 transition-colors duration-300 text-white"
                     >
                       <RxCross2 />
@@ -224,16 +224,4 @@ const ProrekktorTalabnoma = () => {
 };
 
 export default ProrekktorTalabnoma;
-{
-  /* <div className="grid gap-2">
-  <div className="collapse collapse-arrow bg-base-200">
-    <input type="radio" name="my-accordion-2" />
-    <div className="collapse-title text-xl font-medium">
-      Click to open this one and close others
-    </div>
-    <div className="collapse-content">
-      <p>hello</p>
-    </div>
-  </div>
-</div> */
-}
+
