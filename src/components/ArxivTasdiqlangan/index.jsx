@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { FaDownload } from "react-icons/fa6";
 import APIUsers from "../../services/user";
-import APIBuyurtma from "../../services/buyurtma";
 import APIArxiv from "../../services/arxiv";
-import APIMahsulot from "../../services/mahsulot";
-import APIBirlik from "../../services/birlik";
-import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
-import { MdKeyboardDoubleArrowRight } from "react-icons/md";
+import APIBuyurtma from "../../services/buyurtma";
+import APITalabnoma from "../../services/talabnoma";
+import {
+  MdKeyboardDoubleArrowLeft,
+  MdKeyboardDoubleArrowRight,
+} from "react-icons/md";
+import { format } from "date-fns";
 
 const Arxiv = () => {
-  const [arxiv, setArxiv] = useState([]);
   const [buyurtmalar, setBuyurtmalar] = useState([]);
-  const [mahsulot, setMahsulot] = useState([]);
-  const [birlik, setBirlik] = useState([]);
+  const [arxiv, setArxiv] = useState([]);
   const [users, setUsers] = useState({});
-  const [admin, setAdmin] = useState();
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10); // Number of items per page
+  const [itemsPerPage] = useState(10);
 
   useEffect(() => {
     const getBuyurtmalar = async () => {
@@ -24,10 +23,9 @@ const Arxiv = () => {
         const response = await APIBuyurtma.get();
         const filteredBuyurtmalar = response?.data
           ?.reverse()
-          .filter((item) => item.tasdiq && !item.active);
+          .filter((item) => !item.sorov && !item.active);
         setBuyurtmalar(filteredBuyurtmalar);
 
-        // Fetch user data for each buyurtma
         const userPromises = filteredBuyurtmalar.map((buyurtma) =>
           APIUsers.getbyId(`/${buyurtma.user}`).then((response) => {
             const user = response?.data;
@@ -48,58 +46,25 @@ const Arxiv = () => {
     getBuyurtmalar();
   }, []);
 
-  useEffect(() => {
-    const getSavat = async () => {
-      try {
-        if (buyurtmalar.length > 0) {
-          const response = await APIArxiv.get();
-          const filteredArxiv = response?.data?.filter((item) =>
-            buyurtmalar.some((buyurtma) => item.buyurtma === buyurtma.id)
-          );
-          setArxiv(filteredArxiv);
-        }
-      } catch (error) {
-        console.error("Failed to fetch savat", error);
+  const handleSumbit = async (id) => {
+    try {
+      const postData = { buyurtma: buyurtmalar.find((b) => b.id === id).id };
+      const response = await APITalabnoma.post(postData);
+
+      // Extract the PDF URL
+      const pdfUrl = response?.data?.talabnoma_pdf;
+
+      if (pdfUrl) {
+        // Open the PDF in a new tab
+        window.open(pdfUrl, "_blank");
+      } else {
+        console.error("No talabnoma PDF URL in response");
       }
-    };
-    getSavat();
-  }, [buyurtmalar]);
+    } catch (err) {
+      console.error("Error submitting buyurtma:", err);
+    }
+  };
 
-  useEffect(() => {
-    const getAdmin = async () => {
-      try {
-        const response = await APIUsers.get();
-        const findAdmin = response?.data?.find((item) => item.admin === true);
-        setAdmin(findAdmin);
-      } catch (error) {
-        console.error("Failed to fetch admin", error);
-      }
-    };
-    getAdmin();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [mahsulotData, birlikData] = await Promise.all([
-          APIMahsulot.get(),
-          APIBirlik.get(),
-        ]);
-        setMahsulot(mahsulotData?.data);
-        setBirlik(birlikData?.data);
-      } catch (error) {
-        console.error("Failed to fetch mahsulot or birlik", error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const getMahsulotName = (id) =>
-    mahsulot.find((item) => item.id === id)?.name || "Noma'lum";
-  const getBirlikName = (id) =>
-    birlik.find((item) => item.id === id)?.name || "Noma'lum";
-
-  // Pagination logic
   const indexOfLastBuyurtma = currentPage * itemsPerPage;
   const indexOfFirstBuyurtma = indexOfLastBuyurtma - itemsPerPage;
   const currentBuyurtmalar = buyurtmalar.slice(
@@ -109,80 +74,56 @@ const Arxiv = () => {
 
   const totalPages = Math.ceil(buyurtmalar.length / itemsPerPage);
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
+  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+  const handlePrevPage = () =>
+    currentPage > 1 && setCurrentPage(currentPage - 1);
+  const handleNextPage = () =>
+    currentPage < totalPages && setCurrentPage(currentPage + 1);
 
   return (
     <div>
       <div className="flex items-center justify-between p-4">
-        <p className="text-xl font-semibold text-[#004269]">Tasdiqlangan buyurtmalar</p>
+        <p className="text-xl font-semibold text-[#004269]">
+          Tasdiqlangan buyurtmalar
+        </p>
       </div>
       <div className="p-4 min-w-full bg-white">
         {currentBuyurtmalar.map((buyurtma) => (
           <div
             key={buyurtma.id}
-            className="collapse collapse-arrow join-item border-base-300 border mb-3"
+            className="join-item border-base-300 border mb-3 rounded"
           >
-            <input type="radio" name="my-accordion-4" />
-            <div className="flex items-center justify-between collapse-title text-md font-medium">
+            <div className="flex items-center justify-between text-md font-medium p-2">
               <h2 className="text-md font-medium text-[#000]">
                 {users[buyurtma.user] || "Noma'lum"}
               </h2>
-              <div className="italic text-[#000]">{buyurtma.created_at}</div>
-            </div>
-            <div className="collapse-content">
-              <table className="table table-zebra w-full border-collapse border mb-3 text-[#000]">
-                <thead>
-                  <tr>
-                    <th className="py-2 px-4 border text-[#000]">Mahsulot</th>
-                    <th className="py-2 px-4 border text-[#000]">Miqdor</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {arxiv
-                    .filter((item) => item.buyurtma === buyurtma.id)
-                    .map((item) => (
-                      <tr key={item.id}>
-                        <td className="py-2 px-4 border">
-                          {getMahsulotName(item.maxsulot)}
-                        </td>
-                        <td className="py-2 px-4 border">
-                          {item.qiymat} {getBirlikName(item.birlik)}
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-              <div className="justify-self-end">
+              <div className="flex items-center">
+                <div className="italic text-[#000] mr-3">
+                  <span className="hidden lg:block">
+                    {format(new Date(buyurtma.created_at), "yyyy-MM-dd HH:mm")}
+                  </span>
+                  <span className="lg:hidden">
+                    {format(new Date(buyurtma.created_at), "yyyy-MM-dd")}
+                  </span>
+                </div>
                 <button
-                  onClick={() => null}
+                  onClick={() => handleSumbit(buyurtma.id)}
                   className="btn bg-blue-400 hover:bg-blue-500 transition-colors duration-300 text-white flex items-center gap-2"
                 >
                   <FaDownload />
-                  Yuklab olish
+                  <span className="hidden lg:block">Yuklab olish</span>
                 </button>
               </div>
             </div>
           </div>
         ))}
-
-        {/* Pagination Controls */}
         <div className="flex justify-center mt-4 items-center">
           <MdKeyboardDoubleArrowLeft
-            className="w-5 h-auto mr-4 cursor-pointer"
+            className={`w-5 h-auto mr-4 cursor-pointer ${
+              currentPage === 1 ? "text-gray-300" : "text-black"
+            }`}
             onClick={handlePrevPage}
-            disabled={currentPage === totalPages}
           />
-          {/* Page Numbers */}
           {Array.from({ length: totalPages }, (_, index) => (
             <button
               key={index + 1}
@@ -195,9 +136,10 @@ const Arxiv = () => {
             </button>
           ))}
           <MdKeyboardDoubleArrowRight
-            className="w-5 h-auto ml-4 cursor-pointer"
+            className={`w-5 h-auto ml-4 cursor-pointer ${
+              currentPage === totalPages ? "text-gray-300" : "text-black"
+            }`}
             onClick={handleNextPage}
-            disabled={currentPage === totalPages}
           />
         </div>
       </div>

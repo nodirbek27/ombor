@@ -17,7 +17,12 @@ const ArxivRadEtilgan = () => {
     const fetchAllData = async () => {
       try {
         setIsLoading(true);
-        const [buyurtmaResponse, arxivRadResponse, mahsulotResponse, birlikResponse] = await Promise.all([
+        const [
+          buyurtmaResponse,
+          arxivRadResponse,
+          mahsulotResponse,
+          birlikResponse,
+        ] = await Promise.all([
           APIBuyurtma.get(),
           APIArxivRad.get(),
           APIMahsulot.get(),
@@ -31,7 +36,7 @@ const ArxivRadEtilgan = () => {
         setRadMahsulotlar(arxivRadResponse?.data);
         setMahsulot(mahsulotResponse?.data);
         setBirlik(birlikResponse?.data);
-
+        console.log(radMahsulotlar);  
         const userPromises = filteredBuyurtmalar.map((buyurtma) =>
           APIUsers.getbyId(`/${buyurtma.user}`).then((response) => {
             const user = response?.data;
