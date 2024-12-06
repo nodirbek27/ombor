@@ -37,19 +37,23 @@ const KomendantSavatcha = () => {
           item.user === userId &&
           item.active &&
           item.sorov &&
+          !item.maxsulot_it_park &&
           item.xojalik_bolimi
       );
       const filteredItParkBuyurtma = response?.data?.filter(
         (item) =>
-          item.user === userId && item.active && item.sorov && item.it_park
+          item.user === userId &&
+          item.active &&
+          item.sorov &&
+          item.maxsulot_it_park &&
+          item.it_park
       );
       const filteredProrektorBuyurtma = response?.data?.filter(
         (item) =>
           item.user === userId &&
           item.active &&
           item.sorov &&
-          item.it_park &&
-          item.xojalik_bolimi &&
+          (item.it_park || item.xojalik_bolimi) &&
           item.prorektor
       );
       const filteredBugalterBuyurtma = response?.data?.filter(
@@ -57,8 +61,7 @@ const KomendantSavatcha = () => {
           item.user === userId &&
           item.active &&
           item.sorov &&
-          item.it_park &&
-          item.xojalik_bolimi &&
+          (item.it_park || item.xojalik_bolimi) &&
           item.prorektor &&
           item.bugalter
       );
@@ -67,8 +70,7 @@ const KomendantSavatcha = () => {
           item.user === userId &&
           item.active &&
           item.sorov &&
-          item.it_park &&
-          item.xojalik_bolimi &&
+          (item.it_park || item.xojalik_bolimi) &&
           item.prorektor &&
           item.bugalter &&
           item.omborchi
@@ -285,16 +287,10 @@ const KomendantSavatcha = () => {
         {/* Timeline */}
         <ul className="steps steps-vertical md:steps-horizontal">
           <li
-            data-content={`${xojalik ? "✓" : "?"}`}
-            className={`step ${xojalik && "step-accent"}`}
+            data-content={itPark || xojalik ? "✓" : "?"}
+            className={`step ${itPark || xojalik ? "step-accent" : ""}`}
           >
-            Xo'jalik bo'limi
-          </li>
-          <li
-            data-content={`${itPark ? "✓" : "?"}`}
-            className={`step ${itPark && "step-accent"}`}
-          >
-            IT Park
+            {sorov?.maxsulot_it_park === true ? "IT Park" : "Xo'jalik bo'limi"}
           </li>
           <li
             data-content={`${prorektor ? "✓" : "?"}`}

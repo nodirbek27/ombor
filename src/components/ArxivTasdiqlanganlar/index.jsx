@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaDownload } from "react-icons/fa6";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 import APIUsers from "../../services/user";
 import APIBuyurtma from "../../services/buyurtma";
 import APIArxiv from "../../services/arxiv";
@@ -8,7 +10,7 @@ import APIBirlik from "../../services/birlik";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 
-const Arxiv = () => {
+const ArxivTasdiqlanganlar = () => {
   const [arxiv, setArxiv] = useState([]);
   const [buyurtmalar, setBuyurtmalar] = useState([]);
   const [mahsulot, setMahsulot] = useState([]);
@@ -99,6 +101,73 @@ const Arxiv = () => {
   const getBirlikName = (id) =>
     birlik.find((item) => item.id === id)?.name || "Noma'lum";
 
+  const downloadPDF = (buyurtma) => {
+    if (!arxiv.length) {
+      alert("Arxivda ma'lumotlar mavjud emas!");
+      return;
+    }
+
+    const doc = new jsPDF();
+    const orderDate = buyurtma.created_at.split("T")[0];
+
+    doc.setFontSize(12);
+    doc.text(`Buyurtma ID: ${buyurtma.id}`, 14, 10);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "italic");
+    doc.text(`${orderDate}`, 180, 10);
+
+    if (admin) {
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "normal");
+      doc.text(
+        `${admin.first_name} ${admin.last_name}`,
+        14,
+        doc.internal.pageSize.height - 50
+      );
+    }
+
+    const userName = users[buyurtma.user] || "Noma'lum";
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "normal");
+    doc.text(`${userName}`, 14, doc.internal.pageSize.height - 40);
+
+    const signatureX = doc.internal.pageSize.width - 100;
+    doc.text("Imzo (Omborchi):", signatureX, doc.internal.pageSize.height - 52);
+    doc.line(
+      signatureX,
+      doc.internal.pageSize.height - 50,
+      signatureX + 80,
+      doc.internal.pageSize.height - 50
+    );
+    doc.text(
+      "Imzo (Komendant):",
+      signatureX,
+      doc.internal.pageSize.height - 42
+    );
+    doc.line(
+      signatureX,
+      doc.internal.pageSize.height - 40,
+      signatureX + 80,
+      doc.internal.pageSize.height - 40
+    );
+
+    const tableColumn = ["Mahsulot", "Miqdor"];
+    const tableRows = arxiv
+      .filter((item) => item.buyurtma === buyurtma.id)
+      .map((item) => [
+        getMahsulotName(item.maxsulot),
+        `${item.qiymat} ${getBirlikName(item.birlik)}`,
+      ]);
+
+    doc.autoTable({
+      startY: doc.internal.pageSize.height - 275,
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+    doc.save("OlinganMaxsulotlar.pdf");
+  };
+
   // Pagination logic
   const indexOfLastBuyurtma = currentPage * itemsPerPage;
   const indexOfFirstBuyurtma = indexOfLastBuyurtma - itemsPerPage;
@@ -164,7 +233,7 @@ const Arxiv = () => {
               </table>
               <div className="justify-self-end">
                 <button
-                  onClick={() => null}
+                  onClick={() => downloadPDF(buyurtma)}
                   className="btn bg-blue-400 hover:bg-blue-500 transition-colors duration-300 text-white flex items-center gap-2"
                 >
                   <FaDownload />
@@ -205,4 +274,4 @@ const Arxiv = () => {
   );
 };
 
-export default Arxiv;
+export default ArxivTasdiqlanganlar;

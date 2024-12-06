@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import APIUsers from "../../services/user";
 import APIBuyurtma from "../../services/buyurtma";
+import APIArxivRad from "../../services/arxivRad";
 import menus from "../../utils/komendantNavbar";
 import { MdOutlineLocalGroceryStore } from "react-icons/md";
 import { RiMenu2Fill } from "react-icons/ri";
@@ -14,6 +15,7 @@ const KomendantNavbar = () => {
   const [user, setUser] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [rejectedBuyurtma, setRejectedBuyurtma] = useState(null);
+  const [rejectedMahsulotlar, setRejectedMahsulotlar] = useState(null);
   const dispatch = useDispatch();
   const cartLength = useSelector((state) => state.cart.cartLength);
 
@@ -29,13 +31,7 @@ const KomendantNavbar = () => {
         const userId = Number(localStorage.getItem("userId"));
         const response = await APIBuyurtma.get();
         const filteredRadBuyurtma = response?.data?.filter(
-          (item) =>
-            item.user === userId &&
-            !item.active &&
-            (item.prorektor ||
-              item.bugalter ||
-              item.xojalik_bolimi ||
-              item.it_park)
+          (item) => item.user === userId && !item.active
         );
         if (filteredRadBuyurtma.length > 0) {
           setRejectedBuyurtma(filteredRadBuyurtma[0]);
@@ -47,6 +43,24 @@ const KomendantNavbar = () => {
     };
     getBuyurtma();
   }, []);
+
+  useEffect(() => {
+    const getRadMahsulotlar = async () => {
+      try {
+        const response = await APIArxivRad.get();
+        const filteredRadMahsulotlar = response?.data?.filter(
+          (item) => item.active && item.buyurtma === rejectedBuyurtma?.id
+        );
+        if (filteredRadMahsulotlar.length > 0) {
+          setRejectedMahsulotlar(filteredRadMahsulotlar[0]);
+          setShowModal(true);
+        }
+      } catch (error) {
+        console.error("Failed to fetch buyurtma", error);
+      }
+    };
+    getRadMahsulotlar();
+  }, [rejectedBuyurtma?.id]);
 
   const getUserProfile = async () => {
     try {
@@ -137,7 +151,9 @@ const KomendantNavbar = () => {
               <Link to="savatcha" className="relative mr-5 text-2xl">
                 <MdOutlineLocalGroceryStore />
                 <div className="items_count absolute -top-3 -right-4 bg-yellow-500 rounded-full w-6 h-6 flex items-center justify-center">
-                  <span className="text-white text-sm">{cartLength ? cartLength : "0"}</span>
+                  <span className="text-white text-sm">
+                    {cartLength ? cartLength : "0"}
+                  </span>
                 </div>
               </Link>
               <Link className="mr-5 text-2xl" onClick={() => setOpen(!open)}>
@@ -192,11 +208,11 @@ const KomendantNavbar = () => {
       </div>
 
       {/* Modal for rejected order */}
-      {showModal && rejectedBuyurtma && (
+      {showModal && rejectedMahsulotlar && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
           <div className="max-w-[320px] md:max-w-[450px] flex flex-col items-center border p-3 rounded bg-white">
             <p className="text-red-500 italic md:text-lg mb-3 text-center">
-              Sizning {rejectedBuyurtma.id} raqamli buyurtmangiz rad etildi!
+              Sizning {rejectedMahsulotlar?.buyurtma} raqamli buyurtmangizni <strong>{rejectedMahsulotlar?.user}</strong> rad etdi!
             </p>
             <button onClick={handleDelete} className="btn btn-warning w-full">
               OK

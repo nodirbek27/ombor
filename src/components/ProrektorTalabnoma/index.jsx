@@ -85,6 +85,7 @@ const ProrekktorTalabnoma = () => {
     birlik.find((item) => item.id === id)?.name || "Noma'lum";
 
   const handleSumbit = async (action, buyurtmaId) => {
+    const userId = localStorage.getItem("userId");
     try {
       const postData = savat
         .filter((item) => item.buyurtma === buyurtmaId)
@@ -94,9 +95,10 @@ const ProrekktorTalabnoma = () => {
           buyurtma: buyurtmaId,
           maxsulot: item.maxsulot,
           birlik: item.birlik,
-        }));
-
-      if (action === "reject") {
+          user: userId,
+        }));        
+        
+        if (action === "reject") {
         await Promise.all(
           postData.map(async (data, index) => {
             await APIArxivRad.post(data);
@@ -139,7 +141,7 @@ const ProrekktorTalabnoma = () => {
               <div className="collapse collapse-arrow bg-base-200">
                 <input type="radio" name="my-accordion-2" />
                 <div className="collapse-title text-xl font-medium flex justify-between items-center">
-                  <h2 className="text-xl font-medium text-gray-700">
+                  <h2 className="text-xl font-medium text-gray-700 dark:text-white">
                     {users[buyurtma.user] || "Noma'lum"}
                   </h2>
                   <div className="hidden sm:flex gap-2 z-10">

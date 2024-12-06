@@ -15,13 +15,20 @@ const menus = [
   },
   {
     id: 2,
-    title: "Arxiv",
-    link: "/komendant/arxiv",
+    title: "Tasdiqlangan buyurtmalar",
+    link: "/komendant/chiqgan-mahsulotlar",
     isPrivate: true,
     element: KomendantArxiv,
   },
   {
     id: 3,
+    title: "Rad etilgan buyurtmalar",
+    link: "/komendant/rad-etilgan-mahsulotlar",
+    isPrivate: true,
+    element: KomendantArxiv,
+  },
+  {
+    id: 4,
     title: "Savat",
     link: "/komendant/savatcha",
     isPrivate: true,

@@ -5,7 +5,7 @@ import APIBirlik from "../../services/birlik";
 import APIUsers from "../../services/user";
 import APIArxivRad from "../../services/arxivRad";
 
-const ArxivRadEtilgan = () => {
+const KomendantArxivRad = () => {
   const [radMahsulotlar, setRadMahsulotlar] = useState([]);
   const [buyurtmalar, setBuyurtmalar] = useState([]);
   const [mahsulot, setMahsulot] = useState([]);
@@ -114,4 +114,4 @@ const ArxivRadEtilgan = () => {
   );
 };
 
-export default ArxivRadEtilgan;
+export default KomendantArxivRad;

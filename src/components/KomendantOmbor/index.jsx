@@ -23,47 +23,6 @@ const KomendantOmbor = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [buyurtmaId, setBuyurtmaId] = useState(null);
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const [
-        savatData,
-        jamiData,
-        categoryData,
-        mahsulotData,
-        birlikData,
-        yopishData,
-      ] = await Promise.all([
-        APISavat.get(),
-        APIJami.get(),
-        APICategory.get(),
-        APIMahsulot.get(),
-        APIBirlik.get(),
-        APIOmborYopish.get(),
-      ]);
-      // Filter savat by maxviylik
-      const filteredSavat = savatData?.data.filter(
-        (item) => item.buyurtma === buyurtmaId
-      );
-
-      setSavat(filteredSavat);
-      setJami(jamiData?.data);
-      setCategory(categoryData?.data);
-      setBirlik(birlikData?.data);
-      setYopish(yopishData?.data);
-
-      // Filter mahsulot by maxviylik
-      const filteredMahsulot = mahsulotData?.data.filter(
-        (item) => !item.maxviylik
-      );
-      setAllMahsulot(filteredMahsulot);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Fetch buyurtma data and check if active buyurtma exists
   useEffect(() => {
     const getBuyurtma = async () => {
@@ -73,7 +32,6 @@ const KomendantOmbor = () => {
         const filteredBuyurtma = response?.data?.filter(
           (item) => item.user === userId && item.active
         );
-        console.log(filteredBuyurtma);
         // Set buyurtmaId if an active buyurtma exists
         if (filteredBuyurtma.length > 0) {
           setBuyurtmaId(filteredBuyurtma[0].id);
@@ -92,8 +50,48 @@ const KomendantOmbor = () => {
   }, [yopish]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const [
+          savatData,
+          jamiData,
+          categoryData,
+          mahsulotData,
+          birlikData,
+          yopishData,
+        ] = await Promise.all([
+          APISavat.get(),
+          APIJami.get(),
+          APICategory.get(),
+          APIMahsulot.get(),
+          APIBirlik.get(),
+          APIOmborYopish.get(),
+        ]);
+        // Filter savat by maxviylik
+        const filteredSavat = savatData?.data.filter(
+          (item) => item.buyurtma === buyurtmaId
+        );
+
+        setSavat(filteredSavat);
+        setJami(jamiData?.data);
+        setCategory(categoryData?.data);
+        setBirlik(birlikData?.data);
+        setYopish(yopishData?.data);
+
+        // Filter mahsulot by maxviylik
+        const filteredMahsulot = mahsulotData?.data.filter(
+          (item) => !item.maxviylik
+        );
+        setAllMahsulot(filteredMahsulot);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchData();
-  }, []);
+  }, [buyurtmaId]);
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
@@ -113,7 +111,8 @@ const KomendantOmbor = () => {
     setMahsulot(allMahsulot.filter((item) => !item.it_park));
   }, [allMahsulot]);
 
-  const handleAddToCart = async (jamiItem) => {
+  const handleAddToCart = async (jamiItem, e) => {
+    e?.preventDefault();
     setSelectedItem(jamiItem);
     const userId = Number(localStorage.getItem("userId"));
 
@@ -129,8 +128,6 @@ const KomendantOmbor = () => {
           sorov: false,
           maxsulot_it_park: isItPark,
         });
-        console.log(response);
-
         setBuyurtmaId(response.data.id);
       } catch (error) {
         console.error("Error posting Buyurtma:", error);
@@ -139,10 +136,10 @@ const KomendantOmbor = () => {
       // If savat length is 0, update the maxsulot_it_park value via PUT request
       if (savat?.length === 0) {
         try {
-          const response = await APIBuyurtma.patch(buyurtmaId, {
+          await APIBuyurtma.patch(buyurtmaId, {
             maxsulot_it_park: isItPark, // Update the maxsulot_it_park field
+            user: userId,
           });
-          console.log(response);
         } catch (error) {
           console.error("Error updating Buyurtma:", error);
         }
@@ -225,7 +222,7 @@ const KomendantOmbor = () => {
                           </div>
                           <MdOutlineLocalGroceryStore
                             className="w-5 md:w-6 h-auto cursor-pointer"
-                            onClick={() => handleAddToCart(jamiItem)}
+                            onClick={(e) => handleAddToCart(jamiItem, e)}
                           />
                         </div>
                       </div>
