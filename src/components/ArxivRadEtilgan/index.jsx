@@ -29,9 +29,11 @@ const ArxivRadEtilgan = () => {
           APIBirlik.get(),
         ]);
 
-        const filteredBuyurtmalar = buyurtmaResponse?.data?.filter(
-          (item) => !item.sorov && !item.active
-        );
+        const filteredBuyurtmalar = buyurtmaResponse?.data?.filter((item) => {
+          const isRad = radMahsulotlar.some((b) => b.buyurtma === item.id);
+          return !item.sorov && !item.active && isRad;
+        });
+
         setBuyurtmalar(filteredBuyurtmalar);
         setRadMahsulotlar(arxivRadResponse?.data);
         setMahsulot(mahsulotResponse?.data);
@@ -60,6 +62,7 @@ const ArxivRadEtilgan = () => {
 
   const getMahsulotName = (id) =>
     mahsulot.find((item) => item.id === id)?.name || "Noma'lum";
+
   const getBirlikName = (id) =>
     birlik.find((item) => item.id === id)?.name || "Noma'lum";
 
@@ -84,31 +87,31 @@ const ArxivRadEtilgan = () => {
                   </h2>
                   <i>{buyurtma.created_at}</i>
                 </div>
-              </div>
-              <div className="collapse-content">
-                <table className="table relative overflow-x-auto shadow-md">
-                  <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr className="text-gray-700 md:text-base">
-                      <th>Mahsulot</th>
-                      <th>Miqdor</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {radMahsulotlar
-                      .filter((item) => item.buyurtma === buyurtma.id)
-                      .map((item) => (
-                        <tr
-                          key={`${item.id}-${item.buyurtma}`}
-                          className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                        >
-                          <td>{getMahsulotName(item.maxsulot)}</td>
-                          <td>
-                            {item.qiymat} {getBirlikName(item.birlik)}
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
+                <div className="collapse-content">
+                  <table className="table relative overflow-x-auto shadow-md">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                      <tr className="text-gray-700 md:text-base">
+                        <th>Mahsulot</th>
+                        <th>Miqdor</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {radMahsulotlar
+                        .filter((item) => item.buyurtma === buyurtma.id)
+                        .map((item) => (
+                          <tr
+                            key={`${item.id}-${item.buyurtma}`}
+                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                          >
+                            <td>{getMahsulotName(item.maxsulot)}</td>
+                            <td>
+                              {item.qiymat} {getBirlikName(item.birlik)}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           ))}
