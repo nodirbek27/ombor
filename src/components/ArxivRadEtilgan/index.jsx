@@ -17,25 +17,25 @@ const ArxivRadEtilgan = () => {
     const fetchAllData = async () => {
       try {
         setIsLoading(true);
-        const [
-          buyurtmaResponse,
-          arxivRadResponse,
-          mahsulotResponse,
-          birlikResponse,
-        ] = await Promise.all([
+
+        const [buyurtmaResponse, arxivRadResponse, mahsulotResponse, birlikResponse] = await Promise.all([
           APIBuyurtma.get(),
           APIArxivRad.get(),
           APIMahsulot.get(),
           APIBirlik.get(),
         ]);
 
-        const filteredBuyurtmalar = buyurtmaResponse?.data?.filter(
-          (item) => !item.sorov && !item.active
-        );
-        setBuyurtmalar(filteredBuyurtmalar);
         setRadMahsulotlar(arxivRadResponse?.data);
         setMahsulot(mahsulotResponse?.data);
         setBirlik(birlikResponse?.data);
+
+        const filteredBuyurtmalar = buyurtmaResponse?.data?.filter((item) => {
+          const isRad = arxivRadResponse?.data?.some((b) => b.buyurtma === item.id);
+          return !item.sorov && !item.active && isRad;
+        });
+
+        setBuyurtmalar(filteredBuyurtmalar);
+
         const userPromises = filteredBuyurtmalar.map((buyurtma) =>
           APIUsers.getbyId(`/${buyurtma.user}`).then((response) => {
             const user = response?.data;
@@ -46,6 +46,7 @@ const ArxivRadEtilgan = () => {
             };
           })
         );
+
         const usersData = await Promise.all(userPromises);
         setUsers(Object.assign({}, ...usersData));
       } catch (error) {
@@ -60,15 +61,14 @@ const ArxivRadEtilgan = () => {
 
   const getMahsulotName = (id) =>
     mahsulot.find((item) => item.id === id)?.name || "Noma'lum";
+
   const getBirlikName = (id) =>
     birlik.find((item) => item.id === id)?.name || "Noma'lum";
 
   return (
     <div className="px-4">
       <div className="flex items-center justify-between py-4">
-        <p className="text-xl font-semibold text-[#004269]">
-          Rad etilgan buyurtmalar
-        </p>
+        <p className="text-xl font-semibold text-[#004269]">Rad etilgan buyurtmalar</p>
       </div>
       {isLoading ? (
         <p>Yuklanmoqda...</p>
@@ -84,31 +84,31 @@ const ArxivRadEtilgan = () => {
                   </h2>
                   <i>{buyurtma.created_at}</i>
                 </div>
-              </div>
-              <div className="collapse-content">
-                <table className="table relative overflow-x-auto shadow-md">
-                  <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr className="text-gray-700 md:text-base">
-                      <th>Mahsulot</th>
-                      <th>Miqdor</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {radMahsulotlar
-                      .filter((item) => item.buyurtma === buyurtma.id)
-                      .map((item) => (
-                        <tr
-                          key={`${item.id}-${item.buyurtma}`}
-                          className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                        >
-                          <td>{getMahsulotName(item.maxsulot)}</td>
-                          <td>
-                            {item.qiymat} {getBirlikName(item.birlik)}
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
+                <div className="collapse-content">
+                  <table className="table relative overflow-x-auto shadow-md">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                      <tr className="text-gray-700 md:text-base">
+                        <th>Mahsulot</th>
+                        <th>Miqdor</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {radMahsulotlar
+                        .filter((item) => item.buyurtma === buyurtma.id)
+                        .map((item) => (
+                          <tr
+                            key={`${item.id}-${item.buyurtma}`}
+                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                          >
+                            <td>{getMahsulotName(item.maxsulot)}</td>
+                            <td>
+                              {item.qiymat} {getBirlikName(item.birlik)}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           ))}
