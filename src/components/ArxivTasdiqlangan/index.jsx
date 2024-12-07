@@ -12,20 +12,24 @@ import { format } from "date-fns";
 
 const Arxiv = () => {
   const [buyurtmalar, setBuyurtmalar] = useState([]);
-  const [arxiv, setArxiv] = useState([]);
   const [users, setUsers] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
   useEffect(() => {
-    const getBuyurtmalar = async () => {
+    const fetchData = async () => {
       try {
-        const response = await APIBuyurtma.get();
-        const filteredBuyurtmalar = response?.data
+        const arxivResponse = await APIArxiv.get();
+  
+        const buyurtmaResponse = await APIBuyurtma.get();
+        const filteredBuyurtmalar = buyurtmaResponse?.data
           ?.reverse()
-          .filter((item) => !item.sorov && !item.active);
+          .filter((item) => {
+            const isTasdiq = arxivResponse?.data.some((a) => a.buyurtma === item.id);
+            return !item.sorov && !item.active && isTasdiq;
+          });
         setBuyurtmalar(filteredBuyurtmalar);
-
+  
         const userPromises = filteredBuyurtmalar.map((buyurtma) =>
           APIUsers.getbyId(`/${buyurtma.user}`).then((response) => {
             const user = response?.data;
@@ -36,15 +40,17 @@ const Arxiv = () => {
             };
           })
         );
-
+  
         const usersData = await Promise.all(userPromises);
         setUsers(Object.assign({}, ...usersData));
       } catch (error) {
-        console.error("Failed to fetch buyurtmalar or users", error);
+        console.error("Error fetching data:", error);
       }
     };
-    getBuyurtmalar();
-  }, []);
+  
+    fetchData();
+  }, []); 
+  
 
   const handleSumbit = async (id) => {
     try {
