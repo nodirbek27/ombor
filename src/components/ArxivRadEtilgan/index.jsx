@@ -88,8 +88,8 @@ const ArxivRadEtilgan = () => {
                   <table className="table relative overflow-x-auto shadow-md">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                       <tr className="text-gray-700 md:text-base">
-                        <th className="dark:text-white">Mahsulot</th>
-                        <th className="dark:text-white">Miqdor</th>
+                        <th className="dark:text-gray-300">Mahsulot</th>
+                        <th className="dark:text-gray-300">Miqdor</th>
                       </tr>
                     </thead>
                     <tbody>
