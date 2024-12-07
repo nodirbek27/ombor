@@ -13,6 +13,7 @@ import { fetchCartLength } from "../../redux/cartSlice";
 
 const KomendantNavbar = () => {
   const [user, setUser] = useState([]);
+  const [radUser, setRadUser] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [rejectedBuyurtma, setRejectedBuyurtma] = useState(null);
   const [rejectedMahsulotlar, setRejectedMahsulotlar] = useState(null);
@@ -67,6 +68,10 @@ const KomendantNavbar = () => {
       const userId = localStorage.getItem("userId");
       if (userId) {
         const response = await APIUsers.get();
+        const radQilganUser = response.data.find(
+          (item) => item.id === rejectedMahsulotlar.user
+        );
+        setRadUser(radQilganUser.first_name + " " + radQilganUser.last_name);
         const loggedInUser = response.data.find(
           (item) => item.id === parseInt(userId)
         );
@@ -93,10 +98,10 @@ const KomendantNavbar = () => {
     navigate("/");
   };
 
-  const handleDelete = async () => {
+  const handleChange = async () => {
     try {
       if (rejectedBuyurtma) {
-        // await APIBuyurtma.del(rejectedBuyurtma.id);
+        await APIArxivRad.patch((rejectedMahsulotlar.item.active = false));
         setShowModal(false);
         setRejectedBuyurtma(null);
       }
@@ -212,9 +217,10 @@ const KomendantNavbar = () => {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
           <div className="max-w-[320px] md:max-w-[450px] flex flex-col items-center border p-3 rounded bg-white">
             <p className="text-red-500 italic md:text-lg mb-3 text-center">
-              Sizning {rejectedMahsulotlar?.buyurtma} raqamli buyurtmangizni <strong>{rejectedMahsulotlar?.user}</strong> rad etdi!
+              Sizning {rejectedMahsulotlar?.buyurtma} raqamli buyurtmangizni{" "}
+              <strong>{radUser}</strong> rad etdi!
             </p>
-            <button onClick={handleDelete} className="btn btn-warning w-full">
+            <button onClick={handleChange} className="btn btn-warning w-full">
               OK
             </button>
           </div>
