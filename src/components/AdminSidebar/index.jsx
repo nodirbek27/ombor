@@ -75,16 +75,16 @@ export const AdminSidebar = () => {
               <React.Fragment key={parent.id}>
                 <MenuItem
                   onClick={(e) => onClickParent(parent, e)}
-                  active={activePath.toString()}
+                  $active={activePath.toString()}
                 >
-                  <MenuItem.Title active={activePath.toString()}>
+                  <MenuItem.Title $active={activePath.toString()}>
                     <Icon className="icon" /> {parent.title}
                   </MenuItem.Title>
                   {parent?.children?.length && (
-                    <Arrow active={active.toString()} />
+                    <Arrow $active={active.toString()} />
                   )}
                 </MenuItem>
-                <ChildWrapper active={active.toString()}>
+                <ChildWrapper $active={active.toString()}>
                   {parent?.children?.map((child) => {
                     return (
                       <MenuItem
@@ -93,7 +93,7 @@ export const AdminSidebar = () => {
                         onClick={(e) =>
                           onClickChild(parent.title, child.title, child.path, e)
                         }
-                        active={location.pathname
+                        $active={location.pathname
                           ?.includes(child.path)
                           .toString()}
                       >

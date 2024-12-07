@@ -1,6 +1,6 @@
 import axiosInstance from "./index";
 
-const ep = "ombor/rad_etilgan_maxsulotlar/";
+const ep = "users/binos/";
 
 const get = () => axiosInstance.get(ep);
 const getbyId = (id) => {
@@ -20,6 +20,6 @@ const del = (id) => {
   return axiosInstance.delete(`${ep}${id}/`);
 };
 
-const APIArxivRad = { get, getbyId, post, put, patch, del };
+const APIBinolar = { get, getbyId, post, put, patch, del };
 
-export default APIArxivRad;
+export default APIBinolar;

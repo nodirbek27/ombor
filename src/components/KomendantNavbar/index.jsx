@@ -17,6 +17,7 @@ const KomendantNavbar = () => {
   const [showModal, setShowModal] = useState(false);
   const [rejectedBuyurtma, setRejectedBuyurtma] = useState(null);
   const [rejectedMahsulotlar, setRejectedMahsulotlar] = useState(null);
+  const [findRadUser, setFindRadUser] = useState(null);
   const dispatch = useDispatch();
   const cartLength = useSelector((state) => state.cart.cartLength);
 
@@ -53,7 +54,8 @@ const KomendantNavbar = () => {
           (item) => item.active && item.buyurtma === rejectedBuyurtma?.id
         );
         if (filteredRadMahsulotlar.length > 0) {
-          setRejectedMahsulotlar(filteredRadMahsulotlar[0]);
+          setRejectedMahsulotlar(filteredRadMahsulotlar);
+          setFindRadUser(filteredRadMahsulotlar[0]);
           setShowModal(true);
         }
       } catch (error) {
@@ -63,32 +65,33 @@ const KomendantNavbar = () => {
     getRadMahsulotlar();
   }, [rejectedBuyurtma?.id]);
 
-  const getUserProfile = async () => {
-    try {
-      const userId = localStorage.getItem("userId");
-      if (userId) {
-        const response = await APIUsers.get();
-        const radQilganUser = response.data.find(
-          (item) => item.id === rejectedMahsulotlar.user
-        );
-        setRadUser(radQilganUser.first_name + " " + radQilganUser.last_name);
-        const loggedInUser = response.data.find(
-          (item) => item.id === parseInt(userId)
-        );
-        if (loggedInUser) {
-          setUser(loggedInUser);
-        } else {
-          console.error("User not found");
-        }
-      }
-    } catch (error) {
-      console.error("Failed to fetch user profile", error);
-    }
-  };
-
   useEffect(() => {
+    const getUserProfile = async () => {
+      try {
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+          const response = await APIUsers.get();
+          const radQilganUser = response?.data.find(
+            (item) => item.id === findRadUser?.user
+          );
+          setRadUser(
+            radQilganUser?.first_name + " " + radQilganUser?.last_name
+          );
+          const loggedInUser = response.data.find(
+            (item) => item.id === parseInt(userId)
+          );
+          if (loggedInUser) {
+            setUser(loggedInUser);
+          } else {
+            console.error("User not found");
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch user profile", error);
+      }
+    };
     getUserProfile();
-  }, []);
+  }, [findRadUser?.user]);
 
   const [open, setOpen] = useState(false);
   const location = useLocation();
@@ -100,15 +103,23 @@ const KomendantNavbar = () => {
 
   const handleChange = async () => {
     try {
-      if (rejectedBuyurtma) {
-        await APIArxivRad.patch((rejectedMahsulotlar.item.active = false));
+      if (rejectedMahsulotlar && rejectedMahsulotlar.length > 0) {
+        // Barcha mahsulotlarni yangilash uchun patch so‘rovlarini yaratish
+        await Promise.all(
+          rejectedMahsulotlar.map((item) =>
+            APIArxivRad.patch(item.id, { active: false })
+          )
+        );
         setShowModal(false);
         setRejectedBuyurtma(null);
+        setRejectedMahsulotlar(null);
       }
     } catch (error) {
-      console.error("Failed to delete buyurtma", error);
+      console.error("Failed to update rejected mahsulotlar", error);
     }
   };
+  console.log(rejectedMahsulotlar);
+  
 
   return (
     <div className="">
@@ -217,7 +228,7 @@ const KomendantNavbar = () => {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
           <div className="max-w-[320px] md:max-w-[450px] flex flex-col items-center border p-3 rounded bg-white">
             <p className="text-red-500 italic md:text-lg mb-3 text-center">
-              Sizning {rejectedMahsulotlar?.buyurtma} raqamli buyurtmangizni{" "}
+              Sizning {findRadUser?.buyurtma} raqamli buyurtmangizni{" "}
               <strong>{radUser}</strong> rad etdi!
             </p>
             <button onClick={handleChange} className="btn btn-warning w-full">

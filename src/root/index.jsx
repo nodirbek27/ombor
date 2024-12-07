@@ -6,6 +6,7 @@ import PrivateRoute from "./PrivateRoute";
 import SuperadminDashboard from "../pages/SuperadminDashboard";
 import SuperadminOmbor from "../pages/SuperadminDashboard/Ombor";
 import Adminlar from "../pages/SuperadminDashboard/Adminlar";
+import Binolar from "../pages/SuperadminDashboard/Binolar";
 
 // Admin
 import AdminDashboard from "../pages/AdminDashboard";
@@ -90,6 +91,7 @@ const Root = () => {
         <Route index element={<SuperadminOmbor />} />
         <Route path="ombor" element={<SuperadminOmbor />} />
         <Route path="adminlar" element={<Adminlar />} />
+        <Route path="binolar" element={<Binolar />} />
         <Route
           path="arxiv/chiqgan-mahsulotlar"
           element={<ChiqganMahsulotlar />}

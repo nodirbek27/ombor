@@ -3,6 +3,7 @@
 
 // import { ReactComponent as Analitika } from "../assets/icons/analytics.svg";
 import { ReactComponent as Admin } from "../assets/icons/admin.svg";
+import { ReactComponent as Bino } from "../assets/icons/building.svg";
 import { ReactComponent as Arxiv } from "../assets/icons/arxiv.svg";
 import { ReactComponent as Ombor } from "../assets/icons/warehouse-icon.svg";
 
@@ -12,6 +13,7 @@ import Login from "../components/Login";
 // HOME
 import SuperadminOmbor from "../pages/SuperadminDashboard/Ombor";
 import SuperadminAdminlar from "../pages/SuperadminDashboard/Adminlar";
+import SuperadminBinolar from "../pages/SuperadminDashboard/Binolar";
 import SuperadminKategoriya from "../pages/SuperadminDashboard/ArxivPage";
 import ChiqganMahsulotlar from "../pages/AdminDashboard/ArxivPage/ChiqganMahsulotlar";
 import RadEtilganMahsulotlar from "../pages/AdminDashboard/ArxivPage/RadEtilganMahsulotlar";
@@ -33,6 +35,15 @@ const sidebar = [
     icon: Admin,
     isPrivate: true,
     element: SuperadminAdminlar,
+    role: ["admin"],
+  },
+  {
+    id: 3,
+    title: "Binolar",
+    path: "/superadmin/binolar",
+    icon: Bino,
+    isPrivate: true,
+    element: SuperadminBinolar,
     role: ["admin"],
   },
   {

@@ -16,21 +16,37 @@ const KomendantArxivRad = () => {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
+        const userId = localStorage.getItem("userId");
         setIsLoading(true);
-        const [buyurtmaResponse, arxivRadResponse, mahsulotResponse, birlikResponse] = await Promise.all([
+        const [
+          buyurtmaResponse,
+          arxivRadResponse,
+          mahsulotResponse,
+          birlikResponse,
+        ] = await Promise.all([
           APIBuyurtma.get(),
           APIArxivRad.get(),
           APIMahsulot.get(),
           APIBirlik.get(),
         ]);
 
-        const filteredBuyurtmalar = buyurtmaResponse?.data?.filter(
-          (item) => !item.sorov && !item.active
-        );
-        setBuyurtmalar(filteredBuyurtmalar);
         setRadMahsulotlar(arxivRadResponse?.data);
         setMahsulot(mahsulotResponse?.data);
         setBirlik(birlikResponse?.data);
+
+        const filteredBuyurtmalar = buyurtmaResponse?.data?.filter((item) => {
+          const isRad = arxivRadResponse?.data?.some(
+            (b) => b.buyurtma === item.id
+          );
+          return (
+            !item.sorov &&
+            !item.active &&
+            isRad &&
+            item.user === parseInt(userId)
+          );
+        });
+
+        setBuyurtmalar(filteredBuyurtmalar);
 
         const userPromises = filteredBuyurtmalar.map((buyurtma) =>
           APIUsers.getbyId(`/${buyurtma.user}`).then((response) => {
@@ -42,6 +58,7 @@ const KomendantArxivRad = () => {
             };
           })
         );
+
         const usersData = await Promise.all(userPromises);
         setUsers(Object.assign({}, ...usersData));
       } catch (error) {
@@ -56,6 +73,7 @@ const KomendantArxivRad = () => {
 
   const getMahsulotName = (id) =>
     mahsulot.find((item) => item.id === id)?.name || "Noma'lum";
+
   const getBirlikName = (id) =>
     birlik.find((item) => item.id === id)?.name || "Noma'lum";
 
@@ -80,31 +98,31 @@ const KomendantArxivRad = () => {
                   </h2>
                   <i>{buyurtma.created_at}</i>
                 </div>
-              </div>
-              <div className="collapse-content">
-                <table className="table relative overflow-x-auto shadow-md">
-                  <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr className="text-gray-700 md:text-base">
-                      <th>Mahsulot</th>
-                      <th>Miqdor</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {radMahsulotlar
-                      .filter((item) => item.buyurtma === buyurtma.id)
-                      .map((item) => (
-                        <tr
-                          key={`${item.id}-${item.buyurtma}`}
-                          className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                        >
-                          <td>{getMahsulotName(item.maxsulot)}</td>
-                          <td>
-                            {item.qiymat} {getBirlikName(item.birlik)}
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
+                <div className="collapse-content">
+                  <table className="table relative overflow-x-auto shadow-md">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                      <tr className="text-gray-700 md:text-base">
+                        <th className="dark:text-gray-300">Mahsulot</th>
+                        <th className="dark:text-gray-300">Miqdor</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {radMahsulotlar
+                        .filter((item) => item.buyurtma === buyurtma.id)
+                        .map((item) => (
+                          <tr
+                            key={`${item.id}-${item.buyurtma}`}
+                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                          >
+                            <td>{getMahsulotName(item.maxsulot)}</td>
+                            <td>
+                              {item.qiymat} {getBirlikName(item.birlik)}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           ))}

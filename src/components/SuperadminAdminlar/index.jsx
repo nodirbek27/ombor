@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import APIUsers from "../../services/user";
+import APIBinolar from "../../services/binolar";
 import { RiUserAddLine } from "react-icons/ri";
 import { CiEdit } from "react-icons/ci";
 
 const SuperadminAdminlar = () => {
   const [users, setUsers] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [binolar, setBinolar] = useState([]);
 
   const getUsers = async () => {
     try {
@@ -16,6 +18,15 @@ const SuperadminAdminlar = () => {
       setUsers(sortedData);
     } catch (error) {
       console.error("Failed to fetch admins", error);
+    }
+  };
+
+  const getBinolar = async () => {
+    try {
+      const response = await APIBinolar.get();
+      setBinolar(response?.data);
+    } catch (error) {
+      console.error("Failed to fetch binolar", error);
     }
   };
 
@@ -33,6 +44,7 @@ const SuperadminAdminlar = () => {
   };
 
   useEffect(() => {
+    getBinolar();
     getUsers();
   }, []);
 
@@ -47,9 +59,9 @@ const SuperadminAdminlar = () => {
     last_name: Yup.string()
       .required("Last name is required")
       .max(150, "Last name must be 150 characters or fewer"),
-    name: Yup.string()
+    bino: Yup.string()
       .required("Name is required")
-      .max(150, "Name must be 150 characters or fewer"),
+      .max(255, "Name must be 255 characters or fewer"),
     password: Yup.string()
       .required("Password is required")
       .max(128, "Password must be 128 characters or fewer"),
@@ -61,7 +73,7 @@ const SuperadminAdminlar = () => {
       first_name: "",
       last_name: "",
       password: "",
-      name: "",
+      bino: "",
       role: "prorektor",
       is_active: true,
     },
@@ -72,7 +84,7 @@ const SuperadminAdminlar = () => {
         first_name: values.first_name,
         last_name: values.last_name,
         password: values.password,
-        name: values.name,
+        bino: values.bino,
         superadmin: values.role === "superadmin",
         prorektor: values.role === "prorektor",
         bugalter: values.role === "bugalter",
@@ -204,28 +216,23 @@ const SuperadminAdminlar = () => {
                   ) : null}
                 </div>
 
-                {/* Lavozim */}
+                {/* Bino */}
                 <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-900"
-                  >
-                    Lavozim
+                  <label className="block text-sm font-medium text-gray-900">
+                    Bino
                   </label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    className="block w-full rounded-md border-0 bg-white p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                  <select
+                    name="bino"
+                    value={formik.values.bino}
                     onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.name}
-                  />
-                  {formik.touched.name && formik.errors.name ? (
-                    <div className="text-red-500 text-sm">
-                      {formik.errors.name}
-                    </div>
-                  ) : null}
+                    className="block w-full rounded-md border-0 bg-white p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                  >
+                    {binolar?.map((bino) => (
+                      <option key={bino.id} value={bino.id}>
+                        {bino.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Ism */}
@@ -342,7 +349,7 @@ const SuperadminAdminlar = () => {
             <tr className="text-[#000]">
               <th>Ism/Familiya</th>
               <th>Username/Parol</th>
-              <th>Lavozim</th>
+              <th>Bino</th>
               <th>Holat</th>
               <th className="text-center">Tahrirlash</th>
               <th>Status</th>
@@ -366,7 +373,9 @@ const SuperadminAdminlar = () => {
                     {user.parol}
                   </span>
                 </td>
-                <td className="font-semibold text-[#000]">{user.name}</td>
+                <td className="font-semibold text-[#000]">
+                  {binolar.find((bino) => bino.id === user.bino)?.name || "N/A"}
+                </td>
                 <td className="font-semibold text-[#000]">
                   {user.superadmin
                     ? "Superadmin"
