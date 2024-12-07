@@ -17,27 +17,25 @@ const ArxivRadEtilgan = () => {
     const fetchAllData = async () => {
       try {
         setIsLoading(true);
-        const [
-          buyurtmaResponse,
-          arxivRadResponse,
-          mahsulotResponse,
-          birlikResponse,
-        ] = await Promise.all([
+
+        const [buyurtmaResponse, arxivRadResponse, mahsulotResponse, birlikResponse] = await Promise.all([
           APIBuyurtma.get(),
           APIArxivRad.get(),
           APIMahsulot.get(),
           APIBirlik.get(),
         ]);
 
+        setRadMahsulotlar(arxivRadResponse?.data);
+        setMahsulot(mahsulotResponse?.data);
+        setBirlik(birlikResponse?.data);
+
         const filteredBuyurtmalar = buyurtmaResponse?.data?.filter((item) => {
-          const isRad = radMahsulotlar.some((b) => b.buyurtma === item.id);
+          const isRad = arxivRadResponse?.data?.some((b) => b.buyurtma === item.id);
           return !item.sorov && !item.active && isRad;
         });
 
         setBuyurtmalar(filteredBuyurtmalar);
-        setRadMahsulotlar(arxivRadResponse?.data);
-        setMahsulot(mahsulotResponse?.data);
-        setBirlik(birlikResponse?.data);
+
         const userPromises = filteredBuyurtmalar.map((buyurtma) =>
           APIUsers.getbyId(`/${buyurtma.user}`).then((response) => {
             const user = response?.data;
@@ -48,6 +46,7 @@ const ArxivRadEtilgan = () => {
             };
           })
         );
+
         const usersData = await Promise.all(userPromises);
         setUsers(Object.assign({}, ...usersData));
       } catch (error) {
@@ -69,9 +68,7 @@ const ArxivRadEtilgan = () => {
   return (
     <div className="px-4">
       <div className="flex items-center justify-between py-4">
-        <p className="text-xl font-semibold text-[#004269]">
-          Rad etilgan buyurtmalar
-        </p>
+        <p className="text-xl font-semibold text-[#004269]">Rad etilgan buyurtmalar</p>
       </div>
       {isLoading ? (
         <p>Yuklanmoqda...</p>
