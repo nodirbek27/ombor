@@ -39,38 +39,44 @@ const AdminMahsulotYaratish = () => {
     getMahsulot();
   }, []);
 
-  const validationSchema = Yup.object({
-    name: Yup.string()
-      .required("Nom majburiy")
-      .max(150, "Name must be 150 characters or fewer"),
-    kategoriya: Yup.string()
-      .required("Kategoriya majburiy")
-      .max(150, "Name must be 150 characters or fewer"),
-  });
-
   const formik = useFormik({
     initialValues: {
       name: "",
       kategoriya: "",
+      rasm: "",
       maxviylik: false,
       it_park: false,
     },
-    validationSchema: validationSchema,
+    validationSchema: Yup.object({
+      name: Yup.string()
+        .required("Nom majburiy")
+        .max(150, "Name must be 150 characters or fewer"),
+      kategoriya: Yup.string()
+        .required("Kategoriya majburiy")
+        .max(150, "Name must be 150 characters or fewer"),
+      rasm: Yup.string().required("Rasm majburiy"), // Add validation if needed
+    }),
     onSubmit: async (values) => {
-      const dataToPost = {
-        name: values.name,
-        kategoriya: values.kategoriya,
-        maxviylik: values.maxviylik,
-        it_park: values.it_park,
-      };
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("kategoriya", values.kategoriya);
+      formData.append("maxviylik", values.maxviylik);
+      formData.append("it_park", values.it_park);
+      if (values.rasm) {
+        formData.append("rasm", values.rasm);
+      }
 
       try {
         if (editingId) {
-          await APIMahsulot.put(`/${editingId}/`, dataToPost);
+          await APIMahsulot.put(`/${editingId}/`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
           alert("Muvaffaqiyatli o'zgartirildi!");
           setEditingId(null); // Reset edit mode
         } else {
-          await APIMahsulot.post(dataToPost);
+          await APIMahsulot.post(formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
           alert("Muvaffaqiyatli yaratildi!");
         }
         getMahsulot();
@@ -98,7 +104,7 @@ const AdminMahsulotYaratish = () => {
       name: item.name,
       kategoriya: item.kategoriya,
       maxviylik: item.maxviylik,
-      it_park: item.it_park
+      it_park: item.it_park,
     });
     setOpenCategoryId(item.kategoriya);
   };
@@ -154,26 +160,71 @@ const AdminMahsulotYaratish = () => {
                         value={formik.values.name}
                       />
                     </label>
-                    <label className="cursor-pointer label">
-                      <span className="label-text mr-2 text-[#000]">Maxfiylik:</span>
+
+                    {/* Checkbox */}
+                    <div className="flex flex-col xl:flex-row">
+                      <label className="cursor-pointer label">
+                        <span className="label-text mr-2 text-[#000]">
+                          Maxfiylik:
+                        </span>
+                        <input
+                          type="checkbox"
+                          name="maxviylik"
+                          onChange={formik.handleChange}
+                          checked={formik.values.maxviylik}
+                          className="checkbox checkbox-success"
+                        />
+                      </label>
+                      <label className="cursor-pointer label">
+                        <span className="label-text mr-2 text-[#000]">
+                          RTTM:
+                        </span>
+                        <input
+                          type="checkbox"
+                          name="it_park"
+                          onChange={formik.handleChange}
+                          checked={formik.values.it_park}
+                          className="checkbox checkbox-success"
+                        />
+                      </label>
+                    </div>
+
+                    {/* File input */}
+                    <div className="file-input p-0">
                       <input
-                        type="checkbox"
-                        name="maxviylik"
-                        onChange={formik.handleChange}
-                        checked={formik.values.maxviylik}
-                        className="checkbox checkbox-success"
+                        type="file"
+                        name="rasm"
+                        id="rasm"
+                        onChange={(event) => {
+                          formik.setFieldValue(
+                            "rasm",
+                            event.currentTarget.files[0]
+                          );
+                        }}
+                        className="file-input__input w-0 h-0 opacity-0 overflow-hidden absolute -z-1"
                       />
-                    </label>
-                    <label className="cursor-pointer label">
-                      <span className="label-text mr-2 text-[#000]">RTTM:</span>
-                      <input
-                        type="checkbox"
-                        name="it_park"
-                        onChange={formik.handleChange}
-                        checked={formik.values.it_park}
-                        className="checkbox checkbox-success"
-                      />
-                    </label>
+
+                      <label
+                        className="file-input__label flex items-center rounded-md text-sm font-semibold text-white p-2 h-full bg-cyan-400 shadow-sm cursor-pointer hover:bg-cyan-500"
+                        htmlFor="rasm"
+                      >
+                        <svg
+                          aria-hidden="true"
+                          focusable="false"
+                          className="h-4 mr-2"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 512 512"
+                        >
+                          <path
+                            fill="currentColor"
+                            d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"
+                          ></path>
+                        </svg>
+                        <span>Upload file</span>
+                      </label>
+                    </div>
+
+                    {/* Submit */}
                     <button
                       type="submit"
                       className="btn flex items-center bg-blue-400 hover:bg-blue-500 text-white"
@@ -212,7 +263,23 @@ const AdminMahsulotYaratish = () => {
                       <p className="text-md mr-3">{product.name}</p>
                       <div className="flex items-center">
                         <div className="mr-4">
-                          {!product.maxviylik ? <FaEye className="w-5 h-auto" /> : <FaEyeSlash className="w-5 h-auto" />}
+                          {!product.maxviylik ? (
+                            <FaEye className="w-5 h-auto" />
+                          ) : (
+                            <FaEyeSlash className="w-5 h-auto" />
+                          )}
+                        </div>
+                        <div>
+                          <a
+                            href={product?.rasm}
+                            className={`italic underline mr-2 ${
+                              !product.rasm && "hidden"
+                            }`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Rasm
+                          </a>
                         </div>
                         {/* Edit */}
                         <button

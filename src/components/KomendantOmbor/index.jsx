@@ -204,19 +204,36 @@ const KomendantOmbor = () => {
                       .includes(o.maxsulot)
                   )
                   .map((jamiItem) => {
-                    const mahsulotNomi =
-                      mahsulot.find((prod) => prod.id === jamiItem.maxsulot)
-                        ?.name || "Noma'lum";
+                    const mahsulotItem = mahsulot.find(
+                      (prod) => prod.id === jamiItem.maxsulot
+                    );
+                    const mahsulotNomi = mahsulotItem?.name || "Noma'lum";
                     const birlikNomi =
                       birlik.find((unit) => unit.id === jamiItem.birlik)
                         ?.name || "Noma'lum";
+                    const mahsulotRasm = mahsulotItem?.rasm;
+
                     return (
                       <div
                         key={jamiItem.id}
                         className="border rounded p-2 flex items-center justify-between bg-slate-50"
                       >
-                        <div>{mahsulotNomi}</div>
+                        <div className="flex flex-col gap-2">
+                          <div>{mahsulotNomi}</div>
+                        </div>
                         <div className="flex items-center gap-3 xl:gap-8">
+                          <div>
+                            <a
+                              href={mahsulotRasm}
+                              className={`italic underline ${
+                                !mahsulotRasm && "hidden"
+                              }`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Rasm
+                            </a>
+                          </div>
                           <div>
                             {jamiItem.yakuniy_qiymat} {birlikNomi}
                           </div>

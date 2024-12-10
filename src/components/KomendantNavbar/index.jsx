@@ -118,8 +118,6 @@ const KomendantNavbar = () => {
       console.error("Failed to update rejected mahsulotlar", error);
     }
   };
-  console.log(rejectedMahsulotlar);
-  
 
   return (
     <div className="">
