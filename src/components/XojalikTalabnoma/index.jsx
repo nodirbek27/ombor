@@ -120,12 +120,13 @@ const XojalikTalabnoma = () => {
         xojalik_bolimi: action === "approve",
       };
 
-      await APIBuyurtma.put(`/${buyurtmaId}`, updatedBuyurtma);
+      await APIBuyurtma.patch(`/${buyurtmaId}`, updatedBuyurtma);
       await getBuyurtmalar();
 
       // Update state to remove processed buyurtma and savat
       setBuyurtmalar(buyurtmalar.filter((b) => b.id !== buyurtmaId));
       setSavat(savat.filter((item) => item.buyurtma !== buyurtmaId));
+      
     } catch (error) {
       console.error(
         `Failed to ${action === "approve" ? "approve" : "reject"} buyurtma`,
@@ -133,6 +134,7 @@ const XojalikTalabnoma = () => {
       );
     }
   };
+  console.log(buyurtmalar);
 
   return (
     <div>

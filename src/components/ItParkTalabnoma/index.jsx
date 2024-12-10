@@ -117,7 +117,7 @@ const ItParkTalabnoma = () => {
         it_park: action === "approve",
       };
 
-      await APIBuyurtma.put(`/${buyurtmaId}`, updatedBuyurtma);
+      await APIBuyurtma.patch(`/${buyurtmaId}`, updatedBuyurtma);
       await getBuyurtmalar();
 
       // Update state to remove processed buyurtma and savat

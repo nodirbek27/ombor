@@ -170,7 +170,7 @@ const KomendantSavatcha = () => {
         };
 
         // Update the specific buyurtma by ID
-        await APIBuyurtma.put(`/${buyurtma.id}`, postData);
+        await APIBuyurtma.patch(`/${buyurtma.id}`, postData);
         // Update the state to reflect the changes
         setBuyurtma((prevBuyurtma) => ({
           ...prevBuyurtma,

@@ -14,7 +14,7 @@ const put = (id, item) => {
     return axiosInstance.put(`${ep}${id}/`, item);
   };
   const patch = (id, item) => {
-    return axiosInstance.put(`${ep}${id}/`, item);
+    return axiosInstance.patch(`${ep}${id}/`, item);
   };
   const del = (id) => {
     return axiosInstance.delete(`${ep}${id}/`);
