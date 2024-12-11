@@ -112,7 +112,7 @@ const BugalterTalabnoma = () => {
       const updatedBuyurtma = {
         user: buyurtmalar.find((b) => b.id === buyurtmaId)?.user,
         sorov: action === "approve",
-        active: action === "approve",
+        active: true,
         bugalter: action === "approve",
       };
 

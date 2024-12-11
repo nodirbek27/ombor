@@ -33,7 +33,7 @@ const KomendantNavbar = () => {
         const userId = Number(localStorage.getItem("userId"));
         const response = await APIBuyurtma.get();
         const filteredRadBuyurtma = response?.data?.filter(
-          (item) => item.user === userId && !item.active
+          (item) => item.user === userId && !item.sorov && item.active
         );
         if (filteredRadBuyurtma.length > 0) {
           setRejectedBuyurtma(filteredRadBuyurtma[0]);
@@ -103,8 +103,12 @@ const KomendantNavbar = () => {
 
   const handleChange = async () => {
     try {
+      if (rejectedBuyurtma) {
+        // Update the active status of the rejectedBuyurtma
+        await APIBuyurtma.patch(rejectedBuyurtma.id, { active: false });
+      }
+
       if (rejectedMahsulotlar && rejectedMahsulotlar.length > 0) {
-        // Barcha mahsulotlarni yangilash uchun patch so‘rovlarini yaratish
         await Promise.all(
           rejectedMahsulotlar.map((item) =>
             APIArxivRad.patch(item.id, { active: false })

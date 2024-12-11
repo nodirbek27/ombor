@@ -116,7 +116,7 @@ const XojalikTalabnoma = () => {
       const updatedBuyurtma = {
         user: buyurtmalar.find((b) => b.id === buyurtmaId)?.user,
         sorov: action === "approve",
-        active: action === "approve",
+        active: true,
         xojalik_bolimi: action === "approve",
       };
 

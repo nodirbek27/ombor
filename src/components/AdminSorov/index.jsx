@@ -121,7 +121,7 @@ const AdminSorov = () => {
       const updatedBuyurtma = {
         user: buyurtmalar.find((b) => b.id === buyurtmaId)?.user,
         sorov: false,
-        active: false,
+        active: action === "reject",
         omborchi: action === "approve",
       };
 
