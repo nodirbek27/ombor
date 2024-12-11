@@ -1,7 +1,8 @@
 // LOGIN
 import Login from "../components/Login";
 
-import KomendantOmbor from "../pages/KomendantDashboard/Ombor";
+import KomendantOmborXojalik from "../pages/KomendantDashboard/Ombor/Xojalik";
+import KomendantOmborItPark from "../pages/KomendantDashboard/Ombor/ItPark";
 import KomendantArxiv from "../pages/KomendantDashboard/Arxiv";
 import KomendantSavat from "../pages/KomendantDashboard/Savat";
 
@@ -9,9 +10,24 @@ const menus = [
   {
     id: 1,
     title: "Ombor",
-    link: "/komendant/ombor",
     isPrivate: true,
-    element: KomendantOmbor,
+    element: "",
+    children: [
+      {
+        id: 1 - 1,
+        title: "Xo'jalik bo'limi",
+        link: "/komendant/ombor/xojalik-bolimi",
+        isPrivate: true,
+        element: KomendantOmborXojalik,
+      },
+      {
+        id: 1 - 2,
+        title: "IT Park",
+        link: "/komendant/ombor/it-park",
+        isPrivate: true,
+        element: KomendantOmborItPark,
+      },
+    ],
   },
   {
     id: 2,

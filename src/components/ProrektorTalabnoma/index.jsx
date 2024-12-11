@@ -5,7 +5,7 @@ import APIMahsulot from "../../services/mahsulot";
 import APIBirlik from "../../services/birlik";
 import APIUsers from "../../services/user";
 import APIArxivRad from "../../services/arxivRad";
-import { RxCross2, RxCheck, RxDownload } from "react-icons/rx";
+import { RxCross2, RxCheck } from "react-icons/rx";
 
 const ProrekktorTalabnoma = () => {
   const [savat, setSavat] = useState([]);
@@ -128,7 +128,6 @@ const ProrekktorTalabnoma = () => {
       );
     }
   };
-  console.log(buyurtmalar);
 
   return (
     <div>
@@ -157,12 +156,6 @@ const ProrekktorTalabnoma = () => {
                       className="bg-red-400 px-6 py-1 rounded-md focus:bg-red-500 transition-colors duration-300 text-white"
                     >
                       <RxCross2 />
-                    </button>
-                    <button
-                      // onClick={() => handleSumbit("reject", buyurtma.id)}
-                      className="bg-gray-400 px-6 py-1 rounded-md hover:bg-blue-500 transition-colors duration-300 text-white"
-                    >
-                      <RxDownload />
                     </button>
                   </div>
                 </div>
@@ -203,12 +196,6 @@ const ProrekktorTalabnoma = () => {
                         className="bg-red-400 px-6 py-1 rounded-md hover:bg-red-500 transition-colors duration-300 text-white"
                       >
                         <RxCross2 />
-                      </button>
-                      <button
-                        // onClick={() => handleSumbit("reject", buyurtma.id)}
-                        className="bg-gray-400 px-6 py-1 rounded-md focus:bg-blue-500 transition-colors duration-300 text-white"
-                      >
-                        <RxDownload />
                       </button>
                     </div>
                   </div>

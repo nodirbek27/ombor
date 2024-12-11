@@ -9,7 +9,7 @@ import APISavat from "../../services/savat";
 import { MdOutlineLocalGroceryStore } from "react-icons/md";
 import Modal from "../Modal";
 
-const KomendantOmbor = () => {
+const KomendantOmborXojalik = () => {
   const [savat, setSavat] = useState([]);
   const [jami, setJami] = useState([]);
   const [category, setCategory] = useState([]);
@@ -264,4 +264,4 @@ const KomendantOmbor = () => {
   );
 };
 
-export default KomendantOmbor;
+export default KomendantOmborXojalik;
