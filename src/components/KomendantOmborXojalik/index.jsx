@@ -13,7 +13,6 @@ const KomendantOmborXojalik = () => {
   const [savat, setSavat] = useState([]);
   const [jami, setJami] = useState([]);
   const [category, setCategory] = useState([]);
-  const [mahsulot, setMahsulot] = useState([]);
   const [allMahsulot, setAllMahsulot] = useState([]);
   const [birlik, setBirlik] = useState([]);
   const [yopish, setYopish] = useState([]);
@@ -81,7 +80,7 @@ const KomendantOmborXojalik = () => {
 
         // Filter mahsulot by maxviylik
         const filteredMahsulot = mahsulotData?.data.filter(
-          (item) => !item.maxviylik
+          (item) => !item.maxviylik && !item.it_park
         );
         setAllMahsulot(filteredMahsulot);
       } catch (error) {
@@ -97,20 +96,6 @@ const KomendantOmborXojalik = () => {
     setSelectedCategory(event.target.value);
   };
 
-  const handleMahsulotChange = (event) => {
-    const selectedValue = event.target.value;
-    if (selectedValue === "xojalik_bolimi") {
-      setMahsulot(allMahsulot.filter((item) => !item.it_park)); // Xo'jalik bo'limi mahsulotlari
-    } else if (selectedValue === "itpark") {
-      setMahsulot(allMahsulot.filter((item) => item.it_park)); // IT Park mahsulotlari
-    }
-  };
-
-  // Dastlabki holatda xojalik mahsulotlarini o'rnatamiz
-  useEffect(() => {
-    setMahsulot(allMahsulot.filter((item) => !item.it_park));
-  }, [allMahsulot]);
-
   const handleAddToCart = async (jamiItem, e) => {
     e.preventDefault(); // Sahifaning yangilanishini to'xtatish
     e.stopPropagation(); // Hamma boshqa eventlar ishlashini to'xtatish
@@ -118,7 +103,7 @@ const KomendantOmborXojalik = () => {
     const userId = Number(localStorage.getItem("userId"));
   
     // Mahsulotni topish va it_park qiymatini aniqlash
-    const mahsulotItem = mahsulot.find((item) => item.id === jamiItem.maxsulot);
+    const mahsulotItem = allMahsulot.find((item) => item.id === jamiItem.maxsulot);
     const isItPark = mahsulotItem?.it_park || false;
   
     if (!buyurtmaId) {
@@ -164,14 +149,6 @@ const KomendantOmborXojalik = () => {
       <div className="md:flex md:items-center justify-between">
         <div className="flex items-center justify-between mb-3 md:mb-0 w-full mr-3">
           <p className="text-2xl font-semibold text-[#004269]">Ombor</p>
-          <select
-            className="select select-info sm:w-full max-w-xs"
-            onChange={handleMahsulotChange}
-            defaultValue="xojalik_bolimi" // Dastlabki tanlangan qiymat
-          >
-            <option value="xojalik_bolimi">Xo'jalik bo'limi</option>
-            <option value="itpark">IT Park</option>
-          </select>
         </div>
         <select
           className="select select-info w-full md:max-w-xs"
@@ -200,13 +177,13 @@ const KomendantOmborXojalik = () => {
               <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
                 {jami
                   .filter((o) =>
-                    mahsulot
+                    allMahsulot
                       .filter((k) => k.kategoriya === item.id)
                       .map((item) => item.id)
                       .includes(o.maxsulot)
                   )
                   .map((jamiItem) => {
-                    const mahsulotItem = mahsulot.find(
+                    const mahsulotItem = allMahsulot.find(
                       (prod) => prod.id === jamiItem.maxsulot
                     );
                     const mahsulotNomi = mahsulotItem?.name || "Noma'lum";
@@ -254,7 +231,7 @@ const KomendantOmborXojalik = () => {
       {selectedItem && (
         <Modal
           selectedItem={selectedItem}
-          mahsulot={mahsulot}
+          mahsulot={allMahsulot}
           birlik={birlik}
           buyurtmaId={buyurtmaId}
           onClose={closeModal}

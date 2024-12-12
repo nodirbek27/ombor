@@ -10,11 +10,13 @@ import { CgClose } from "react-icons/cg";
 import logo from "../../assets/images/logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCartLength } from "../../redux/cartSlice";
+import { IoIosArrowDown } from "react-icons/io";
 
 const KomendantNavbar = () => {
   const [user, setUser] = useState([]);
   const [radUser, setRadUser] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(null);
   const [rejectedBuyurtma, setRejectedBuyurtma] = useState(null);
   const [rejectedMahsulotlar, setRejectedMahsulotlar] = useState(null);
   const [findRadUser, setFindRadUser] = useState(null);
@@ -123,6 +125,10 @@ const KomendantNavbar = () => {
     }
   };
 
+  const toggleDropdown = (menuId) => {
+    setShowDropdown(showDropdown === menuId ? null : menuId);
+  };
+
   return (
     <div className="">
       <div className="bg-white header sticky top-0 z-50 shadow-xl border-b-2">
@@ -143,22 +149,35 @@ const KomendantNavbar = () => {
               {menus.map(
                 (menu) =>
                   !menu.hidden && (
-                    <li key={menu.id} className="mr-3">
-                      <Link
-                        to={menu.link}
-                        className={`flex rounded-md p-2 cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md items-center gap-x-4
-                        ${
+                    <li key={menu.id} className="relative mr-3">
+                      <div
+                        className={`flex rounded-md p-2 cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md items-center gap-x-4 ${
                           location.pathname === menu.link ? "text-blue-700" : ""
                         }`}
+                        onClick={() =>
+                          menu.children
+                            ? toggleDropdown(menu.id)
+                            : navigate(menu.link)
+                        }
                       >
-                        <span
-                          className={`${
-                            !open && "hidden"
-                          } md:block origin-left duration-200`}
-                        >
-                          {menu.title}
-                        </span>
-                      </Link>
+                        <span>{menu.title}</span>
+                        {menu.children && <IoIosArrowDown />}
+                      </div>
+                      {/* Dropdown for children */}
+                      {menu.children && showDropdown === menu.id && (
+                        <ul className="absolute top-full left-0 mt-2 bg-white shadow-lg rounded-md border z-10">
+                          {menu.children.map((child) => (
+                            <li key={child.id}>
+                              <Link
+                                to={child.link}
+                                className="block px-4 py-2 hover:bg-gray-100 text-sm text-[#111] whitespace-nowrap"
+                              >
+                                {child.title}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </li>
                   )
               )}
@@ -190,24 +209,37 @@ const KomendantNavbar = () => {
                 {menus.map(
                   (menu) =>
                     !menu.hidden && (
-                      <li key={menu.id}>
-                        <Link
-                          to={menu.link}
-                          className={`w-full p-1 rounded-md cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md items-center gap-x-4 md:hidden
-                          ${
-                            location.pathname === menu.link && open
+                      <li key={menu.id} className="relative mr-3 md:hidden">
+                        <div
+                          className={`flex justify-between rounded-md p-2 cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md items-center gap-x-4 ${
+                            location.pathname === menu.link
                               ? "text-blue-700"
                               : ""
                           }`}
+                          onClick={() =>
+                            menu.children
+                              ? toggleDropdown(menu.id)
+                              : navigate(menu.link)
+                          }
                         >
-                          <span
-                            className={`${
-                              !open && "hidden"
-                            } md:block origin-left duration-200`}
-                          >
-                            {menu.title}
-                          </span>
-                        </Link>
+                          <span>{menu.title}</span>
+                          {menu.children && <IoIosArrowDown />}
+                        </div>
+                        {/* Dropdown for children */}
+                        {menu.children && showDropdown === menu.id && (
+                          <ul className="top-full left-0 mt-2 z-10">
+                            {menu.children.map((child) => (
+                              <li key={child.id} className="font-semibold text-md">
+                                <Link
+                                  to={child.link}
+                                  className="block px-4 py-2 hover:bg-gray-100 text-sm text-[#111]"
+                                >
+                                  {child.title}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                       </li>
                     )
                 )}
