@@ -38,7 +38,7 @@ const Login = ({ onLogin }) => {
           navigate("/omborchi/ombor");
         } else if (currentUser.komendant) {
           onLogin("komendant");
-          navigate("/komendant/ombor");
+          navigate("/komendant/ombor/xojalik-bolimi");
         } else if (currentUser.prorektor) {
           onLogin("prorektor");
           navigate("/prorektor/talabnoma");

@@ -135,7 +135,7 @@ const KomendantNavbar = () => {
         <div className="max-w-7xl mx-auto flex justify-between items-center p-4 relative">
           <div>
             <a
-              href="/komendant"
+              href="/komendant/ombor/xojalik-bolimi"
               className="logo flex items-start text-xl font-semibold"
             >
               <img className="mr-3" src={logo} alt="" />
@@ -161,7 +161,15 @@ const KomendantNavbar = () => {
                         }
                       >
                         <span>{menu.title}</span>
-                        {menu.children && <IoIosArrowDown />}
+                        {menu.children && (
+                          <IoIosArrowDown
+                            className={`transition-transform duration-300 ${
+                              showDropdown === menu.id
+                                ? "rotate-180"
+                                : "rotate-0"
+                            }`}
+                          />
+                        )}
                       </div>
                       {/* Dropdown for children */}
                       {menu.children && showDropdown === menu.id && (
@@ -223,13 +231,24 @@ const KomendantNavbar = () => {
                           }
                         >
                           <span>{menu.title}</span>
-                          {menu.children && <IoIosArrowDown />}
+                          {menu.children && (
+                            <IoIosArrowDown
+                              className={`transition-transform duration-300 ${
+                                showDropdown === menu.id
+                                  ? "rotate-180"
+                                  : "rotate-0"
+                              }`}
+                            />
+                          )}
                         </div>
                         {/* Dropdown for children */}
                         {menu.children && showDropdown === menu.id && (
                           <ul className="top-full left-0 mt-2 z-10">
                             {menu.children.map((child) => (
-                              <li key={child.id} className="font-semibold text-md">
+                              <li
+                                key={child.id}
+                                className="font-semibold text-md"
+                              >
                                 <Link
                                   to={child.link}
                                   className="block px-4 py-2 hover:bg-gray-100 text-sm text-[#111]"
