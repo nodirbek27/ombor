@@ -54,22 +54,35 @@ const Arxiv = () => {
 
   const handleSumbit = async (id) => {
     try {
-      const postData = { buyurtma: buyurtmalar.find((b) => b.id === id).id };
-      const response = await APITalabnoma.post(postData);
-
-      // Extract the PDF URL
-      const pdfUrl = response?.data?.talabnoma_pdf;
-
-      if (pdfUrl) {
-        // Open the PDF in a new tab
+      // Find the buyurtma object by id
+      const buyurtma = buyurtmalar.find((b) => b.id === id);
+  
+      // Check if a talabnoma already exists for this buyurtma
+      const talabnomaResponse = await APITalabnoma.get(`/${buyurtma.id}`);
+      
+      if (talabnomaResponse?.data?.talabnoma_pdf) {
+        // If talabnoma exists, open the existing PDF in a new tab
+        const pdfUrl = talabnomaResponse.data.talabnoma_pdf;
         window.open(pdfUrl, "_blank");
       } else {
-        console.error("No talabnoma PDF URL in response");
+        // If no talabnoma exists, post a new talabnoma
+        const postData = { buyurtma: buyurtma.id };
+        const response = await APITalabnoma.post(postData);
+  
+        // Extract the PDF URL from the response
+        const pdfUrl = response?.data?.talabnoma_pdf;
+  
+        if (pdfUrl) {
+          // Open the PDF in a new tab
+          window.open(pdfUrl, "_blank");
+        } else {
+          console.error("No talabnoma PDF URL in response");
+        }
       }
     } catch (err) {
       console.error("Error submitting buyurtma:", err);
     }
-  };
+  };  
 
   const indexOfLastBuyurtma = currentPage * itemsPerPage;
   const indexOfFirstBuyurtma = indexOfLastBuyurtma - itemsPerPage;
