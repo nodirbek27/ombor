@@ -49,6 +49,9 @@ import ItParkTalabnoma from "../pages/ItParkDashboard/Talabnoma";
 import NotFoundPage from "../pages/NotFoundPage";
 import Login from "../components/Login";
 
+// PDF Talabnoma
+import Talabnomalar from "../components/Talabnomalar";
+
 const Root = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState("");
@@ -76,6 +79,12 @@ const Root = () => {
 
   return (
     <Routes>
+      {/* TALABNOMALAR */}
+      <Route
+        path="/talabnomalar/:pk"
+        element={<Talabnomalar />}
+      />
+
       {/* SUPERADMIN */}
       <Route
         path="/superadmin/*"
