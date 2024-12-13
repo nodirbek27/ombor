@@ -8,18 +8,27 @@ const Talabnomalar = () => {
   useEffect(() => {
     const fetchTalabnoma = async () => {
       try {
-        // Make the API call
-        const response = await APITalabnoma.get(`/${pk}`);
-        const pdfUrl = response?.data?.talabnoma_pdf;
+        // Talabnomalarni olish
+        const response = await APITalabnoma.get();
+
+        // Buyurtmaga mos talabnomani topish
+        const talabnoma = response?.data?.find((b) => b.buyurtma === pk);
+
+        if (!talabnoma) {
+          console.error("Talabnoma topilmadi.");
+          return;
+        }
+
+        const pdfUrl = talabnoma.talabnoma_pdf;
 
         if (pdfUrl) {
-          // Open the PDF in a new tab
-          window.open(pdfUrl, "_blank");
+          // Foydalanuvchini PDF URL ga yo'naltirish
+            window.location.href = pdfUrl;
         } else {
-          console.error("PDF URL not found in response.");
+          console.error("PDF URL topilmadi.");
         }
       } catch (error) {
-        console.error("Error fetching Talabnoma:", error);
+        console.error("Talabnomani olishda xato:", error);
       }
     };
 
@@ -28,7 +37,7 @@ const Talabnomalar = () => {
 
   return (
     <div>
-      <p>PK: {pk}</p>
+      <p>Talabnoma ma'lumotlarini yuklash...</p>
     </div>
   );
 };

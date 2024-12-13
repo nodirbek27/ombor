@@ -20,16 +20,18 @@ const Arxiv = () => {
     const fetchData = async () => {
       try {
         const arxivResponse = await APIArxiv.get();
-  
+
         const buyurtmaResponse = await APIBuyurtma.get();
         const filteredBuyurtmalar = buyurtmaResponse?.data
           ?.reverse()
           .filter((item) => {
-            const isTasdiq = arxivResponse?.data.some((a) => a.buyurtma === item.id);
+            const isTasdiq = arxivResponse?.data.some(
+              (a) => a.buyurtma === item.id
+            );
             return !item.sorov && !item.active && isTasdiq;
           });
         setBuyurtmalar(filteredBuyurtmalar);
-  
+
         const userPromises = filteredBuyurtmalar.map((buyurtma) =>
           APIUsers.getbyId(`/${buyurtma.user}`).then((response) => {
             const user = response?.data;
@@ -40,38 +42,42 @@ const Arxiv = () => {
             };
           })
         );
-  
+
         const usersData = await Promise.all(userPromises);
         setUsers(Object.assign({}, ...usersData));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-  
+
     fetchData();
-  }, []); 
-  
+  }, []);
 
   const handleSumbit = async (id) => {
     try {
       // Find the buyurtma object by id
       const buyurtma = buyurtmalar.find((b) => b.id === id);
-  
+
       // Check if a talabnoma already exists for this buyurtma
-      const talabnomaResponse = await APITalabnoma.get(`/${buyurtma.id}`);
-      
-      if (talabnomaResponse?.data?.talabnoma_pdf) {
+      const talabnomaResponse = await APITalabnoma.get();
+
+      // Buyurtmaga mos talabnomani topish
+      const talabnoma = talabnomaResponse?.data?.find(
+        (b) => b.buyurtma === buyurtma.id
+      );
+
+      if (talabnoma?.talabnoma_pdf) {
         // If talabnoma exists, open the existing PDF in a new tab
-        const pdfUrl = talabnomaResponse.data.talabnoma_pdf;
+        const pdfUrl = talabnoma.talabnoma_pdf;
         window.open(pdfUrl, "_blank");
       } else {
         // If no talabnoma exists, post a new talabnoma
         const postData = { buyurtma: buyurtma.id };
         const response = await APITalabnoma.post(postData);
-  
+
         // Extract the PDF URL from the response
         const pdfUrl = response?.data?.talabnoma_pdf;
-  
+
         if (pdfUrl) {
           // Open the PDF in a new tab
           window.open(pdfUrl, "_blank");
@@ -82,7 +88,7 @@ const Arxiv = () => {
     } catch (err) {
       console.error("Error submitting buyurtma:", err);
     }
-  };  
+  };
 
   const indexOfLastBuyurtma = currentPage * itemsPerPage;
   const indexOfFirstBuyurtma = indexOfLastBuyurtma - itemsPerPage;

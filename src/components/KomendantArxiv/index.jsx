@@ -65,11 +65,16 @@ const KomendantArxiv = () => {
       const buyurtma = buyurtmalar.find((b) => b.id === id);
 
       // Check if a talabnoma already exists for this buyurtma
-      const talabnomaResponse = await APITalabnoma.get(`/${buyurtma.id}`);
+      const talabnomaResponse = await APITalabnoma.get();
 
-      if (talabnomaResponse?.data?.talabnoma_pdf) {
+      // Buyurtmaga mos talabnomani topish
+      const talabnoma = talabnomaResponse?.data?.find(
+        (b) => b.buyurtma === buyurtma.id
+      );
+
+      if (talabnoma?.talabnoma_pdf) {
         // If talabnoma exists, open the existing PDF in a new tab
-        const pdfUrl = talabnomaResponse.data.talabnoma_pdf;
+        const pdfUrl = talabnoma.talabnoma_pdf;
         window.open(pdfUrl, "_blank");
       } else {
         // If no talabnoma exists, post a new talabnoma
