@@ -21,6 +21,7 @@ const KomendantOmborXojalik = () => {
   const [selectedCategory, setSelectedCategory] = useState("Hammasi");
   const [selectedItem, setSelectedItem] = useState(null);
   const [buyurtmaId, setBuyurtmaId] = useState(null);
+  const [buyurtma, setBuyurtma] = useState(null);
 
   // Fetch buyurtma data and check if active buyurtma exists
   useEffect(() => {
@@ -34,6 +35,7 @@ const KomendantOmborXojalik = () => {
         // Set buyurtmaId if an active buyurtma exists
         if (filteredBuyurtma.length > 0) {
           setBuyurtmaId(filteredBuyurtma[0].id);
+          setBuyurtma(filteredBuyurtma[0]);
         }
       } catch (error) {
         console.error("Failed to fetch buyurtma", error);
@@ -105,8 +107,10 @@ const KomendantOmborXojalik = () => {
     // Mahsulotni topish va it_park qiymatini aniqlash
     const mahsulotItem = allMahsulot.find((item) => item.id === jamiItem.maxsulot);
     const isItPark = mahsulotItem?.it_park || false;
+    console.log(buyurtma);
+    
   
-    if (!buyurtmaId) {
+    if (!buyurtmaId || buyurtma?.sorov === true) {
       try {
         const response = await APIBuyurtma.post({
           active: true,
