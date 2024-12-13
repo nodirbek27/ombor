@@ -75,7 +75,7 @@ const KomendantSavatcha = () => {
           item.bugalter &&
           item.omborchi
       );
-      setBuyurtma(filteredBuyurtma || null);
+      setBuyurtma(filteredBuyurtma);
       setSorov(filteredSorovBuyurtma?.[0] || null);
       setProrektor(filteredProrektorBuyurtma?.[0] || null);
       setBugalter(filteredBugalterBuyurtma?.[0] || null);
@@ -85,7 +85,7 @@ const KomendantSavatcha = () => {
     } catch (error) {
       console.error("Failed to fetch buyurtma", error);
     }
-  };  
+  };
 
   useEffect(() => {
     getBuyurtma();
@@ -101,7 +101,7 @@ const KomendantSavatcha = () => {
       }
     };
     getSavat();
-  }, [buyurtma]);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -201,7 +201,7 @@ const KomendantSavatcha = () => {
             </div>
           ) : (
             <div>
-              {buyurtma?.map((b) => (
+              {Array.isArray(buyurtma) && buyurtma.map((b) => (
                 <div key={b.id} className="mb-5">
                   <div>
                     <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mb-5">

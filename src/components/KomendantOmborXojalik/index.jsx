@@ -100,16 +100,16 @@ const KomendantOmborXojalik = () => {
 
   const handleAddToCart = async (jamiItem, e) => {
     e.preventDefault(); // Sahifaning yangilanishini to'xtatish
-    e.stopPropagation(); // Hamma boshqa eventlar ishlashini to'xtatish
     setSelectedItem(jamiItem);
     const userId = Number(localStorage.getItem("userId"));
-  
+
     // Mahsulotni topish va it_park qiymatini aniqlash
-    const mahsulotItem = allMahsulot.find((item) => item.id === jamiItem.maxsulot);
+    const mahsulotItem = allMahsulot.find(
+      (item) => item.id === jamiItem.maxsulot
+    );
     const isItPark = mahsulotItem?.it_park || false;
     console.log(buyurtma);
-    
-  
+
     if (!buyurtmaId || buyurtma?.sorov === true) {
       try {
         const response = await APIBuyurtma.post({
@@ -136,7 +136,6 @@ const KomendantOmborXojalik = () => {
       }
     }
   };
-  
 
   const closeModal = () => setSelectedItem(null);
 

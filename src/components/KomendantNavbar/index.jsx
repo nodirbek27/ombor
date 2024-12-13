@@ -14,7 +14,7 @@ import { IoIosArrowDown } from "react-icons/io";
 
 const KomendantNavbar = () => {
   const [user, setUser] = useState([]);
-  const [radUser, setRadUser] = useState([]);
+  const [radUsers, setRadUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null);
   const [rejectedBuyurtma, setRejectedBuyurtma] = useState(null);
@@ -38,7 +38,7 @@ const KomendantNavbar = () => {
           (item) => item.user === userId && !item.sorov && item.active
         );
         if (filteredRadBuyurtma.length > 0) {
-          setRejectedBuyurtma(filteredRadBuyurtma[0]);
+          setRejectedBuyurtma(filteredRadBuyurtma);
           setShowModal(true);
         }
       } catch (error) {
@@ -53,7 +53,7 @@ const KomendantNavbar = () => {
       try {
         const response = await APIArxivRad.get();
         const filteredRadMahsulotlar = response?.data?.filter(
-          (item) => item.active && item.buyurtma === rejectedBuyurtma?.id
+          (item) => item.active && item.buyurtma === [0]?.id
         );
         if (filteredRadMahsulotlar.length > 0) {
           setRejectedMahsulotlar(filteredRadMahsulotlar);
@@ -65,7 +65,7 @@ const KomendantNavbar = () => {
       }
     };
     getRadMahsulotlar();
-  }, [rejectedBuyurtma?.id]);
+  }, [rejectedBuyurtma]);
 
   useEffect(() => {
     const getUserProfile = async () => {
@@ -73,12 +73,7 @@ const KomendantNavbar = () => {
         const userId = localStorage.getItem("userId");
         if (userId) {
           const response = await APIUsers.get();
-          const radQilganUser = response?.data.find(
-            (item) => item.id === findRadUser?.user
-          );
-          setRadUser(
-            radQilganUser?.first_name + " " + radQilganUser?.last_name
-          );
+          setRadUsers(response?.data);
           const loggedInUser = response.data.find(
             (item) => item.id === parseInt(userId)
           );
@@ -103,11 +98,11 @@ const KomendantNavbar = () => {
     navigate("/");
   };
 
-  const handleChange = async () => {
+  const handleChange = async (buyurtma) => {
     try {
-      if (rejectedBuyurtma) {
-        // Update the active status of the rejectedBuyurtma
-        await APIBuyurtma.patch(rejectedBuyurtma.id, { active: false });
+      if (buyurtma) {
+        // Update the active status of the buyurtma
+        await APIBuyurtma.patch(buyurtma.id, { active: false });
       }
 
       if (rejectedMahsulotlar && rejectedMahsulotlar.length > 0) {
@@ -277,19 +272,36 @@ const KomendantNavbar = () => {
       </div>
 
       {/* Modal for rejected order */}
-      {showModal && rejectedMahsulotlar && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="max-w-[320px] md:max-w-[450px] flex flex-col items-center border p-3 rounded bg-white">
-            <p className="text-red-500 italic md:text-lg mb-3 text-center">
-              Sizning {findRadUser?.buyurtma} raqamli buyurtmangizni{" "}
-              <strong>{radUser}</strong> rad etdi!
-            </p>
-            <button onClick={handleChange} className="btn btn-warning w-full">
-              OK
-            </button>
+      {showModal &&
+        rejectedBuyurtma.map((buyurtma) => (
+          <div
+            key={buyurtma.id}
+            className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50"
+          >
+            <div className="max-w-[320px] md:max-w-[450px] flex flex-col items-center border p-3 rounded bg-white">
+              <p className="text-red-500 italic md:text-lg mb-3 text-center">
+                Sizning {buyurtma.id} raqamli buyurtmangizni{" "}
+                <strong>
+                  {
+                    radUsers.find((user) => user.id === buyurtma.user)
+                      .first_name
+                  }{" "}
+                  {
+                    radUsers.find((user) => user.id === buyurtma.user)
+                      .last_name
+                  }
+                </strong>{" "}
+                rad etdi!
+              </p>
+              <button
+                onClick={() => handleChange(buyurtma)}
+                className="btn btn-warning w-full"
+              >
+                OK
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        ))}
 
       <div className="p-4 max-w-7xl mx-auto bg-white">
         <Outlet />
