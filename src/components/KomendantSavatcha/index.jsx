@@ -158,14 +158,13 @@ const KomendantSavatcha = () => {
     try {
       if (id) {
         const postData = {
-          // ...buyurtma,
           active: true,
           sorov: true,
           omborchi: false,
         };
 
         // Update the specific buyurtma by ID
-        await APIBuyurtma.patch(`/${id}`, postData);
+        await APIBuyurtma.patch(`${id}`, postData);
         // Update the state to reflect the changes
         setBuyurtma((prevBuyurtma) => ({
           ...prevBuyurtma,

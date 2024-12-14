@@ -35,7 +35,8 @@ const KomendantNavbar = () => {
         const userId = Number(localStorage.getItem("userId"));
         const response = await APIBuyurtma.get();
         const filteredRadBuyurtma = response?.data?.filter(
-          (item) => item.user === userId && !item.sorov && item.active
+          (item) =>
+            item.user === userId && !item.sorov && item.active && item.rad
         );
         if (filteredRadBuyurtma.length > 0) {
           setRejectedBuyurtma(filteredRadBuyurtma);
@@ -102,7 +103,7 @@ const KomendantNavbar = () => {
     try {
       if (buyurtma) {
         // Update the active status of the buyurtma
-        await APIBuyurtma.patch(buyurtma.id, { active: false });
+        await APIBuyurtma.patch(buyurtma.id, { active: false, rad: false });
       }
 
       if (rejectedMahsulotlar && rejectedMahsulotlar.length > 0) {
@@ -286,10 +287,7 @@ const KomendantNavbar = () => {
                     radUsers.find((user) => user.id === buyurtma.user)
                       .first_name
                   }{" "}
-                  {
-                    radUsers.find((user) => user.id === buyurtma.user)
-                      .last_name
-                  }
+                  {radUsers.find((user) => user.id === buyurtma.user).last_name}
                 </strong>{" "}
                 rad etdi!
               </p>

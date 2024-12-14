@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://omborxona2024.pythonanywhere.com/",
+  baseURL: "https://apiombor.kspi.uz/",
   headers: {
     "Content-Type": "multipart/form-data",
     Accept: "application/json",
@@ -35,9 +35,12 @@ axiosInstance.interceptors.response.use(
 const refreshToken = async () => {
   try {
     const refreshToken = localStorage.getItem("refreshToken");
-    const res = await axios.post("https://omborxona2024.pythonanywhere.com/api/token/refresh/", {
-      refresh: refreshToken,
-    });
+    const res = await axios.post(
+      "https://apiombor.kspi.uz/api/token/refresh/",
+      {
+        refresh: refreshToken,
+      }
+    );
     const token = res.data.access;
     if (token) {
       localStorage.setItem("token", token);
