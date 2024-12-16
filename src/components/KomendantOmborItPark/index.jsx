@@ -132,22 +132,22 @@ const KomendantOmborItPark = () => {
 
   return (
     <div>
-      <div className="md:flex md:items-center justify-between">
+      <div className="flex items-center justify-between">
         <div className="flex items-center justify-between mb-3 md:mb-0 w-full mr-3">
-          <p className="text-2xl font-semibold text-[#004269]">Ombor</p>
+          <p className="text-2xl font-semibold text-[#004269] mr-5">Ombor</p>
+          <select
+            className="select select-info w-full max-w-xs"
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+          >
+            <option value="Hammasi">Hammasi</option>
+            {category.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
         </div>
-        <select
-          className="select select-info w-full md:max-w-xs"
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-        >
-          <option value="Hammasi">Hammasi</option>
-          {category.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
       </div>
       <div className={`${isClose && "hidden"}`}>
         {category

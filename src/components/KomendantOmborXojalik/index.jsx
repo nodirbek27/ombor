@@ -131,12 +131,11 @@ const KomendantOmborXojalik = () => {
 
   return (
     <div>
-      <div className="md:flex md:items-center justify-between">
+      <div className="flex items-center justify-between">
         <div className="flex items-center justify-between mb-3 md:mb-0 w-full mr-3">
-          <p className="text-2xl font-semibold text-[#004269]">Ombor</p>
-        </div>
+          <p className="text-2xl font-semibold text-[#004269] mr-5">Ombor</p>
         <select
-          className="select select-info w-full md:max-w-xs"
+          className="select select-info w-full max-w-xs"
           value={selectedCategory}
           onChange={handleCategoryChange}
         >
@@ -147,6 +146,7 @@ const KomendantOmborXojalik = () => {
             </option>
           ))}
         </select>
+        </div>
       </div>
       <div className={`${isClose && "hidden"}`}>
         {category
