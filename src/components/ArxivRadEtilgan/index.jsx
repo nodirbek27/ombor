@@ -37,7 +37,7 @@ const ArxivRadEtilgan = () => {
         setBuyurtmalar(filteredBuyurtmalar);
 
         const userPromises = filteredBuyurtmalar.map((buyurtma) =>
-          APIUsers.getbyId(`/${buyurtma.user}`).then((response) => {
+          APIUsers.getbyId(`${buyurtma.user}`).then((response) => {
             const user = response?.data;
             return {
               [buyurtma.user]: `${user?.first_name || "Noma'lum"} ${

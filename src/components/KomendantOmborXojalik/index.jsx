@@ -21,28 +21,6 @@ const KomendantOmborXojalik = () => {
   const [selectedCategory, setSelectedCategory] = useState("Hammasi");
   const [selectedItem, setSelectedItem] = useState(null);
   const [buyurtmaId, setBuyurtmaId] = useState(null);
-  const [buyurtma, setBuyurtma] = useState(null);
-
-  // Fetch buyurtma data and check if active buyurtma exists
-  useEffect(() => {
-    const getBuyurtma = async () => {
-      try {
-        const userId = Number(localStorage.getItem("userId"));
-        const response = await APIBuyurtma.get();
-        const filteredBuyurtma = response?.data?.filter(
-          (item) => item.user === userId && item.active
-        );
-        // Set buyurtmaId if an active buyurtma exists
-        if (filteredBuyurtma.length > 0) {
-          setBuyurtmaId(filteredBuyurtma[0].id);
-          setBuyurtma(filteredBuyurtma[0]);
-        }
-      } catch (error) {
-        console.error("Failed to fetch buyurtma", error);
-      }
-    };
-    getBuyurtma();
-  }, []);
 
   useEffect(() => {
     if (yopish && yopish.length > 0) {
@@ -99,44 +77,48 @@ const KomendantOmborXojalik = () => {
   };
 
   const handleAddToCart = async (jamiItem, e) => {
-    e.preventDefault(); // Sahifaning yangilanishini to'xtatish
+    e.preventDefault(); // Prevent page refresh
     setSelectedItem(jamiItem);
     const userId = Number(localStorage.getItem("userId"));
 
-    // Mahsulotni topish va it_park qiymatini aniqlash
+    // Find the mahsulot and check its it_park property
     const mahsulotItem = allMahsulot.find(
       (item) => item.id === jamiItem.maxsulot
     );
     const isItPark = mahsulotItem?.it_park || false;
-    console.log(buyurtma);
 
-    if (!buyurtmaId || buyurtma?.sorov === true) {
-      try {
-        const response = await APIBuyurtma.post({
+    try {
+      // Check for buyurtma with sorov === false
+      const response = await APIBuyurtma.get();
+      const activeBuyurtma = response?.data.find(
+        (item) => item.user === userId && item.sorov === false && item.active
+      );
+
+      if (activeBuyurtma) {
+        // If an active buyurtma with sorov === false exists
+        setBuyurtmaId(activeBuyurtma.id);
+      } else {
+        // If no buyurtma with sorov === false exists, create a new one
+        const newBuyurtma = await APIBuyurtma.post({
           active: true,
           user: userId,
           sorov: false,
           maxsulot_it_park: isItPark,
         });
-        setBuyurtmaId(response.data.id);
-      } catch (error) {
-        console.error("Error posting Buyurtma:", error);
+        setBuyurtmaId(newBuyurtma.data.id);
       }
-    } else {
-      // If savat length is 0, update the maxsulot_it_park value via PUT request
-      if (savat?.length === 0) {
-        try {
-          await APIBuyurtma.patch(buyurtmaId, {
-            maxsulot_it_park: isItPark, // Update the maxsulot_it_park field
-            user: userId,
-          });
-        } catch (error) {
-          console.error("Error updating Buyurtma:", error);
-        }
+
+      // Update the maxsulot_it_park value if savat length is 0
+      if (savat?.length === 0 && buyurtmaId) {
+        await APIBuyurtma.patch(buyurtmaId, {
+          maxsulot_it_park: isItPark,
+          user: userId,
+        });
       }
+    } catch (error) {
+      console.error("Error handling Buyurtma:", error);
     }
   };
-
   const closeModal = () => setSelectedItem(null);
 
   if (loading) {

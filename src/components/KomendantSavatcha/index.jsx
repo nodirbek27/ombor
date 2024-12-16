@@ -200,129 +200,130 @@ const KomendantSavatcha = () => {
             </div>
           ) : (
             <div>
-              {Array.isArray(buyurtma) && buyurtma.map((b) => (
-                <div key={b.id} className="mb-5">
-                  <div>
-                    <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mb-5">
-                      {savat
-                        .filter((item) => item.buyurtma === b.id)
-                        .map((item) => (
-                          <div
-                            key={item.id}
-                            className="border p-4 rounded-lg bg-slate-50"
-                          >
-                            <h3 className="font-semibold">
-                              {getMahsulotName(item.maxsulot)}
-                            </h3>
-                            <div className="flex items-center gap-2">
-                              <div>
-                                {editingItem === item.id ? (
-                                  <label className="max-w-[200px] flex items-center gap-2 mb-2">
-                                    Miqdori:
-                                    <input
-                                      type="number"
-                                      min="0"
-                                      className="p-1"
-                                      value={editedQuantity}
-                                      onChange={(e) =>
-                                        setEditedQuantity(e.target.value)
-                                      }
-                                    />
-                                  </label>
-                                ) : (
-                                  item.qiymat
-                                )}
+              {Array.isArray(buyurtma) &&
+                buyurtma.map((b) => (
+                  <div key={b.id} className="mb-5">
+                    <div>
+                      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mb-5">
+                        {savat
+                          .filter((item) => item.buyurtma === b.id)
+                          .map((item) => (
+                            <div
+                              key={item.id}
+                              className="border p-4 rounded-lg bg-slate-50"
+                            >
+                              <h3 className="font-semibold">
+                                {getMahsulotName(item.maxsulot)}
+                              </h3>
+                              <div className="flex items-center gap-2">
+                                <div>
+                                  {editingItem === item.id ? (
+                                    <label className="max-w-[200px] flex items-center gap-2 mb-2">
+                                      Miqdori:
+                                      <input
+                                        type="number"
+                                        min="0"
+                                        className="p-1"
+                                        value={editedQuantity}
+                                        onChange={(e) =>
+                                          setEditedQuantity(e.target.value)
+                                        }
+                                      />
+                                    </label>
+                                  ) : (
+                                    item.qiymat
+                                  )}
+                                </div>
+                                {getBirlikName(item.birlik)}
                               </div>
-                              {getBirlikName(item.birlik)}
-                            </div>
-                            <div className="flex items-center justify-end">
-                              <div className="flex items-center">
-                                {editingItem === item.id ? (
-                                  <div className="flex items-center">
+                              <div className="flex items-center justify-end">
+                                <div className="flex items-center">
+                                  {editingItem === item.id ? (
+                                    <div className="flex items-center">
+                                      <button
+                                        className="mr-5 bg-blue-400 hover:bg-blue-500 p-1 rounded text-white cursor-pointer transition-colors duration-300"
+                                        onClick={() => handleSave(item.id)}
+                                      >
+                                        Saqlash
+                                      </button>
+                                    </div>
+                                  ) : (
                                     <button
-                                      className="mr-5 bg-blue-400 hover:bg-blue-500 p-1 rounded text-white cursor-pointer transition-colors duration-300"
-                                      onClick={() => handleSave(item.id)}
+                                      className="mr-5 cursor-pointer"
+                                      onClick={() => handleEdit(item)}
                                     >
-                                      Saqlash
+                                      <CiEdit className="w-5 h-auto text-green-400" />
                                     </button>
-                                  </div>
-                                ) : (
-                                  <button
-                                    className="mr-5 cursor-pointer"
-                                    onClick={() => handleEdit(item)}
-                                  >
-                                    <CiEdit className="w-5 h-auto text-green-400" />
-                                  </button>
-                                )}
+                                  )}
+                                </div>
+                                <button
+                                  className={`cursor-pointer ${
+                                    b.sorov && "hidden"
+                                  }`}
+                                  onClick={() => handleDelete(item.id)}
+                                >
+                                  <RiDeleteBin5Line className="w-5 h-auto text-red-400" />
+                                </button>
                               </div>
-                              <button
-                                className={`cursor-pointer ${
-                                  b.sorov && "hidden"
-                                }`}
-                                onClick={() => handleDelete(item.id)}
-                              >
-                                <RiDeleteBin5Line className="w-5 h-auto text-red-400" />
-                              </button>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                      </div>
+                      {/* Only show submit button if the cart for this order is not empty */}
+                      {savat.some((item) => item.buyurtma === b.id) && (
+                        <button
+                          onClick={() => handleSumbit(b.id)}
+                          disabled={b?.sorov}
+                          className={`btn w-full bg-blue-400 hover:bg-blue-500 transition-colors duration-300 text-white ${
+                            b?.sorov ? "opacity-50 cursor-not-allowed" : ""
+                          }`}
+                        >
+                          So'rov yuborish
+                        </button>
+                      )}
                     </div>
-                    {/* Only show submit button if the cart for this order is not empty */}
-                    {savat.some((item) => item.buyurtma === b.id) && (
-                      <button
-                        onClick={() => handleSumbit(b.id)}
-                        disabled={b?.sorov}
-                        className={`btn w-full bg-blue-400 hover:bg-blue-500 transition-colors duration-300 text-white ${
-                          b?.sorov ? "opacity-50 cursor-not-allowed" : ""
-                        }`}
-                      >
-                        So'rov yuborish
-                      </button>
-                    )}
+                    {/* Tasdiqlanish jarayonida */}
+                    <div
+                      className={`flex flex-col text-center my-4 ${
+                        !b.sorov && "hidden"
+                      }`}
+                    >
+                      <h2 className="text-xl text-gray-700 font-medium italic my-4">
+                        Tasdiqlanish jarayonida
+                      </h2>
+                      {/* Timeline */}
+                      <ul className="steps steps-vertical md:steps-horizontal">
+                        <li
+                          data-content={itPark || xojalik ? "✓" : "?"}
+                          className={`step ${
+                            itPark || xojalik ? "step-accent" : ""
+                          }`}
+                        >
+                          {sorov?.maxsulot_it_park === true
+                            ? "IT Park"
+                            : "Xo'jalik bo'limi"}
+                        </li>
+                        <li
+                          data-content={`${prorektor ? "✓" : "?"}`}
+                          className={`step ${prorektor && "step-accent"}`}
+                        >
+                          Prorektor
+                        </li>
+                        <li
+                          data-content={`${bugalter ? "✓" : "?"}`}
+                          className={`step ${bugalter && "step-accent"}`}
+                        >
+                          Bugalter
+                        </li>
+                        <li
+                          data-content={`${omborchi ? "✓" : "?"}`}
+                          className={`step ${omborchi && "step-accent"}`}
+                        >
+                          Omborchi
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-                  {/* Tasdiqlanish jarayonida */}
-                  <div
-                    className={`flex flex-col text-center my-4 ${
-                      !b.sorov && "hidden"
-                    }`}
-                  >
-                    <h2 className="text-xl text-gray-700 font-medium italic my-4">
-                      Tasdiqlanish jarayonida
-                    </h2>
-                    {/* Timeline */}
-                    <ul className="steps steps-vertical md:steps-horizontal">
-                      <li
-                        data-content={itPark || xojalik ? "✓" : "?"}
-                        className={`step ${
-                          itPark || xojalik ? "step-accent" : ""
-                        }`}
-                      >
-                        {sorov?.maxsulot_it_park === true
-                          ? "IT Park"
-                          : "Xo'jalik bo'limi"}
-                      </li>
-                      <li
-                        data-content={`${prorektor ? "✓" : "?"}`}
-                        className={`step ${prorektor && "step-accent"}`}
-                      >
-                        Prorektor
-                      </li>
-                      <li
-                        data-content={`${bugalter ? "✓" : "?"}`}
-                        className={`step ${bugalter && "step-accent"}`}
-                      >
-                        Bugalter
-                      </li>
-                      <li
-                        data-content={`${omborchi ? "✓" : "?"}`}
-                        className={`step ${omborchi && "step-accent"}`}
-                      >
-                        Omborchi
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           )}
         </div>

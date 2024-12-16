@@ -25,7 +25,7 @@ const ItParkTalabnoma = () => {
       setBuyurtmalar(filteredBuyurtmalar);
       // Fetch user data for each buyurtma
       const userPromises = filteredBuyurtmalar.map((buyurtma) =>
-        APIUsers.getbyId(`/${buyurtma.user}`).then((response) => {
+        APIUsers.getbyId(`${buyurtma.user}`).then((response) => {
           const user = response?.data;
           return {
             [buyurtma.user]: `${user?.first_name || "Noma'lum"} ${
@@ -115,9 +115,10 @@ const ItParkTalabnoma = () => {
         sorov: action === "approve",
         active: true,
         it_park: action === "approve",
+        rad: action === "reject",
       };
 
-      await APIBuyurtma.patch(`/${buyurtmaId}`, updatedBuyurtma);
+      await APIBuyurtma.patch(`${buyurtmaId}`, updatedBuyurtma);
       await getBuyurtmalar();
 
       // Update state to remove processed buyurtma and savat

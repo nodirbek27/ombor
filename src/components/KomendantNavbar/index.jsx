@@ -13,12 +13,12 @@ import { fetchCartLength } from "../../redux/cartSlice";
 import { IoIosArrowDown } from "react-icons/io";
 
 const KomendantNavbar = () => {
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState(null);
   const [radUsers, setRadUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null);
-  const [rejectedBuyurtma, setRejectedBuyurtma] = useState(null);
-  const [rejectedMahsulotlar, setRejectedMahsulotlar] = useState(null);
+  const [rejectedBuyurtma, setRejectedBuyurtma] = useState([]);
+  const [rejectedMahsulotlar, setRejectedMahsulotlar] = useState([]);
   const [findRadUser, setFindRadUser] = useState(null);
   const dispatch = useDispatch();
   const cartLength = useSelector((state) => state.cart.cartLength);
@@ -29,6 +29,7 @@ const KomendantNavbar = () => {
 
   const navigate = useNavigate();
 
+  // Fetch rejected buyurtma
   useEffect(() => {
     const getBuyurtma = async () => {
       try {
@@ -49,12 +50,16 @@ const KomendantNavbar = () => {
     getBuyurtma();
   }, []);
 
+  // Fetch rejected mahsulotlar
   useEffect(() => {
     const getRadMahsulotlar = async () => {
       try {
         const response = await APIArxivRad.get();
+        // *** TUZATISH: To'g'ri buyurtma ID sini olish ***
+        // Agar siz barcha buyurtmalarni ko'rib chiqayotgan bo'lsangiz, u holda quyidagi kabi qilish mumkin:
+        const buyurtmaIds = rejectedBuyurtma.map((b) => b.id);
         const filteredRadMahsulotlar = response?.data?.filter(
-          (item) => item.active && item.buyurtma === [0]?.id
+          (item) => item.active && buyurtmaIds.includes(item.buyurtma)
         );
         if (filteredRadMahsulotlar.length > 0) {
           setRejectedMahsulotlar(filteredRadMahsulotlar);
@@ -62,19 +67,22 @@ const KomendantNavbar = () => {
           setShowModal(true);
         }
       } catch (error) {
-        console.error("Failed to fetch buyurtma", error);
+        console.error("Failed to fetch mahsulotlar", error);
       }
     };
-    getRadMahsulotlar();
+    if (rejectedBuyurtma.length > 0) {
+      getRadMahsulotlar();
+    }
   }, [rejectedBuyurtma]);
 
+  // Fetch user profile
   useEffect(() => {
     const getUserProfile = async () => {
       try {
         const userId = localStorage.getItem("userId");
         if (userId) {
           const response = await APIUsers.get();
-          setRadUsers(response?.data);
+          setRadUsers(response?.data || []);
           const loggedInUser = response.data.find(
             (item) => item.id === parseInt(userId)
           );
@@ -112,10 +120,12 @@ const KomendantNavbar = () => {
             APIArxivRad.patch(item.id, { active: false })
           )
         );
-        setShowModal(false);
-        setRejectedBuyurtma(null);
-        setRejectedMahsulotlar(null);
       }
+
+      // Yangi buyurtma yoki mahsulotlar holatini yangilagandan so'ng modalni yopish
+      setShowModal(false);
+      setRejectedBuyurtma([]);
+      setRejectedMahsulotlar([]);
     } catch (error) {
       console.error("Failed to update rejected mahsulotlar", error);
     }
@@ -130,13 +140,13 @@ const KomendantNavbar = () => {
       <div className="bg-white header sticky top-0 z-50 shadow-xl border-b-2">
         <div className="max-w-7xl mx-auto flex justify-between items-center p-4 relative">
           <div>
-            <a
-              href="/komendant/ombor/xojalik-bolimi"
+            <Link
+              to="/komendant/ombor/xojalik-bolimi"
               className="logo flex items-start text-xl font-semibold"
             >
-              <img className="mr-3" src={logo} alt="" />
+              <img className="mr-3" src={logo} alt="Logo" />
               QDPI <br /> Ombor
-            </a>
+            </Link>
           </div>
 
           <div className="flex items-center">
@@ -197,9 +207,13 @@ const KomendantNavbar = () => {
                   </span>
                 </div>
               </Link>
-              <Link className="mr-5 text-2xl" onClick={() => setOpen(!open)}>
+              <button
+                className="mr-5 text-2xl"
+                onClick={() => setOpen(!open)}
+                aria-label="Toggle Menu"
+              >
                 {open ? <CgClose /> : <RiMenu2Fill />}
-              </Link>
+              </button>
 
               {/* Mobile menu */}
               <ul
@@ -208,7 +222,9 @@ const KomendantNavbar = () => {
                 }`}
               >
                 <li className="p-1 rounded-md cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md items-center gap-x-4">
-                  {user.first_name} {user.last_name}
+                  {user
+                    ? `${user.first_name} ${user.last_name}`
+                    : "Foydalanuvchi"}
                 </li>
                 {menus.map(
                   (menu) =>
@@ -260,7 +276,7 @@ const KomendantNavbar = () => {
                 )}
                 <li>
                   <button
-                    className="p-1 rounded-md cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md items-center gap-x-4"
+                    className="w-full text-left p-1 rounded-md cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md"
                     onClick={onLogOut}
                   >
                     Chiqish
@@ -270,39 +286,44 @@ const KomendantNavbar = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Modal for rejected order */}
-      {showModal &&
-        rejectedBuyurtma.map((buyurtma) => (
-          <div
-            key={buyurtma.id}
-            className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50"
-          >
-            <div className="max-w-[320px] md:max-w-[450px] flex flex-col items-center border p-3 rounded bg-white">
-              <p className="text-red-500 italic md:text-lg mb-3 text-center">
-                Sizning {buyurtma.id} raqamli buyurtmangizni{" "}
-                <strong>
-                  {
-                    radUsers.find((user) => user.id === buyurtma.user)
-                      .first_name
-                  }{" "}
-                  {radUsers.find((user) => user.id === buyurtma.user).last_name}
-                </strong>{" "}
-                rad etdi!
-              </p>
-              <button
-                onClick={() => handleChange(buyurtma)}
-                className="btn btn-warning w-full"
-              >
-                OK
-              </button>
+        {/* Modal for rejected order */}
+        {showModal && rejectedBuyurtma.length > 0 && (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+            <div className="max-w-[320px] md:max-w-[450px] flex flex-col items-center border p-6 rounded bg-white">
+              {rejectedBuyurtma.map((buyurtma) => {
+                const rejectedMahsulot = rejectedMahsulotlar.find(
+                  (rM) => rM.buyurtma === buyurtma.id
+                );
+                const radUser = radUsers.find(
+                  (u) => u.id === rejectedMahsulot?.user
+                );
+                return (
+                  <div key={buyurtma.id} className="w-full text-center mb-3">
+                    <p className="text-red-500 italic md:text-lg">
+                      Sizning <strong>{buyurtma.id}</strong> raqamli
+                      buyurtmangizni{" "}
+                      <strong>
+                        {radUser ? `${radUser?.first_name} ${radUser?.last_name}` : "Yuklanmoqda..."}
+                      </strong>{" "}
+                      rad etdi!
+                    </p>
+                    <button
+                      onClick={() => handleChange(buyurtma)}
+                      className="btn btn-warning w-full mt-4"
+                    >
+                      Yopish
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
-        ))}
+        )}
 
-      <div className="p-4 max-w-7xl mx-auto bg-white">
-        <Outlet />
+        <div className="p-4 max-w-7xl mx-auto bg-white">
+          <Outlet />
+        </div>
       </div>
     </div>
   );
