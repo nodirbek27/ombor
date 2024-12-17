@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addToCart, fetchCartLength } from "../../redux/cartSlice";
 
-const Modal = ({ selectedItem, mahsulot, birlik, buyurtmaId, onClose }) => {
+const Modal = ({
+  selectedItem,
+  mahsulot,
+  birlik,
+  buyurtmaId,
+  yakuniyQiymat,
+  onClose,
+}) => {
   const [quantity, setQuantity] = useState("");
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
@@ -18,7 +25,25 @@ const Modal = ({ selectedItem, mahsulot, birlik, buyurtmaId, onClose }) => {
   const birlikId =
     birlik.find((unit) => unit.id === selectedItem?.birlik)?.id || "Noma'lum";
 
-  const handleQuantityChange = (e) => setQuantity(e.target.value);
+  // Handle input change with validation
+  const handleQuantityChange = (e) => {
+    const value = e.target.value;
+
+    if (value === "") {
+      setQuantity("");
+      setError(null);
+      return;
+    }
+
+    // Ensure value does not exceed yakuniyQiymat
+    if (parseFloat(value) > yakuniyQiymat) {
+      setError(`Miqdor ${yakuniyQiymat} dan katta bo'lishi mumkin emas!`);
+    } else {
+      setError(null);
+    }
+
+    setQuantity(value);
+  };
 
   const handleAddToCart = async (e) => {
     e.preventDefault();

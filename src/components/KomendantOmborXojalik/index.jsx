@@ -219,6 +219,7 @@ const KomendantOmborXojalik = () => {
           mahsulot={allMahsulot}
           birlik={birlik}
           buyurtmaId={buyurtmaId}
+          yakuniyQiymat={selectedItem.yakuniy_qiymat}
           onClose={closeModal}
         />
       )}
