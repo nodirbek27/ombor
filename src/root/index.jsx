@@ -81,7 +81,7 @@ const Root = () => {
     <Routes>
       {/* TALABNOMALAR */}
       <Route
-        path="/talabnomalar/:pk"
+        path="/talabnoma/:pk"
         element={<Talabnomalar />}
       />
 

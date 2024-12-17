@@ -7,6 +7,7 @@ import APICategory from "../../services/category";
 import APIMahsulot from "../../services/mahsulot";
 import APIBirlik from "../../services/birlik";
 import { MdOutlineAddCard } from "react-icons/md";
+import * as XLSX from "xlsx";
 
 const AdminOmbor = () => {
   const [jami, setJami] = useState([]);
@@ -81,6 +82,43 @@ const AdminOmbor = () => {
     formik.setFieldValue("mahsulot", "");
   };
 
+  // Excel faylni yaratish funksiyasi
+  const handleExportToExcel = () => {
+    const exportData = [];
+
+    category.forEach((item) => {
+      jami
+        .filter((o) =>
+          mahsulot
+            .filter((k) => k.kategoriya === item.id)
+            .map((prod) => prod.id)
+            .includes(o.maxsulot)
+        )
+        .forEach((jamiItem) => {
+          const mahsulotItem = mahsulot.find(
+            (prod) => prod.id === jamiItem.maxsulot
+          );
+          const birlikNomi =
+            birlik.find((unit) => unit.id === jamiItem.birlik)?.name ||
+            "Noma'lum";
+
+          exportData.push({
+            Kategoriya: item.name,
+            Mahsulot: mahsulotItem?.name || "Noma'lum",
+            "Miqdor": jamiItem.yakuniy_qiymat,
+            Birlik: birlikNomi,
+          });
+        });
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Ombor");
+
+    // Faylni yuklash
+    XLSX.writeFile(workbook, "ombor_ma'lumotlari.xlsx");
+  };
+
   if (loading) {
     return (
       <div className="w-full h-[80vh] flex items-center justify-center">
@@ -93,17 +131,25 @@ const AdminOmbor = () => {
     <div>
       <div className="flex items-center justify-between p-4">
         <p className="text-xl font-semibold text-[#004269]">Ombor</p>
-        <button
-          className="btn flex items-center bg-blue-400 hover:bg-blue-500 text-white"
-          onClick={() => {
-            formik.resetForm();
-            setFilteredMahsulot([]);
-            modalRef.current.showModal();
-          }}
-        >
-          <MdOutlineAddCard className="mr-1 w-4 h-auto" />
-          Qo'shish
-        </button>
+        <div className="flex items-center">
+          <button
+            onClick={handleExportToExcel}
+            className="btn flex items-center bg-green-500 hover:bg-green-600 text-white mr-3"
+          >
+            Excelga Yuklash
+          </button>
+          <button
+            className="btn flex items-center bg-blue-400 hover:bg-blue-500 text-white"
+            onClick={() => {
+              formik.resetForm();
+              setFilteredMahsulot([]);
+              modalRef.current.showModal();
+            }}
+          >
+            <MdOutlineAddCard className="mr-1 w-4 h-auto" />
+            Qo'shish
+          </button>
+        </div>
       </div>
 
       {/* Modal for adding/editing items */}
