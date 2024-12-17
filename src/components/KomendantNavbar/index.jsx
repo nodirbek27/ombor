@@ -215,7 +215,7 @@ const KomendantNavbar = () => {
 
               {/* Mobile menu */}
               <ul
-                className={`absolute border-2 top-14 right-8 rounded-md p-3 bg-white ${
+                className={`absolute border-2 top-14 right-8 rounded-md p-3 bg-white z-10 ${
                   !open && "hidden"
                 }`}
               >
