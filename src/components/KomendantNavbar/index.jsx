@@ -30,23 +30,22 @@ const KomendantNavbar = () => {
   const navigate = useNavigate();
 
   // Fetch rejected buyurtma
-  useEffect(() => {
-    const getBuyurtma = async () => {
-      try {
-        const userId = Number(localStorage.getItem("userId"));
-        const response = await APIBuyurtma.get();
-        const filteredRadBuyurtma = response?.data?.filter(
-          (item) =>
-            item.user === userId && !item.sorov && item.active && item.rad
-        );
-        if (filteredRadBuyurtma.length > 0) {
-          setRejectedBuyurtma(filteredRadBuyurtma);
-          setShowModal(true);
-        }
-      } catch (error) {
-        console.error("Failed to fetch buyurtma", error);
+  const getBuyurtma = async () => {
+    try {
+      const userId = Number(localStorage.getItem("userId"));
+      const response = await APIBuyurtma.get();
+      const filteredRadBuyurtma = response?.data?.filter(
+        (item) => item.user === userId && !item.sorov && item.active && item.rad
+      );
+      if (filteredRadBuyurtma.length > 0) {
+        setRejectedBuyurtma(filteredRadBuyurtma);
+        setShowModal(true);
       }
-    };
+    } catch (error) {
+      console.error("Failed to fetch buyurtma", error);
+    }
+  };
+  useEffect(() => {
     getBuyurtma();
   }, []);
 
@@ -124,8 +123,7 @@ const KomendantNavbar = () => {
 
       // Yangi buyurtma yoki mahsulotlar holatini yangilagandan so'ng modalni yopish
       setShowModal(false);
-      setRejectedBuyurtma([]);
-      setRejectedMahsulotlar([]);
+      getBuyurtma();
     } catch (error) {
       console.error("Failed to update rejected mahsulotlar", error);
     }
@@ -288,18 +286,22 @@ const KomendantNavbar = () => {
         </div>
 
         {/* Modal for rejected order */}
-        {showModal && rejectedBuyurtma.length > 0 && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-            <div className="max-w-[320px] md:max-w-[450px] flex flex-col items-center border p-6 rounded bg-white">
-              {rejectedBuyurtma.map((buyurtma) => {
-                const rejectedMahsulot = rejectedMahsulotlar.find(
-                  (rM) => rM.buyurtma === buyurtma.id
-                );
-                const radUser = radUsers.find(
-                  (u) => u.id === rejectedMahsulot?.user
-                );
-                return (
-                  <div key={buyurtma.id} className="w-full text-center mb-3">
+        {showModal &&
+          rejectedBuyurtma.length > 0 &&
+          rejectedBuyurtma.map((buyurtma) => {
+            const rejectedMahsulot = rejectedMahsulotlar.find(
+              (rM) => rM.buyurtma === buyurtma.id
+            );
+            const radUser = radUsers.find(
+              (u) => u.id === rejectedMahsulot?.user
+            );
+            return (
+              <div
+                key={buyurtma.id}
+                className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 mb-3"
+              >
+                <div className="max-w-[320px] md:max-w-[450px] flex flex-col items-center border p-6 rounded bg-white">
+                  <div className="w-full text-center mb-3">
                     <p className="text-red-500 italic md:text-lg">
                       Sizning <strong>{buyurtma.id}</strong> raqamli
                       buyurtmangizni{" "}
@@ -317,11 +319,10 @@ const KomendantNavbar = () => {
                       Yopish
                     </button>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
+                </div>
+              </div>
+            );
+          })}
 
         <div className="p-4 max-w-7xl mx-auto bg-white">
           <Outlet />
