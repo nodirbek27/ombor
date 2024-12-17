@@ -68,3 +68,30 @@ body {
     transform: scale(1.2);
   }
 }
+
+/* Marquee */
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+  background-color: #f8d7da; /* Qizg'ish fon rangi */
+  color: #721c24; /* Matn rangi */
+  padding: 4px 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.marquee {
+  display: block;
+  white-space: nowrap; /* Matnni bir qatorda ushlab turish */
+  animation: scrollText 20s linear infinite; /* Harakat animatsiyasi */
+}
+
+@keyframes scrollText {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+

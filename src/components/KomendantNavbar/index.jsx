@@ -323,8 +323,11 @@ const KomendantNavbar = () => {
               </div>
             );
           })}
-
-        <div className="p-4 max-w-7xl mx-auto bg-white">
+        {/* Marquee */}
+        <div className="pb-4 max-w-7xl mx-auto bg-white">
+          <div className="marquee-container mb-3">
+            <div className="marquee">Sayt test rejimida ishlayapti</div>
+          </div>
           <Outlet />
         </div>
       </div>

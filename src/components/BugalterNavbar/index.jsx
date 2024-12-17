@@ -158,6 +158,9 @@ const BugalterNavbar = () => {
         </div>
       </nav>
       {/* Outlet */}
+      <div className="marquee-container mb-3">
+        <div className="marquee">Sayt test rejimida ishlayapti</div>
+      </div>
       <div className="flex-1 bg-[#FAFAFA] max-w-7xl mx-auto p-4">
         <Outlet />
       </div>

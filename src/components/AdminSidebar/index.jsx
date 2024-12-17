@@ -34,10 +34,10 @@ export const AdminSidebar = () => {
     navigate("/admin/ombor");
   };
   const onLogOut = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('role');
-    localStorage.removeItem('refreshToken');
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("role");
+    localStorage.removeItem("refreshToken");
     navigate("/");
   };
 
@@ -113,6 +113,9 @@ export const AdminSidebar = () => {
       </Side>
       <Body>
         <Navbar />
+        <div className="marquee-container mb-3">
+          <div className="marquee">Sayt test rejimida ishlayapti</div>
+        </div>
         <Wrapper>
           <Outlet />
         </Wrapper>

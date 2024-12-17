@@ -157,6 +157,9 @@ const ProrektorNavbar = () => {
           </div>
         </div>
       </nav>
+      <div className="marquee-container mb-3">
+        <div className="marquee">Sayt test rejimida ishlayapti</div>
+      </div>
       {/* Outlet */}
       <div className="flex-1 bg-[#FAFAFA] max-w-7xl mx-auto p-4">
         <Outlet />
