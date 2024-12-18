@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
-import * as Yup from "yup";
 import APIOmbor from "../../services/ombor";
 import APICategory from "../../services/category";
 import APIMahsulot from "../../services/mahsulot";
@@ -45,15 +44,7 @@ const AdminKiritilganMahsulotlar = () => {
     fetchData();
   }, []);
 
-  const validationSchema = Yup.object({
-    mahsulot: Yup.string().required("Product is required"),
-    birlik: Yup.string().required("Unit is required"),
-    qiymat: Yup.number().required("Quantity is required"),
-  });
-
   const formik = useFormik({
-    initialValues: { mahsulot: "", qiymat: "", birlik: "" },
-    validationSchema,
     onSubmit: async (values) => {
       if (editingId) {
         const dataToPut = {
@@ -63,7 +54,7 @@ const AdminKiritilganMahsulotlar = () => {
         };
 
         try {
-          await APIOmbor.put(`/${editingId}/`, dataToPut);
+          await APIOmbor.patch(`${editingId}`, dataToPut);
           alert("Successfully updated!");
           formik.resetForm();
           setEditingId(null);

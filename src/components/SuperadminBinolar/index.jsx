@@ -37,7 +37,7 @@ const SuperadminBinolar = () => {
       const dataToPost = { name: values.name };
       try {
         if (editingId) {
-          await APIBinolar.put(`/${editingId}/`, dataToPost);
+          await APIBinolar.patch(`${editingId}`, dataToPost);
           alert("Muvaffaqiyatli o'zgartirildi!");
         } else {
           await APIBinolar.post(dataToPost);

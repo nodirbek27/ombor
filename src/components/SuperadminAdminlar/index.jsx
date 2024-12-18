@@ -59,9 +59,6 @@ const SuperadminAdminlar = () => {
     last_name: Yup.string()
       .required("Last name is required")
       .max(150, "Last name must be 150 characters or fewer"),
-    bino: Yup.string()
-      .required("Name is required")
-      .max(255, "Name must be 255 characters or fewer"),
     password: Yup.string()
       .required("Password is required")
       .max(128, "Password must be 128 characters or fewer"),
@@ -94,15 +91,15 @@ const SuperadminAdminlar = () => {
         komendant: values.role === "komendant",
         is_active: values.is_active,
       };
-
       try {
         if (editingId) {
           // Update existing user
-          await APIUsers.put(`/${editingId}/`, dataToPost);
+          await APIUsers.patch(`${editingId}`, dataToPost);
           alert("Muvaffaqiyatli o'zgartirildi.!");
         } else {
           // Create new user
           await APIUsers.post(dataToPost);
+
           alert("Muvaffaqiyatli qo'shildi.!");
         }
         getUsers();
@@ -135,27 +132,15 @@ const SuperadminAdminlar = () => {
         ? "omborchi"
         : user.komendant
         ? "komendant"
-        : "prorektor", // Default if no role matches
+        : "prorektor",
     });
     document.getElementById("my_modal_2").showModal();
   };
 
-  // const handleDelete = async (id) => {
-  //   if (window.confirm("O'chirishga ishonchingiz komilmi.??")) {
-  //     try {
-  //       await APIUsers.del(id);
-  //       alert("Muvaffaqiyatli o'chirildi.!");
-  //       getUsers();
-  //     } catch (error) {
-  //       console.error("Failed to delete user", error);
-  //     }
-  //   }
-  // };
-
   const resetForm = () => {
     setEditingId(null);
     formik.resetForm();
-    document.getElementById("my_modal_2").close(); // Close the modal
+    document.getElementById("my_modal_2").close();
   };
 
   return (

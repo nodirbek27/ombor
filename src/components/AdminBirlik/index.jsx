@@ -41,8 +41,8 @@ const AdminBirlik = () => {
 
       try {
         if (editingId) {
-          await APIBirlik.put(`/${editingId}/`, dataToPost);
-          alert("Muvaffaqiyatli o'zgartirildi.!");
+          await APIBirlik.put(`${editingId}`, dataToPost); 
+          alert("Muvaffaqiyatli o'zgartirildi.!"); 
         } else {
           await APIBirlik.post(dataToPost);
           alert("Muvaffaqiyatli yaratildi.!");

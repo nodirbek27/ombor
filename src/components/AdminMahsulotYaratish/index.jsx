@@ -54,7 +54,6 @@ const AdminMahsulotYaratish = () => {
       kategoriya: Yup.string()
         .required("Kategoriya majburiy")
         .max(150, "Name must be 150 characters or fewer"),
-      rasm: Yup.string().required("Rasm majburiy"), // Add validation if needed
     }),
     onSubmit: async (values) => {
       const formData = new FormData();
@@ -68,7 +67,7 @@ const AdminMahsulotYaratish = () => {
 
       try {
         if (editingId) {
-          await APIMahsulot.put(`/${editingId}/`, formData, {
+          await APIMahsulot.put(`${editingId}`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
           alert("Muvaffaqiyatli o'zgartirildi!");
@@ -112,7 +111,7 @@ const AdminMahsulotYaratish = () => {
   const handleDelete = async (id) => {
     if (window.confirm("O'chirishga ishonchingiz komilmi?")) {
       try {
-        await APIMahsulot.del(`/${id}`);
+        await APIMahsulot.del(`${id}`);
         alert("Muvaffaqiyatli o'chirildi!");
         getMahsulot(); // Refresh mahsulot list
       } catch (error) {
