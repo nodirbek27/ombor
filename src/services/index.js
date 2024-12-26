@@ -1,56 +1,29 @@
 import axios from "axios";
+import CryptoJS from "crypto-js";
 
 const axiosInstance = axios.create({
-  baseURL: "https://apiombor.kspi.uz/",
-  headers: {
-    "Content-Type": "multipart/form-data",
-    Accept: "application/json",
-  },
+    baseURL: "https://omborxona2024.pythonanywhere.com/",
+    headers: {
+        "Content-Type": "multipart/form-data",
+        Accept: "application/json",
+    },
 });
 
-axiosInstance.interceptors.request.use(async (request) => {
-  const token = localStorage.getItem("token");
-  request.headers.Authorization = `Bearer ${token}`;
-  return request;
+axiosInstance.interceptors.request.use((request) => {
+    const data = JSON.parse(localStorage.getItem("data"));
+    if (data?.token) {
+        const unShifredToken = CryptoJS.AES.decrypt(data?.token, "token-001")
+                .toString(CryptoJS.enc.Utf8)
+                .trim().replace(/^"|"$/g, '');
+        request.headers.Authorization = `Bearer ${unShifredToken}`;
+    }
+    return request;
 });
 
 axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  async (error) => {
-    if (error.response && error.response.status === 401) {
-      const refreshed = await refreshToken();
-      if (refreshed) {
-        // Refreshed successfully, retry the original request
-        const token = localStorage.getItem("token");
-        error.config.headers.Authorization = `Bearer ${token}`;
-        return axiosInstance(error.config);
-      }
-    }
-    return Promise.reject(error);
-  }
+    (response) => {
+        return response;
+    },
 );
-
-const refreshToken = async () => {
-  try {
-    const refreshToken = localStorage.getItem("refreshToken");
-    const res = await axios.post(
-      "https://apiombor.kspi.uz/api/token/refresh/",
-      {
-        refresh: refreshToken,
-      }
-    );
-    const token = res.data.access;
-    if (token) {
-      localStorage.setItem("token", token);
-      return true;
-    }
-    return false;
-  } catch (err) {
-    console.error(err);
-    return false;
-  }
-};
 
 export default axiosInstance;

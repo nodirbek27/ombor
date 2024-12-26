@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Route, Routes } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 
@@ -53,47 +53,16 @@ import Login from "../components/Login";
 import Talabnomalar from "../components/Talabnomalar";
 
 const Root = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [role, setRole] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const storedRole = localStorage.getItem("role");
-    if (token && storedRole) {
-      setIsAuthenticated(true);
-      setRole(storedRole);
-    }
-    setIsLoading(false);
-  }, []);
-
-  const handleLogin = (userRole) => {
-    setIsAuthenticated(true);
-    setRole(userRole);
-    localStorage.setItem("role", userRole);
-  };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <Routes>
       {/* TALABNOMALAR */}
-      <Route
-        path="/talabnoma/:pk"
-        element={<Talabnomalar />}
-      />
+      <Route path="/talabnoma/:pk" element={<Talabnomalar />} />
 
       {/* SUPERADMIN */}
       <Route
         path="/superadmin/*"
         element={
-          <PrivateRoute
-            isAuthenticated={isAuthenticated}
-            role={role}
-            requiredRole="superadmin"
-          >
+          <PrivateRoute requiredRole="admin">
             <SuperadminDashboard />
           </PrivateRoute>
         }
@@ -116,11 +85,7 @@ const Root = () => {
       <Route
         path="/omborchi/*"
         element={
-          <PrivateRoute
-            isAuthenticated={isAuthenticated}
-            role={role}
-            requiredRole="omborchi"
-          >
+          <PrivateRoute requiredRole="omborchi">
             <AdminDashboard />
           </PrivateRoute>
         }
@@ -149,11 +114,7 @@ const Root = () => {
       <Route
         path="/komendant/*"
         element={
-          <PrivateRoute
-            isAuthenticated={isAuthenticated}
-            role={role}
-            requiredRole="komendant"
-          >
+          <PrivateRoute requiredRole="komendant">
             <KomendantDashboard />
           </PrivateRoute>
         }
@@ -173,11 +134,7 @@ const Root = () => {
       <Route
         path="/prorektor/*"
         element={
-          <PrivateRoute
-            isAuthenticated={isAuthenticated}
-            role={role}
-            requiredRole="prorektor"
-          >
+          <PrivateRoute requiredRole="prorektor">
             <ProrektorDashboard />
           </PrivateRoute>
         }
@@ -195,11 +152,7 @@ const Root = () => {
       <Route
         path="/bugalter/*"
         element={
-          <PrivateRoute
-            isAuthenticated={isAuthenticated}
-            role={role}
-            requiredRole="bugalter"
-          >
+          <PrivateRoute requiredRole="bugalter">
             <BugalterDashboard />
           </PrivateRoute>
         }
@@ -217,11 +170,7 @@ const Root = () => {
       <Route
         path="/xojalik_bolimi/*"
         element={
-          <PrivateRoute
-            isAuthenticated={isAuthenticated}
-            role={role}
-            requiredRole="xojalik_bolimi"
-          >
+          <PrivateRoute requiredRole="xojalik">
             <XojalikDashboard />
           </PrivateRoute>
         }
@@ -239,11 +188,7 @@ const Root = () => {
       <Route
         path="/it_park/*"
         element={
-          <PrivateRoute
-            isAuthenticated={isAuthenticated}
-            role={role}
-            requiredRole="it_park"
-          >
+          <PrivateRoute requiredRole="rttm">
             <ItParkDashboard />
           </PrivateRoute>
         }
@@ -258,7 +203,7 @@ const Root = () => {
       </Route>
 
       {/* LOGIN and * */}
-      <Route path="/" element={<Login onLogin={handleLogin} />} />
+      <Route path="/" element={<Login />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
