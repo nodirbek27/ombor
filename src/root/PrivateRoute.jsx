@@ -10,9 +10,10 @@ const PrivateRoute = ({ children, requiredRole }) => {
 
   const decryptedRole = CryptoJS.AES.decrypt(data?.role, "role-001")
     .toString(CryptoJS.enc.Utf8)
-    .trim();
+    .trim()
+    .replace(/^"|"$/g, "");
 
-  if (decryptedRole === requiredRole) {
+  if (decryptedRole === requiredRole.replace(/^|"$/g, "")) {
     return children;
   }
 };

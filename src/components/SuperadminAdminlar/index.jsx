@@ -13,8 +13,9 @@ const SuperadminAdminlar = () => {
 
   const getUsers = async () => {
     try {
-      const response = await APIUsers.get();
-      const sortedData = response.data.filter((item) => !item.superadmin);
+      const response = await APIUsers.getAll();
+      const sortedData = response.data.filter((item) => !item.admin);
+
       setUsers(sortedData);
     } catch (error) {
       console.error("Failed to fetch admins", error);
@@ -82,13 +83,7 @@ const SuperadminAdminlar = () => {
         last_name: values.last_name,
         password: values.password,
         bino: values.bino,
-        superadmin: values.role === "superadmin",
-        prorektor: values.role === "prorektor",
-        bugalter: values.role === "bugalter",
-        xojalik_bolimi: values.role === "xojalik_bolimi",
-        it_park: values.role === "it_park",
-        omborchi: values.role === "omborchi",
-        komendant: values.role === "komendant",
+        role: values.role,
         is_active: values.is_active,
       };
       try {
@@ -118,21 +113,7 @@ const SuperadminAdminlar = () => {
       last_name: user.last_name,
       name: user.name,
       password: user.parol,
-      role: user.superadmin
-        ? "superadmin"
-        : user.prorektor
-        ? "prorektor"
-        : user.bugalter
-        ? "bugalter"
-        : user.xojalik_bolimi
-        ? "xojalik_bolimi"
-        : user.it_park
-        ? "it_park"
-        : user.omborchi
-        ? "omborchi"
-        : user.komendant
-        ? "komendant"
-        : "prorektor",
+      role: user.role,
     });
     document.getElementById("my_modal_2").showModal();
   };
@@ -207,11 +188,13 @@ const SuperadminAdminlar = () => {
                     Bino
                   </label>
                   <select
+                    id="bino"
                     name="bino"
                     value={formik.values.bino}
                     onChange={formik.handleChange}
                     className="block w-full rounded-md border-0 bg-white p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                   >
+                    <option value="">Tanlang</option>
                     {binolar?.map((bino) => (
                       <option key={bino.id} value={bino.id}>
                         {bino.name}
@@ -281,8 +264,8 @@ const SuperadminAdminlar = () => {
                   >
                     <option value="prorektor">Prorektor</option>
                     <option value="bugalter">Bugalter</option>
-                    <option value="xojalik_bolimi">Xo'jalik bo'limi</option>
-                    <option value="it_park">IT Park</option>
+                    <option value="xojalik">Xo'jalik bo'limi</option>
+                    <option value="rttm">IT Park</option>
                     <option value="omborchi">Omborchi</option>
                     <option value="komendant">Komendant</option>
                   </select>
@@ -342,7 +325,7 @@ const SuperadminAdminlar = () => {
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr key={user.id}>
+              <tr key={user.username}>
                 <td className="font-semibold text-[#000]">
                   <div className="flex items-center gap-3">
                     <div>
@@ -359,25 +342,9 @@ const SuperadminAdminlar = () => {
                   </span>
                 </td>
                 <td className="font-semibold text-[#000]">
-                  {binolar.find((bino) => bino.id === user.bino)?.name || "N/A"}
+                  {user.bino?.name || "N/A"}
                 </td>
-                <td className="font-semibold text-[#000]">
-                  {user.superadmin
-                    ? "Superadmin"
-                    : user.prorektor
-                    ? "Prorektor"
-                    : user.bugalter
-                    ? "Bugalter"
-                    : user.xojalik_bolimi
-                    ? "Xo'jalik bo'limi"
-                    : user.it_park
-                    ? "IT Park"
-                    : user.omborchi
-                    ? "Omborchi"
-                    : user.komendant
-                    ? "Komendant"
-                    : "Noma'lum"}{" "}
-                </td>
+                <td className="font-semibold text-[#000]">{user.role}</td>
 
                 <th className="text-center">
                   <button

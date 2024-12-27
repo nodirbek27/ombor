@@ -2,11 +2,15 @@ import axiosInstance from "./index";
 
 const ep = "users/users/";
 
+const getAll = () => {
+  return axiosInstance.get(`${ep}/`);
+};
+
 const get = (username, token) => {
   const config = {
-      headers: {
-          Authorization: `Bearer ${token}`,
-      },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   };
 
   return axiosInstance.get(`${ep}?username=${username}`, config);
@@ -29,6 +33,6 @@ const del = (id) => {
   return axiosInstance.delete(`${ep}${id}/`);
 };
 
-const APIUsers = { get, getbyId, post, put, patch, del };
+const APIUsers = { getAll, get, getbyId, post, put, patch, del };
 
 export default APIUsers;
