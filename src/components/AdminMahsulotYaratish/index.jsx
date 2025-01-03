@@ -13,6 +13,7 @@ const AdminMahsulotYaratish = () => {
   const [mahsulot, setMahsulot] = useState([]);
   const [openCategoryId, setOpenCategoryId] = useState(null);
   const [editingId, setEditingId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch categories
   const getCategory = async () => {
@@ -88,6 +89,7 @@ const AdminMahsulotYaratish = () => {
   });
 
   const handleClick = (categoryId) => {
+    setIsModalOpen(true);
     if (openCategoryId === categoryId) {
       setOpenCategoryId(null);
       formik.resetForm();
@@ -113,7 +115,7 @@ const AdminMahsulotYaratish = () => {
       try {
         await APIMahsulot.del(`${id}`);
         alert("Muvaffaqiyatli o'chirildi!");
-        getMahsulot(); // Refresh mahsulot list
+        getMahsulot();
       } catch (error) {
         console.error("Failed to delete mahsulot", error);
       }
@@ -125,6 +127,25 @@ const AdminMahsulotYaratish = () => {
       <div className="flex items-center p-4 mb-3 rounded">
         <p className="text-xl font-semibold text-[#004269]">Mahsulotlar</p>
       </div>
+
+      {/* Modal */}
+      <div className={`modal ${!isModalOpen && "hidden"}`}>
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">
+            Congratulations random Interner user!
+          </h3>
+          <p className="py-4">
+            You've been selected for a chance to get one year of subscription to
+            use Wikipedia for free!
+          </p>
+          <div className="modal-action">
+            <button className="btn" onClick={() => setIsModalOpen(false)}>
+              Yay!
+            </button>
+          </div>
+        </div>
+      </div>
+
       {category &&
         category.map((item) => (
           <div key={item.id} className="bg-slate-100 p-4 mb-3 rounded">
@@ -219,7 +240,7 @@ const AdminMahsulotYaratish = () => {
                             d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"
                           ></path>
                         </svg>
-                        <span>Upload file</span>
+                        <span>Rasm yuklash</span>
                       </label>
                     </div>
 
@@ -241,7 +262,7 @@ const AdminMahsulotYaratish = () => {
                 </div>
                 {openCategoryId !== item.id && (
                   <button
-                    className="btn items-center bg-blue-400 hover:bg-blue-500 text-white"
+                    className="btn modal-button items-center bg-blue-400 hover:bg-blue-500 text-white"
                     onClick={() => handleClick(item.id)}
                   >
                     <MdOutlineAddCard className="mr-1 w-4 h-auto" />

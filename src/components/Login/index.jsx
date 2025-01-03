@@ -11,6 +11,7 @@ import CryptoJS from "crypto-js";
 import LoadnigTxt from "../../components/LoadingTxt";
 
 const Login = () => {
+  localStorage.clear();
   const ShifredTxt = (key, content) => {
     const shifredTxt = CryptoJS.AES.encrypt(
       JSON.stringify(content),
@@ -64,10 +65,10 @@ const Login = () => {
                 username: ShifredTxt("username-001", values.username),
                 password: ShifredTxt("password-001", values.password),
                 remember: values.remember,
-                first_name: ShifredTxt("first_name-001", data.first_name),
-                last_name: ShifredTxt("last_name-001", data.last_name),
-                token: ShifredTxt("token-001", res.data.access),
-                role: ShifredTxt("role-001", data.role),
+                first_name: ShifredTxt("first_name-001", data?.first_name),
+                last_name: ShifredTxt("last_name-001", data?.last_name),
+                token: ShifredTxt("token-001", res.data?.access),
+                role: ShifredTxt("role-001", data?.role),
               });
               localStorage.setItem("data", jsonData);
 
