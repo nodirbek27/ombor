@@ -6,11 +6,13 @@ import { CiEdit } from "react-icons/ci";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import APICategory from "../../services/category";
 import APIMahsulot from "../../services/mahsulot";
+import APIBirlik from "../../services/birlik";
 import { MdOutlineAddCard } from "react-icons/md";
 
 const AdminMahsulotYaratish = () => {
   const [category, setCategory] = useState([]);
   const [mahsulot, setMahsulot] = useState([]);
+  const [birliklar, setBirliklar] = useState([]);
   const [openCategoryId, setOpenCategoryId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,9 +37,20 @@ const AdminMahsulotYaratish = () => {
     }
   };
 
+  // Fetch products
+  const getBirlik = async () => {
+    try {
+      const response = await APIBirlik.get();
+      setBirliklar(response?.data);
+    } catch (error) {
+      console.error("Failed to fetch mahsulot", error);
+    }
+  };
+
   useEffect(() => {
     getCategory();
     getMahsulot();
+    getBirlik();
   }, []);
 
   const formik = useFormik({
@@ -45,8 +58,9 @@ const AdminMahsulotYaratish = () => {
       name: "",
       kategoriya: "",
       rasm: "",
+      birlik: "",
       maxviylik: false,
-      it_park: false,
+      maxsulot_role: "",
     },
     validationSchema: Yup.object({
       name: Yup.string()
@@ -60,26 +74,30 @@ const AdminMahsulotYaratish = () => {
       const formData = new FormData();
       formData.append("name", values.name);
       formData.append("kategoriya", values.kategoriya);
+      formData.append("birlik", values.birlik);
       formData.append("maxviylik", values.maxviylik);
-      formData.append("it_park", values.it_park);
+      formData.append(
+        "maxsulot_role",
+        values.maxsulot_role ? "rttm" : "xojalik"
+      );
       if (values.rasm) {
         formData.append("rasm", values.rasm);
       }
 
       try {
         if (editingId) {
-          await APIMahsulot.put(`${editingId}`, formData, {
+          await APIMahsulot.patch(`${editingId}`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
           alert("Muvaffaqiyatli o'zgartirildi!");
-          setEditingId(null); // Reset edit mode
+          setEditingId(null);
         } else {
           await APIMahsulot.post(formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
           alert("Muvaffaqiyatli yaratildi!");
         }
-        getMahsulot();
+        getCategory();
         formik.resetForm();
         setOpenCategoryId(null);
       } catch (error) {
@@ -99,15 +117,19 @@ const AdminMahsulotYaratish = () => {
     }
   };
 
-  const handleEdit = (item) => {
-    setEditingId(item.id);
+  const handleEdit = (product) => {
+    setIsModalOpen(true);
+    setEditingId(product.id);
+    setOpenCategoryId(product.kategoriya?.id);
+
     formik.setValues({
-      name: item.name,
-      kategoriya: item.kategoriya,
-      maxviylik: item.maxviylik,
-      it_park: item.it_park,
+      name: product.name,
+      kategoriya: product.kategoriya,
+      maxviylik: product.maxviylik,
+      rasm: product.rasm,
+      birlik: product.birlik,
+      maxsulot_role: product.maxsulot_role ? "rttm" : "xojalik",
     });
-    setOpenCategoryId(item.kategoriya);
   };
 
   const handleDelete = async (id) => {
@@ -115,7 +137,7 @@ const AdminMahsulotYaratish = () => {
       try {
         await APIMahsulot.del(`${id}`);
         alert("Muvaffaqiyatli o'chirildi!");
-        getMahsulot();
+        getCategory();
       } catch (error) {
         console.error("Failed to delete mahsulot", error);
       }
@@ -128,24 +150,6 @@ const AdminMahsulotYaratish = () => {
         <p className="text-xl font-semibold text-[#004269]">Mahsulotlar</p>
       </div>
 
-      {/* Modal */}
-      <div className={`modal ${!isModalOpen && "hidden"}`}>
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">
-            Congratulations random Interner user!
-          </h3>
-          <p className="py-4">
-            You've been selected for a chance to get one year of subscription to
-            use Wikipedia for free!
-          </p>
-          <div className="modal-action">
-            <button className="btn" onClick={() => setIsModalOpen(false)}>
-              Yay!
-            </button>
-          </div>
-        </div>
-      </div>
-
       {category &&
         category.map((item) => (
           <div key={item.id} className="bg-slate-100 p-4 mb-3 rounded">
@@ -154,170 +158,223 @@ const AdminMahsulotYaratish = () => {
                 {item.name}
               </p>
               <div className="relative">
-                <div
-                  className={`transition-all duration-300 overflow-hidden ${
-                    openCategoryId === item.id
-                      ? "w-full opacity-100"
-                      : "w-0 opacity-0"
-                  }`}
-                  style={{
-                    display: openCategoryId === item.id ? "flex" : "none",
-                  }}
-                >
-                  <form
-                    onSubmit={formik.handleSubmit}
-                    className="flex items-center gap-3"
+                {openCategoryId === item.id && isModalOpen && (
+                  <div
+                    className={`transition-all duration-300 overflow-hidden ${
+                      openCategoryId === item.id
+                        ? "w-full opacity-100"
+                        : "w-0 opacity-0"
+                    }`}
+                    style={{
+                      display: openCategoryId === item.id ? "flex" : "none",
+                    }}
                   >
-                    <label className="input input-bordered flex items-center gap-2 bg-white text-[#000]">
-                      Nomi:
-                      <input
-                        type="text"
-                        className="grow"
-                        placeholder="..."
-                        name="name"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.name}
-                      />
-                    </label>
-
-                    {/* Checkbox */}
-                    <div className="flex flex-col xl:flex-row">
-                      <label className="cursor-pointer label">
-                        <span className="label-text mr-2 text-[#000]">
-                          Maxfiylik:
-                        </span>
-                        <input
-                          type="checkbox"
-                          name="maxviylik"
-                          onChange={formik.handleChange}
-                          checked={formik.values.maxviylik}
-                          className="checkbox checkbox-success"
-                        />
-                      </label>
-                      <label className="cursor-pointer label">
-                        <span className="label-text mr-2 text-[#000]">
-                          RTTM:
-                        </span>
-                        <input
-                          type="checkbox"
-                          name="it_park"
-                          onChange={formik.handleChange}
-                          checked={formik.values.it_park}
-                          className="checkbox checkbox-success"
-                        />
-                      </label>
-                    </div>
-
-                    {/* File input */}
-                    <div className="file-input p-0">
-                      <input
-                        type="file"
-                        name="rasm"
-                        id="rasm"
-                        onChange={(event) => {
-                          formik.setFieldValue(
-                            "rasm",
-                            event.currentTarget.files[0]
-                          );
-                        }}
-                        className="file-input__input w-0 h-0 opacity-0 overflow-hidden absolute -z-1"
-                      />
-
-                      <label
-                        className="file-input__label flex items-center rounded-md text-sm font-semibold text-white p-2 h-full bg-cyan-400 shadow-sm cursor-pointer hover:bg-cyan-500"
-                        htmlFor="rasm"
-                      >
-                        <svg
-                          aria-hidden="true"
-                          focusable="false"
-                          className="h-4 mr-2"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 512 512"
-                        >
-                          <path
-                            fill="currentColor"
-                            d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"
-                          ></path>
-                        </svg>
-                        <span>Rasm yuklash</span>
-                      </label>
-                    </div>
-
-                    {/* Submit */}
-                    <button
-                      type="submit"
-                      className="btn flex items-center bg-blue-400 hover:bg-blue-500 text-white"
+                    {/* Main modal */}
+                    <div
+                      id="crud-modal"
+                      tabIndex="-1"
+                      aria-hidden="true"
+                      className={`${
+                        isModalOpen ? "flex" : "hidden"
+                      } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
                     >
-                      {editingId ? "O'zgartirish" : "Qo'shish"}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn flex items-center bg-red-400 hover:bg-red-500 text-[#000]"
-                      onClick={() => handleClick(item.id)}
-                    >
-                      X
-                    </button>
-                  </form>
-                </div>
-                {openCategoryId !== item.id && (
-                  <button
-                    className="btn modal-button items-center bg-blue-400 hover:bg-blue-500 text-white"
-                    onClick={() => handleClick(item.id)}
-                  >
-                    <MdOutlineAddCard className="mr-1 w-4 h-auto" />
-                    Yaratish
-                  </button>
+                      <div className="relative p-4 w-full max-w-md max-h-full">
+                        {/* Modal content */}
+                        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                          {/* Modal header */}
+                          <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                              {item.name}
+                            </h3>
+                            <button
+                              type="button"
+                              onClick={() => setIsModalOpen(false)}
+                              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                              data-modal-toggle="crud-modal"
+                            >
+                              <svg
+                                className="w-3 h-3"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 14 14"
+                              >
+                                <path
+                                  stroke="currentColor"
+                                  stroklinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                                />
+                              </svg>
+                              <span className="sr-only">Close modal</span>
+                            </button>
+                          </div>
+                          {/* Modal body */}
+                          <form
+                            onSubmit={formik.handleSubmit}
+                            className="p-4 md:p-5"
+                          >
+                            <div className="grid gap-4 mb-4 grid-cols-2">
+                              <div className="col-span-2">
+                                <label
+                                  htmlFor="name"
+                                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >
+                                  Nomi
+                                </label>
+                                <input
+                                  type="text"
+                                  name="name"
+                                  id="name"
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                  placeholder="Mahsulot nomi"
+                                  onChange={formik.handleChange}
+                                  onBlur={formik.handleBlur}
+                                  value={formik.values.name}
+                                />
+                              </div>
+
+                              {/* Rasm input */}
+                              <div className="col-span-2 sm:col-span-1">
+                                <label
+                                  htmlFor="rasm"
+                                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >
+                                  Rasm
+                                </label>
+                                <input
+                                  type="file"
+                                  name="rasm"
+                                  id="rasm"
+                                  onChange={(event) => {
+                                    formik.setFieldValue(
+                                      "rasm",
+                                      event.currentTarget.files[0]
+                                    );
+                                  }}
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                />
+                              </div>
+                              <div className="col-span-2 sm:col-span-1">
+                                <label
+                                  htmlFor="birlik"
+                                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >
+                                  Birlik
+                                </label>
+                                <select
+                                  id="birlik"
+                                  value={formik.values.birlik}
+                                  onChange={formik.handleChange}
+                                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                >
+                                  <option defaultValue="">
+                                    Birlikni tanlang
+                                  </option>
+                                  {birliklar.map((birlik) => (
+                                    <option key={birlik.id} value={birlik.id}>
+                                      {birlik.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+
+                            {/* Checkbox */}
+                            <div className="flex flex-col items-start">
+                              <label className="cursor-pointer label">
+                                <input
+                                  type="checkbox"
+                                  name="maxviylik"
+                                  onChange={formik.handleChange}
+                                  checked={formik.values.maxviylik}
+                                  className="checkbox checkbox-success mr-2"
+                                />
+                                <span className="label-text text-[#000] dark:text-white">
+                                  Maxfiylik
+                                </span>
+                              </label>
+                              <label className="cursor-pointer label">
+                                <input
+                                  type="checkbox"
+                                  name="maxsulot_role"
+                                  onChange={formik.handleChange}
+                                  checked={formik.values.maxsulot_role}
+                                  className="checkbox checkbox-success mr-2"
+                                />
+                                <span className="label-text text-[#000] dark:text-white">
+                                  RTTM
+                                </span>
+                              </label>
+                            </div>
+                            <button
+                              type="submit"
+                              className="btn text-white items-center bg-blue-400 hover:bg-blue-500 font-medium rounded-lg px-5 py-2.5 text-center"
+                            >
+                              {editingId
+                                ? "O'zgartirish"
+                                : "Yangi mahsulot qo'shish"}
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 )}
+                <button
+                  className="btn modal-button items-center bg-blue-400 hover:bg-blue-500 text-white"
+                  onClick={() => handleClick(item.id)}
+                >
+                  <MdOutlineAddCard className="mr-1 w-4 h-auto" />
+                  Yaratish
+                </button>
               </div>
             </div>
             <div className="flex items-center flex-wrap gap-3">
-              {mahsulot &&
-                mahsulot
-                  .filter((product) => product.kategoriya === item.id)
-                  .map((product) => (
-                    <div
-                      key={product.id}
-                      className="flex items-center text-sm text-gray-700 border p-2 rounded font-medium bg-white"
-                    >
-                      <p className="text-md mr-3">{product.name}</p>
-                      <div className="flex items-center">
-                        <div className="mr-4">
-                          {!product.maxviylik ? (
-                            <FaEye className="w-5 h-auto" />
-                          ) : (
-                            <FaEyeSlash className="w-5 h-auto" />
-                          )}
-                        </div>
-                        <div>
-                          <a
-                            href={product?.rasm}
-                            className={`italic underline mr-2 ${
-                              !product.rasm && "hidden"
-                            }`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Rasm
-                          </a>
-                        </div>
-                        {/* Edit */}
-                        <button
-                          className="mr-4 cursor-pointer"
-                          onClick={() => handleEdit(product)}
-                        >
-                          <CiEdit className="w-5 h-auto text-green-400" />
-                        </button>
-                        {/* Delete */}
-                        <button
-                          className="cursor-pointer"
-                          onClick={() => handleDelete(product.id)}
-                        >
-                          <RiDeleteBin5Line className="w-5 h-auto text-red-400" />
-                        </button>
-                      </div>
+              {item.maxsulot.map((product) => (
+                <div
+                  key={product.id}
+                  className="flex items-center text-sm text-gray-700 border p-2 rounded font-medium bg-white"
+                >
+                  <p className="text-md mr-3">{product.name}</p>
+                  <div className="flex items-center">
+                    <div className="mr-4">
+                      {!product.maxviylik ? (
+                        <FaEye className="w-5 h-auto" />
+                      ) : (
+                        <FaEyeSlash className="w-5 h-auto" />
+                      )}
                     </div>
-                  ))}
+                    <div>
+                      <a
+                        href={product?.rasm}
+                        className={`italic underline mr-2 ${
+                          !product.rasm && "hidden"
+                        }`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Rasm
+                      </a>
+                    </div>
+                    {/* Edit */}
+                    <button
+                      className="mr-4 cursor-pointer"
+                      onClick={() => handleEdit(product)}
+                    >
+                      <CiEdit className="w-5 h-auto text-green-400" />
+                    </button>
+                    {/* Delete */}
+                    <button
+                      className="cursor-pointer"
+                      onClick={() => handleDelete(product.id)}
+                    >
+                      <RiDeleteBin5Line className="w-5 h-auto text-red-400" />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         ))}
