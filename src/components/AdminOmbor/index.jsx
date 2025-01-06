@@ -4,35 +4,27 @@ import * as Yup from "yup";
 import APIJami from "../../services/jami";
 import APIOmbor from "../../services/ombor";
 import APICategory from "../../services/category";
-import APIMahsulot from "../../services/mahsulot";
-import APIBirlik from "../../services/birlik";
 import { MdOutlineAddCard } from "react-icons/md";
 import * as XLSX from "xlsx";
 
 const AdminOmbor = () => {
   const [jami, setJami] = useState([]);
   const [category, setCategory] = useState([]);
-  const [mahsulot, setMahsulot] = useState([]);
-  const [filteredMahsulot, setFilteredMahsulot] = useState([]);
   const [birlik, setBirlik] = useState([]);
+  const [filteredMahsulot, setFilteredMahsulot] = useState([]);
   const [loading, setLoading] = useState(true);
   const modalRef = useRef(null);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [jamiData, categoryData, mahsulotData, birlikData] =
-        await Promise.all([
-          APIJami.get(),
-          APICategory.get(),
-          APIMahsulot.get(),
-          APIBirlik.get(),
-        ]);
+      const [jamiData, categoryData] = await Promise.all([
+        APIJami.get(),
+        APICategory.get(),
+      ]);
 
       setJami(jamiData?.data || []);
       setCategory(categoryData?.data || []);
-      setMahsulot(mahsulotData?.data || []);
-      setBirlik(birlikData?.data || []);
     } catch (error) {
       console.error("Failed to fetch data", error);
     } finally {
@@ -45,18 +37,16 @@ const AdminOmbor = () => {
 
   const validationSchema = Yup.object({
     mahsulot: Yup.string().required("Product is required"),
-    birlik: Yup.string().required("Unit is required"),
     qiymat: Yup.number().required("Quantity is required"),
   });
 
   const formik = useFormik({
-    initialValues: { mahsulot: "", qiymat: "", birlik: "" },
+    initialValues: { mahsulot: "", qiymat: "" },
     validationSchema,
     onSubmit: async (values) => {
       const dataToPost = {
         maxsulot: values.mahsulot,
         qiymat: values.qiymat,
-        birlik: values.birlik,
       };
 
       try {
@@ -64,6 +54,7 @@ const AdminOmbor = () => {
         alert("Successfully added!");
         formik.resetForm();
         fetchData();
+        setBirlik([])
         modalRef.current.close();
       } catch (error) {
         console.error("Failed to add/update ombor", error);
@@ -71,51 +62,39 @@ const AdminOmbor = () => {
     },
   });
 
-  const handleCategoryChange = (event) => {
-    const selectedCategoryId = event.target.value;
-    formik.setFieldValue("category", selectedCategoryId);
+  const handleCategoryChange = async (event) => {
+    const selectedCategory = event.target.value;
 
-    const filteredProducts = mahsulot.filter(
-      (prod) => prod.kategoriya === selectedCategoryId
-    );
-    setFilteredMahsulot(filteredProducts);
-    formik.setFieldValue("mahsulot", "");
+    try {
+      const response = await APICategory.getbyName(selectedCategory);
+      const filteredProducts = response?.data;
+
+      setFilteredMahsulot(filteredProducts);
+      formik.setFieldValue("mahsulot", "");
+    } catch (err) {
+      console.error("Kategoriya ma'lumotlarini olishda xatolik:", err);
+    }
   };
 
-  // Excel faylni yaratish funksiyasi
   const handleExportToExcel = () => {
     const exportData = [];
 
-    category.forEach((item) => {
-      jami
-        .filter((o) =>
-          mahsulot
-            .filter((k) => k.kategoriya === item.id)
-            .map((prod) => prod.id)
-            .includes(o.maxsulot)
-        )
-        .forEach((jamiItem) => {
-          const mahsulotItem = mahsulot.find(
-            (prod) => prod.id === jamiItem.maxsulot
-          );
-          const birlikNomi =
-            birlik.find((unit) => unit.id === jamiItem.birlik)?.name ||
-            "Noma'lum";
-
-          exportData.push({
-            Kategoriya: item.name,
-            Mahsulot: mahsulotItem?.name || "Noma'lum",
-            "Miqdor": jamiItem.yakuniy_qiymat,
-            Birlik: birlikNomi,
-          });
+    jami.forEach((item) => {
+      item?.maxsulotlar?.forEach((product) => {
+        exportData.push({
+          Kategoriya: item?.name,
+          Mahsulot: product?.maxsulot?.name,
+          Miqdor: product?.qiymat,
+          Birlik: product?.maxsulot?.birlik?.name,
         });
+      });
     });
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Ombor");
 
-    // Faylni yuklash
+    // Excel faylni yuklash
     XLSX.writeFile(workbook, "ombor_ma'lumotlari.xlsx");
   };
 
@@ -172,14 +151,14 @@ const AdminOmbor = () => {
             <select
               name="category"
               onChange={handleCategoryChange}
-              value={formik.values.category || ""}
+              value={formik.values.category}
               className="select select-bordered w-full bg-white text-[#000]"
             >
-              <option value="" disabled>
+              <option value="">
                 Kategoriya
               </option>
               {category.map((cat) => (
-                <option key={cat.id} value={cat.id}>
+                <option key={cat.id} value={cat.name}>
                   {cat.name}
                 </option>
               ))}
@@ -187,14 +166,20 @@ const AdminOmbor = () => {
 
             <select
               name="mahsulot"
-              onChange={formik.handleChange}
+              onChange={(event) => {
+                formik.handleChange(event);
+                const selectedProduct = filteredMahsulot[0]?.maxsulot?.find(
+                  (prod) => prod.id === event.target.value
+                );
+                setBirlik(selectedProduct?.birlik?.name || "");
+              }}
               value={formik.values.mahsulot || ""}
               className="select select-bordered w-full bg-white text-[#000]"
             >
               <option value="" disabled>
                 Mahsulot
               </option>
-              {filteredMahsulot.map((prod) => (
+              {filteredMahsulot[0]?.maxsulot?.map((prod) => (
                 <option key={prod.id} value={prod.id}>
                   {prod.name}
                 </option>
@@ -213,21 +198,9 @@ const AdminOmbor = () => {
               />
             </label>
 
-            <select
-              name="birlik"
-              onChange={formik.handleChange}
-              value={formik.values.birlik || ""}
-              className="select select-bordered w-full bg-white text-[#000]"
-            >
-              <option value="" disabled>
-                O'lchov birlik
-              </option>
-              {birlik.map((unit) => (
-                <option key={unit.id} value={unit.id}>
-                  {unit.name}
-                </option>
-              ))}
-            </select>
+            <p className="text-red-500">
+              <i>Birligi:</i> <strong>{birlik ? birlik : "..."}</strong>
+            </p>
 
             <div className="modal-action w-full">
               <button
@@ -242,54 +215,40 @@ const AdminOmbor = () => {
       </dialog>
 
       <div>
-        {category.map((item) => (
+        {jami.map((item) => (
           <div key={item.id} className="p-2">
             <h2 className="text-lg font-semibold text-[#004269]">
               {item.name}
             </h2>
             <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
-              {jami
-                .filter((o) =>
-                  mahsulot
-                    .filter((k) => k.kategoriya === item.id)
-                    .map((item) => item.id)
-                    .includes(o.maxsulot)
-                )
-                .map((jamiItem) => {
-                  const mahsulotItem = mahsulot.find(
-                    (prod) => prod.id === jamiItem.maxsulot
-                  );
-                  const mahsulotNomi =
-                    mahsulot.find((prod) => prod.id === jamiItem.maxsulot)
-                      ?.name || "Noma'lum";
-                  const birlikNomi =
-                    birlik.find((unit) => unit.id === jamiItem.birlik)?.name ||
-                    "Noma'lum";
-                  const mahsulotRasm = mahsulotItem?.rasm;
-                  return (
-                    <div
-                      key={jamiItem.id}
-                      className="border rounded p-2 flex items-center justify-between bg-slate-50"
-                    >
-                      <div className="text-[#000]">{mahsulotNomi}</div>
-                      <div>
-                        <a
-                          href={mahsulotRasm}
-                          className={`italic underline ${
-                            !mahsulotRasm && "hidden"
-                          }`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Rasm
-                        </a>
-                      </div>
+              {item.maxsulotlar.map((maxsulotItem) => {
+                return (
+                  <div
+                    key={maxsulotItem.id}
+                    className="border rounded p-2 flex items-center justify-between bg-slate-50"
+                  >
+                    <div className="text-[#000]">
+                      {maxsulotItem.maxsulot.name}
+                    </div>
+                    <div className="flex items-center">
+                      <a
+                        href={maxsulotItem.maxsulot.rasm}
+                        className={`italic underline text-blue-300 mr-3 ${
+                          !maxsulotItem.maxsulot.rasm && "hidden"
+                        }`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Rasmi
+                      </a>
                       <div className="text-[#000]">
-                        {jamiItem.yakuniy_qiymat} {birlikNomi}
+                        {maxsulotItem.qiymat}{" "}
+                        {maxsulotItem.maxsulot.birlik.name}
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
             </div>
           </div>
         ))}

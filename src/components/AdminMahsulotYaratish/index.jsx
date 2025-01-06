@@ -11,7 +11,6 @@ import { MdOutlineAddCard } from "react-icons/md";
 
 const AdminMahsulotYaratish = () => {
   const [category, setCategory] = useState([]);
-  const [mahsulot, setMahsulot] = useState([]);
   const [birliklar, setBirliklar] = useState([]);
   const [openCategoryId, setOpenCategoryId] = useState(null);
   const [editingId, setEditingId] = useState(null);
@@ -28,16 +27,6 @@ const AdminMahsulotYaratish = () => {
   };
 
   // Fetch products
-  const getMahsulot = async () => {
-    try {
-      const response = await APIMahsulot.get();
-      setMahsulot(response?.data);
-    } catch (error) {
-      console.error("Failed to fetch mahsulot", error);
-    }
-  };
-
-  // Fetch products
   const getBirlik = async () => {
     try {
       const response = await APIBirlik.get();
@@ -49,7 +38,6 @@ const AdminMahsulotYaratish = () => {
 
   useEffect(() => {
     getCategory();
-    getMahsulot();
     getBirlik();
   }, []);
 
@@ -91,11 +79,13 @@ const AdminMahsulotYaratish = () => {
           });
           alert("Muvaffaqiyatli o'zgartirildi!");
           setEditingId(null);
+          setIsModalOpen(false);
         } else {
           await APIMahsulot.post(formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
           alert("Muvaffaqiyatli yaratildi!");
+          setIsModalOpen(false);
         }
         getCategory();
         formik.resetForm();
@@ -123,11 +113,11 @@ const AdminMahsulotYaratish = () => {
     setOpenCategoryId(product.kategoriya?.id);
 
     formik.setValues({
-      name: product.name,
-      kategoriya: product.kategoriya,
-      maxviylik: product.maxviylik,
-      rasm: product.rasm,
-      birlik: product.birlik,
+      name: product.name || "",
+      kategoriya: product.kategoriya?.id || "",
+      maxviylik: product.maxviylik || false,
+      birlik: product.birlik || "",
+      rasm: "",
       maxsulot_role: product.maxsulot_role ? "rttm" : "xojalik",
     });
   };
@@ -158,25 +148,18 @@ const AdminMahsulotYaratish = () => {
                 {item.name}
               </p>
               <div className="relative">
-                {openCategoryId === item.id && isModalOpen && (
+                {isModalOpen && (
                   <div
                     className={`transition-all duration-300 overflow-hidden ${
-                      openCategoryId === item.id
-                        ? "w-full opacity-100"
-                        : "w-0 opacity-0"
+                      // openCategoryId === item.id
+                      true ? "w-full opacity-100" : "w-0 opacity-0"
                     }`}
-                    style={{
-                      display: openCategoryId === item.id ? "flex" : "none",
-                    }}
                   >
                     {/* Main modal */}
                     <div
-                      id="crud-modal"
-                      tabIndex="-1"
-                      aria-hidden="true"
-                      className={`${
+                      className={`overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full ${
                         isModalOpen ? "flex" : "hidden"
-                      } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full`}
+                      }`}
                     >
                       <div className="relative p-4 w-full max-w-md max-h-full">
                         {/* Modal content */}
@@ -190,7 +173,6 @@ const AdminMahsulotYaratish = () => {
                               type="button"
                               onClick={() => setIsModalOpen(false)}
                               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                              data-modal-toggle="crud-modal"
                             >
                               <svg
                                 className="w-3 h-3"
@@ -323,7 +305,7 @@ const AdminMahsulotYaratish = () => {
                   </div>
                 )}
                 <button
-                  className="btn modal-button items-center bg-blue-400 hover:bg-blue-500 text-white"
+                  className="btn items-center bg-blue-400 hover:bg-blue-500 text-white"
                   onClick={() => handleClick(item.id)}
                 >
                   <MdOutlineAddCard className="mr-1 w-4 h-auto" />
