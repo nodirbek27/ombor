@@ -12,6 +12,7 @@ import { MdOutlineAddCard } from "react-icons/md";
 const AdminMahsulotYaratish = () => {
   const [category, setCategory] = useState([]);
   const [birliklar, setBirliklar] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [openCategoryId, setOpenCategoryId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,6 +22,7 @@ const AdminMahsulotYaratish = () => {
     try {
       const response = await APICategory.get();
       setCategory(response?.data);
+      setLoading(false);
     } catch (error) {
       console.error("Failed to fetch category", error);
     }
@@ -74,6 +76,8 @@ const AdminMahsulotYaratish = () => {
 
       try {
         if (editingId) {
+          console.log(editingId);
+          
           await APIMahsulot.patch(`${editingId}`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
@@ -107,10 +111,10 @@ const AdminMahsulotYaratish = () => {
     }
   };
 
-  const handleEdit = (product) => {
+  const handleEdit = (product, id) => {
     setIsModalOpen(true);
     setEditingId(product.id);
-    setOpenCategoryId(product.kategoriya?.id);
+    setOpenCategoryId(id);
 
     formik.setValues({
       name: product.name || "",
@@ -134,6 +138,14 @@ const AdminMahsulotYaratish = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="w-full h-[80vh] flex items-center justify-center">
+        <span className="loader"></span>
+      </div>
+    );
+  }
+
   return (
     <div className="p-1">
       <div className="flex items-center p-4 mb-3 rounded">
@@ -151,8 +163,9 @@ const AdminMahsulotYaratish = () => {
                 {isModalOpen && (
                   <div
                     className={`transition-all duration-300 overflow-hidden ${
-                      // openCategoryId === item.id
-                      true ? "w-full opacity-100" : "w-0 opacity-0"
+                      openCategoryId === item.id
+                        ? "w-full opacity-100"
+                        : "w-0 opacity-0"
                     }`}
                   >
                     {/* Main modal */}
@@ -343,7 +356,7 @@ const AdminMahsulotYaratish = () => {
                     {/* Edit */}
                     <button
                       className="mr-4 cursor-pointer"
-                      onClick={() => handleEdit(product)}
+                      onClick={() => handleEdit(product, item.id)}
                     >
                       <CiEdit className="w-5 h-auto text-green-400" />
                     </button>

@@ -34,10 +34,7 @@ export const AdminSidebar = () => {
     navigate("/admin/ombor");
   };
   const onLogOut = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("role");
-    localStorage.removeItem("refreshToken");
+    localStorage.clear();
     navigate("/");
   };
 

@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import APIOmbor from "../../services/ombor";
-import APICategory from "../../services/category";
 import { CiEdit } from "react-icons/ci";
 
 const AdminKiritilganMahsulotlar = () => {
   const [ombor, setOmbor] = useState([]);
-  const [category, setCategory] = useState([]);
-  const [filteredOmbor, setFilteredOmbor] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -15,8 +12,9 @@ const AdminKiritilganMahsulotlar = () => {
   // Fetch categories
   const getOmbor = async () => {
     try {
-      const response = await APICategory.get();
-      setCategory(response?.data);
+      const response = await APIOmbor.get();
+      setOmbor(response?.data?.reverse());
+      setLoading(false)
     } catch (error) {
       console.error("Failed to fetch category", error);
     }
@@ -32,7 +30,6 @@ const AdminKiritilganMahsulotlar = () => {
         const dataToPut = {
           maxsulot: values.mahsulot,
           qiymat: values.qiymat,
-          birlik: values.birlik,
         };
 
         try {
@@ -48,13 +45,6 @@ const AdminKiritilganMahsulotlar = () => {
       }
     },
   });
-
-  const handleCategoryChange = (event) => {
-    const selectedCategoryId = event.target.value;
-    formik.setFieldValue("category", selectedCategoryId);
-
-    formik.setFieldValue("mahsulot", "");
-  };
 
   const handleEdit = (item) => {
     setEditingId(item.id);
@@ -127,24 +117,6 @@ const AdminKiritilganMahsulotlar = () => {
         </dialog>
       )}
 
-      <div className="flex items-center gap-3 px-4">
-        <select
-          name="category"
-          onChange={handleCategoryChange}
-          value={formik.values.category || ""}
-          className="select select-bordered w-full max-w-xs bg-white text-[#000]"
-        >
-          <option value="" disabled>
-            Kategoriya
-          </option>
-          {category.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
       {/* Filtered Ombor Items */}
       <div className="overflow-x-auto my-4">
         <table className="table table-zebra w-full">
@@ -157,24 +129,24 @@ const AdminKiritilganMahsulotlar = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredOmbor
-              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-              .map((omborItem) => (
-                <tr key={omborItem.id}>
-                  <td>{omborItem.mahsulot}</td>
-                  <td>{omborItem.qiymat} </td>
-                  <td className="text-center">
-                    <button
-                      type="button"
-                      onClick={() => handleEdit(omborItem)}
-                      className="text-xl text-green-400 hover:text-green-500"
-                    >
-                      <CiEdit />
-                    </button>
-                  </td>
-                  <td className="text-center">{omborItem.created_at}</td>
-                </tr>
-              ))}
+            {ombor.map((omborItem) => (
+              <tr key={omborItem.id}>
+                <td>{omborItem.maxsulot.name}</td>
+                <td>
+                  {omborItem.qiymat} {omborItem.maxsulot.birlik.name}
+                </td>
+                <td className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => handleEdit(omborItem)}
+                    className="text-xl text-green-400 hover:text-green-500"
+                  >
+                    <CiEdit />
+                  </button>
+                </td>
+                <td className="text-center">{omborItem.maxsulot.created_at}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
