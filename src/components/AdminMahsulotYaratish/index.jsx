@@ -43,6 +43,48 @@ const AdminMahsulotYaratish = () => {
     getBirlik();
   }, []);
 
+  const handleEdit = (product, id) => {
+    setIsModalOpen(true);
+    setEditingId(product.id);
+    setOpenCategoryId(id);
+
+    formik.setValues({
+      name: product.name || "",
+      kategoriya: id || "",
+      maxviylik: product.maxviylik || false,
+      birlik: product.birlik || "",
+      rasm: "",
+      maxsulot_role: product.maxsulot_role ? "rttm" : "xojalik",
+    });
+  };
+
+  const handleClick = (categoryId) => {
+    setIsModalOpen(true);
+    if (openCategoryId === categoryId) {
+      setOpenCategoryId(null);
+      formik.resetForm();
+    } else {
+      setOpenCategoryId(categoryId);
+      formik.setFieldValue("kategoriya", categoryId);
+    }
+  };
+
+  const validationSchema = (isEdit) =>
+    Yup.object({
+      name: isEdit
+        ? Yup.string() // Tahrirlashda validatsiya yo'q
+        : Yup.string()
+            .required("Nom majburiy")
+            .max(150, "Name must be 150 characters or fewer"),
+      kategoriya: isEdit
+        ? Yup.string() // Tahrirlashda validatsiya yo'q
+        : Yup.string()
+            .required("Kategoriya majburiy")
+            .max(150, "Kategoriya must be 150 characters or fewer"),
+      birlik: Yup.string()
+        .required("Birlikni tanlang"),
+    });
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -50,16 +92,9 @@ const AdminMahsulotYaratish = () => {
       rasm: "",
       birlik: "",
       maxviylik: false,
-      maxsulot_role: "",
+      maxsulot_role: "xojalik",
     },
-    validationSchema: Yup.object({
-      name: Yup.string()
-        .required("Nom majburiy")
-        .max(150, "Name must be 150 characters or fewer"),
-      kategoriya: Yup.string()
-        .required("Kategoriya majburiy")
-        .max(150, "Name must be 150 characters or fewer"),
-    }),
+    validationSchema: validationSchema(Boolean(editingId)),
     onSubmit: async (values) => {
       const formData = new FormData();
       formData.append("name", values.name);
@@ -76,8 +111,6 @@ const AdminMahsulotYaratish = () => {
 
       try {
         if (editingId) {
-          console.log(editingId);
-          
           await APIMahsulot.patch(`${editingId}`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
@@ -99,32 +132,6 @@ const AdminMahsulotYaratish = () => {
       }
     },
   });
-
-  const handleClick = (categoryId) => {
-    setIsModalOpen(true);
-    if (openCategoryId === categoryId) {
-      setOpenCategoryId(null);
-      formik.resetForm();
-    } else {
-      setOpenCategoryId(categoryId);
-      formik.setFieldValue("kategoriya", categoryId);
-    }
-  };
-
-  const handleEdit = (product, id) => {
-    setIsModalOpen(true);
-    setEditingId(product.id);
-    setOpenCategoryId(id);
-
-    formik.setValues({
-      name: product.name || "",
-      kategoriya: product.kategoriya?.id || "",
-      maxviylik: product.maxviylik || false,
-      birlik: product.birlik || "",
-      rasm: "",
-      maxsulot_role: product.maxsulot_role ? "rttm" : "xojalik",
-    });
-  };
 
   const handleDelete = async (id) => {
     if (window.confirm("O'chirishga ishonchingiz komilmi?")) {
@@ -273,6 +280,12 @@ const AdminMahsulotYaratish = () => {
                                     </option>
                                   ))}
                                 </select>
+                                {formik.errors.birlik &&
+                                  formik.touched.birlik && (
+                                    <div className="text-red-500 text-sm italic">
+                                      Birlikni tanlang
+                                    </div>
+                                  )}
                               </div>
                             </div>
 
