@@ -9,11 +9,13 @@ import { CiEdit } from "react-icons/ci";
 const AdminBirlik = () => {
   const [birlik, setBirlik] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const getBirlik = async () => {
     try {
       const response = await APIBirlik.get();
       setBirlik(response?.data);
+      setLoading(false);
     } catch (error) {
       console.error("Failed to fetch birlik", error);
     }
@@ -41,8 +43,8 @@ const AdminBirlik = () => {
 
       try {
         if (editingId) {
-          await APIBirlik.put(`${editingId}`, dataToPost); 
-          alert("Muvaffaqiyatli o'zgartirildi.!"); 
+          await APIBirlik.put(`${editingId}`, dataToPost);
+          alert("Muvaffaqiyatli o'zgartirildi.!");
         } else {
           await APIBirlik.post(dataToPost);
           alert("Muvaffaqiyatli yaratildi.!");
@@ -81,10 +83,20 @@ const AdminBirlik = () => {
     document.getElementById("my_modal_2").close();
   };
 
+  if (loading) {
+    return (
+      <div className="w-full h-[80vh] flex items-center justify-center">
+        <span className="loader"></span>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between p-4">
-        <p className="text-xl font-semibold text-[#004269]">O'lchov birliklari</p>
+        <p className="text-xl font-semibold text-[#004269]">
+          O'lchov birliklari
+        </p>
         <button
           className="btn flex items-center bg-blue-400 hover:bg-blue-500 text-white"
           onClick={() => {
@@ -135,7 +147,10 @@ const AdminBirlik = () => {
                 ) : null}
               </div>
               <div className="modal-action w-full">
-                <button type="submit" className="btn w-full bg-blue-400 hover:bg-blue-500 text-white">
+                <button
+                  type="submit"
+                  className="btn w-full bg-blue-400 hover:bg-blue-500 text-white"
+                >
                   {editingId ? "Saqlash" : "Yaratish"}
                 </button>
               </div>

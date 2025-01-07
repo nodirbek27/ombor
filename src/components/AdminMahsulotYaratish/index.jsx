@@ -81,8 +81,7 @@ const AdminMahsulotYaratish = () => {
         : Yup.string()
             .required("Kategoriya majburiy")
             .max(150, "Kategoriya must be 150 characters or fewer"),
-      birlik: Yup.string()
-        .required("Birlikni tanlang"),
+      birlik: Yup.string().required("Birlikni tanlang"),
     });
 
   const formik = useFormik({
@@ -92,7 +91,7 @@ const AdminMahsulotYaratish = () => {
       rasm: "",
       birlik: "",
       maxviylik: false,
-      maxsulot_role: "xojalik",
+      maxsulot_role: "",
     },
     validationSchema: validationSchema(Boolean(editingId)),
     onSubmit: async (values) => {
@@ -137,12 +136,17 @@ const AdminMahsulotYaratish = () => {
     if (window.confirm("O'chirishga ishonchingiz komilmi?")) {
       try {
         await APIMahsulot.del(`${id}`);
-        alert("Muvaffaqiyatli o'chirildi!");
         getCategory();
       } catch (error) {
         console.error("Failed to delete mahsulot", error);
       }
     }
+  };
+
+  const modalClose = () => {
+    setIsModalOpen(false);
+    setEditingId(null)
+    setOpenCategoryId(null);
   };
 
   if (loading) {
@@ -169,11 +173,7 @@ const AdminMahsulotYaratish = () => {
               <div className="relative">
                 {isModalOpen && (
                   <div
-                    className={`transition-all duration-300 overflow-hidden ${
-                      openCategoryId === item.id
-                        ? "w-full opacity-100"
-                        : "w-0 opacity-0"
-                    }`}
+                    className={`transition-all duration-300 overflow-hidden`}
                   >
                     {/* Main modal */}
                     <div
@@ -191,7 +191,7 @@ const AdminMahsulotYaratish = () => {
                             </h3>
                             <button
                               type="button"
-                              onClick={() => setIsModalOpen(false)}
+                              onClick={() => modalClose()}
                               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                             >
                               <svg
