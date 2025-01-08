@@ -1,34 +1,43 @@
 import React, { useEffect, useState } from "react";
-import APIUsers from "../../services/user";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import profilePicture from "../../assets/images/profile-picture.png";
+import CryptoJS from "crypto-js";
+
 
 const ProrektorNavbar = () => {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [user, setUser] = useState([]);
-
-  const getUserProfile = async () => {
-    try {
-      const userId = localStorage.getItem("userId");
-      if (userId) {
-        const response = await APIUsers.get();
-        const loggedInUser = response.data.find(
-          (item) => item.id === parseInt(userId)
-        );
-        if (loggedInUser) {
-          setUser(loggedInUser);
-        } else {
-          console.error("User not found");
-        }
-      }
-    } catch (error) {
-      console.error("Failed to fetch user profile", error);
-    }
-  };
+  const [name, setName] = useState([]);
+  const [lastName, setLastName] = useState([]);
+  const [role, setRole] = useState([]);
 
   useEffect(() => {
-    getUserProfile();
+    const data = JSON.parse(localStorage.getItem("data"));
+    if (data) {
+      const unShifredName = CryptoJS.AES.decrypt(
+        data?.first_name,
+        "first_name-001"
+      )
+        .toString(CryptoJS.enc.Utf8)
+        .trim()
+        .replace(/^"|"$/g, "");
+      setName(unShifredName);
+
+      const unShifredLastName = CryptoJS.AES.decrypt(
+        data?.last_name,
+        "last_name-001"
+      )
+        .toString(CryptoJS.enc.Utf8)
+        .trim()
+        .replace(/^"|"$/g, "");
+      setLastName(unShifredLastName);
+
+      const unShifredRole = CryptoJS.AES.decrypt(data?.role, "role-001")
+        .toString(CryptoJS.enc.Utf8)
+        .trim()
+        .replace(/^"|"$/g, "");
+      setRole(unShifredRole);
+    }
   }, []);
 
   const toggleNavbar = () => setIsNavbarOpen(!isNavbarOpen);
@@ -77,10 +86,10 @@ const ProrektorNavbar = () => {
               <div className="z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 absolute top-12 right-0">
                 <div className="px-4 py-3">
                   <span className="block text-sm text-gray-900 truncate dark:text-white">
-                    {user.first_name} {user.last_name}
+                    {name} {lastName}
                   </span>
                   <span className="block text-sm text-gray-500 truncate dark:text-gray-400">
-                    {user.name}
+                    {role}
                   </span>
                 </div>
                 <ul className="py-2">
