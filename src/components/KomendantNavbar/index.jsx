@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import APIUsers from "../../services/user";
-import APIBuyurtma from "../../services/buyurtma";
-import APIArxivRad from "../../services/arxivRad";
 import menus from "../../utils/komendantNavbar";
 import { MdOutlineLocalGroceryStore } from "react-icons/md";
 import { RiMenu2Fill } from "react-icons/ri";
@@ -11,17 +8,41 @@ import logo from "../../assets/images/logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCartLength } from "../../redux/cartSlice";
 import { IoIosArrowDown } from "react-icons/io";
+import CryptoJS from "crypto-js";
 
 const KomendantNavbar = () => {
-  const [user, setUser] = useState(null);
-  const [radUsers, setRadUsers] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null);
-  const [rejectedBuyurtma, setRejectedBuyurtma] = useState([]);
-  const [rejectedMahsulotlar, setRejectedMahsulotlar] = useState([]);
-  const [findRadUser, setFindRadUser] = useState(null);
+  // const [rejectedBuyurtma, setRejectedBuyurtma] = useState([]);
+  // const [rejectedMahsulotlar, setRejectedMahsulotlar] = useState([]);
   const dispatch = useDispatch();
   const cartLength = useSelector((state) => state.cart.cartLength);
+
+  const [name, setName] = useState([]);
+  const [lastName, setLastName] = useState([]);
+
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("data"));
+    if (data) {
+      const unShifredName = CryptoJS.AES.decrypt(
+        data?.first_name,
+        "first_name-001"
+      )
+        .toString(CryptoJS.enc.Utf8)
+        .trim()
+        .replace(/^"|"$/g, "");
+      setName(unShifredName);
+
+      const unShifredLastName = CryptoJS.AES.decrypt(
+        data?.last_name,
+        "last_name-001"
+      )
+        .toString(CryptoJS.enc.Utf8)
+        .trim()
+        .replace(/^"|"$/g, "");
+      setLastName(unShifredLastName);
+    }
+  }, []);
 
   useEffect(() => {
     dispatch(fetchCartLength());
@@ -29,104 +50,12 @@ const KomendantNavbar = () => {
 
   const navigate = useNavigate();
 
-  // Fetch rejected buyurtma
-  const getBuyurtma = async () => {
-    try {
-      const userId = Number(localStorage.getItem("userId"));
-      const response = await APIBuyurtma.get();
-      const filteredRadBuyurtma = response?.data?.filter(
-        (item) => item.user === userId && !item.sorov && item.active && item.rad
-      );
-      if (filteredRadBuyurtma.length > 0) {
-        setRejectedBuyurtma(filteredRadBuyurtma);
-        setShowModal(true);
-      }
-    } catch (error) {
-      console.error("Failed to fetch buyurtma", error);
-    }
-  };
-  useEffect(() => {
-    getBuyurtma();
-  }, []);
-
-  // Fetch rejected mahsulotlar
-  useEffect(() => {
-    const getRadMahsulotlar = async () => {
-      try {
-        const response = await APIArxivRad.get();
-        // *** TUZATISH: To'g'ri buyurtma ID sini olish ***
-        // Agar siz barcha buyurtmalarni ko'rib chiqayotgan bo'lsangiz, u holda quyidagi kabi qilish mumkin:
-        const buyurtmaIds = rejectedBuyurtma.map((b) => b.id);
-        const filteredRadMahsulotlar = response?.data?.filter(
-          (item) => item.active && buyurtmaIds.includes(item.buyurtma)
-        );
-        if (filteredRadMahsulotlar.length > 0) {
-          setRejectedMahsulotlar(filteredRadMahsulotlar);
-          setFindRadUser(filteredRadMahsulotlar[0]);
-          setShowModal(true);
-        }
-      } catch (error) {
-        console.error("Failed to fetch mahsulotlar", error);
-      }
-    };
-    if (rejectedBuyurtma.length > 0) {
-      getRadMahsulotlar();
-    }
-  }, [rejectedBuyurtma]);
-
-  // Fetch user profile
-  useEffect(() => {
-    const getUserProfile = async () => {
-      try {
-        const userId = localStorage.getItem("userId");
-        if (userId) {
-          const response = await APIUsers.get();
-          setRadUsers(response?.data || []);
-          const loggedInUser = response.data.find(
-            (item) => item.id === parseInt(userId)
-          );
-          if (loggedInUser) {
-            setUser(loggedInUser);
-          } else {
-            console.error("User not found");
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch user profile", error);
-      }
-    };
-    getUserProfile();
-  }, [findRadUser?.user]);
-
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
   const onLogOut = () => {
     localStorage.clear();
     navigate("/");
-  };
-
-  const handleChange = async (buyurtma) => {
-    try {
-      if (buyurtma) {
-        // Update the active status of the buyurtma
-        await APIBuyurtma.patch(buyurtma.id, { active: false, rad: false });
-      }
-
-      if (rejectedMahsulotlar && rejectedMahsulotlar.length > 0) {
-        await Promise.all(
-          rejectedMahsulotlar.map((item) =>
-            APIArxivRad.patch(item.id, { active: false })
-          )
-        );
-      }
-
-      // Yangi buyurtma yoki mahsulotlar holatini yangilagandan so'ng modalni yopish
-      setShowModal(false);
-      getBuyurtma();
-    } catch (error) {
-      console.error("Failed to update rejected mahsulotlar", error);
-    }
   };
 
   const toggleDropdown = (menuId) => {
@@ -220,9 +149,7 @@ const KomendantNavbar = () => {
                 }`}
               >
                 <li className="p-1 rounded-md cursor-pointer hover:text-blue-700 transition-colors duration-300 text-[#111] font-semibold text-md items-center gap-x-4">
-                  {user
-                    ? `${user.first_name} ${user.last_name}`
-                    : "Foydalanuvchi"}
+                  {name} {lastName}
                 </li>
                 {menus.map(
                   (menu) =>
@@ -286,7 +213,7 @@ const KomendantNavbar = () => {
         </div>
 
         {/* Modal for rejected order */}
-        {showModal &&
+        {/* {showModal &&
           rejectedBuyurtma.length > 0 &&
           rejectedBuyurtma.map((buyurtma) => {
             const rejectedMahsulot = rejectedMahsulotlar.find(
@@ -322,7 +249,7 @@ const KomendantNavbar = () => {
                 </div>
               </div>
             );
-          })}
+          })} */}
         {/* Marquee */}
         <div className="pb-4 max-w-7xl mx-auto bg-white">
           <div className="marquee-container mb-3">

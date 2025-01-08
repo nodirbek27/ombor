@@ -6,7 +6,6 @@ const Modal = ({ selectedItem, onClose }) => {
   const [quantity, setQuantity] = useState("");
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
-  console.log(selectedItem);
   // Handle input change with validation
   const handleQuantityChange = (e) => {
     const value = e.target.value;

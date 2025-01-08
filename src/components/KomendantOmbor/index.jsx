@@ -41,6 +41,11 @@ const KomendantOmbor = () => {
     setSelectedCategory(event.target.value);
   };
 
+  const filteredItems =
+    selectedCategory === "Hammasi"
+      ? jami
+      : jami.filter((item) => item.id === selectedCategory);
+
   const handleAddToCart = async (jamiItem, e) => {
     e.preventDefault();
     setSelectedItem(jamiItem);
@@ -80,7 +85,7 @@ const KomendantOmbor = () => {
         </div>
       </div>
       <div className={`${isClose && "hidden"}`}>
-        {jami.map((item) => (
+        {filteredItems.map((item) => (
           <div key={item.id} className="p-2">
             <h2 className="text-lg font-semibold text-[#004269] mb-3">
               {item.name}
