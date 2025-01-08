@@ -23,8 +23,7 @@ import RadEtilganMahsulotlar from "../pages/AdminDashboard/ArxivPage/RadEtilganM
 
 // Komendant
 import KomendantDashboard from "../pages/KomendantDashboard";
-import KomendantOmborXojalik from "../pages/KomendantDashboard/Ombor/Xojalik";
-import KomendantOmborItPark from "../pages/KomendantDashboard/Ombor/ItPark";
+import KomendantOmbor from "../pages/KomendantDashboard/Ombor";
 import KomendantSavatcha from "../pages/KomendantDashboard/Savat";
 import KomendantArxivTasdiq from "../pages/KomendantDashboard/Arxiv";
 import KomendantArxivRad from "../pages/KomendantDashboard/ArxivRad";
@@ -119,12 +118,8 @@ const Root = () => {
           </PrivateRoute>
         }
       >
-        <Route index element={<KomendantOmborXojalik />} />
-        <Route
-          path="ombor/xojalik-bolimi"
-          element={<KomendantOmborXojalik />}
-        />
-        <Route path="ombor/it-park" element={<KomendantOmborItPark />} />
+        <Route index element={<KomendantOmbor />} />
+        <Route path="ombor" element={<KomendantOmbor />} />
         <Route path="chiqgan-mahsulotlar" element={<KomendantArxivTasdiq />} />
         <Route path="rad-etilgan-mahsulotlar" element={<KomendantArxivRad />} />
         <Route path="savatcha" element={<KomendantSavatcha />} />

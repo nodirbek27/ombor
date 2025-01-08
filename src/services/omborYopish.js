@@ -1,6 +1,6 @@
 import axiosInstance from "./index";
 
-const ep = "ombor/omborni_yopish";
+const ep = "ombor/omborni_yopish/";
 
 const get = () => axiosInstance.get(ep);
 const getbyId = (id) => {

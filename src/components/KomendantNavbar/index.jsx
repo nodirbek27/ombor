@@ -139,7 +139,7 @@ const KomendantNavbar = () => {
         <div className="max-w-7xl mx-auto flex justify-between items-center p-4 relative border-b-2">
           <div>
             <Link
-              to="/komendant/ombor/xojalik-bolimi"
+              to="/komendant/ombor"
               className="logo flex items-start text-xl font-semibold"
             >
               <img className="mr-3" src={logo} alt="Logo" />

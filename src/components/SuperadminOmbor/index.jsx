@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react";
 import APIJami from "../../services/jami";
-import APICategory from "../../services/category";
-import APIMahsulot from "../../services/mahsulot";
-import APIBirlik from "../../services/birlik";
 import APIOmborYopish from "../../services/omborYopish";
 import * as XLSX from "xlsx";
 
 const SuperadminOmbor = () => {
   const [jami, setJami] = useState([]);
-  const [category, setCategory] = useState([]);
-  const [mahsulot, setMahsulot] = useState([]);
-  const [birlik, setBirlik] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isOmborClosed, setIsOmborClosed] = useState(false);
   const [omborYopishId, setOmborYopishId] = useState(null);
@@ -18,32 +12,18 @@ const SuperadminOmbor = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [
-        jamiData,
-        categoryData,
-        mahsulotData,
-        birlikData,
-        omborYopishData,
-      ] = await Promise.all([
+      const [jamiData, omborYopishData] = await Promise.all([
         APIJami.get(),
-        APICategory.get(),
-        APIMahsulot.get(),
-        APIBirlik.get(),
         APIOmborYopish.get(),
       ]);
 
       setJami(jamiData?.data || []);
-      setCategory(categoryData?.data || []);
-      setMahsulot(mahsulotData?.data || []);
-      setBirlik(birlikData?.data || []);
 
       if (omborYopishData?.data && omborYopishData.data.length > 0) {
         setIsOmborClosed(omborYopishData.data[0].yopish);
         setOmborYopishId(omborYopishData.data[0].id);
       } else {
         setIsOmborClosed(false);
-        const response = await APIOmborYopish.post({ yopish: false });
-        setOmborYopishId(response.data.id);
       }
     } catch (error) {
       console.error("Failed to fetch data", error);
@@ -51,14 +31,13 @@ const SuperadminOmbor = () => {
       setLoading(false);
     }
   };
-
   const handleToggleOmbor = async () => {
     const newStatus = !isOmborClosed;
     setIsOmborClosed(newStatus);
 
     try {
       if (omborYopishId) {
-        await APIOmborYopish.put(`/${omborYopishId}/`, { yopish: newStatus });
+        await APIOmborYopish.put(`${omborYopishId}/`, { yopish: newStatus });
       } else {
         const response = await APIOmborYopish.post({ yopish: newStatus });
         setOmborYopishId(response.data.id);
@@ -73,40 +52,25 @@ const SuperadminOmbor = () => {
     fetchData();
   }, []);
 
-  // Excel faylni yaratish funksiyasi
   const handleExportToExcel = () => {
     const exportData = [];
 
-    category.forEach((item) => {
-      jami
-        .filter((o) =>
-          mahsulot
-            .filter((k) => k.kategoriya === item.id)
-            .map((prod) => prod.id)
-            .includes(o.maxsulot)
-        )
-        .forEach((jamiItem) => {
-          const mahsulotItem = mahsulot.find(
-            (prod) => prod.id === jamiItem.maxsulot
-          );
-          const birlikNomi =
-            birlik.find((unit) => unit.id === jamiItem.birlik)?.name ||
-            "Noma'lum";
-
-          exportData.push({
-            Kategoriya: item.name,
-            Mahsulot: mahsulotItem?.name || "Noma'lum",
-            Miqdor: jamiItem.yakuniy_qiymat,
-            Birlik: birlikNomi,
-          });
+    jami.forEach((item) => {
+      item?.maxsulotlar?.forEach((product) => {
+        exportData.push({
+          Kategoriya: item?.name,
+          Mahsulot: product?.maxsulot?.name,
+          Miqdor: product?.qiymat,
+          Birlik: product?.maxsulot?.birlik?.name,
         });
+      });
     });
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Ombor");
 
-    // Faylni yuklash
+    // Excel faylni yuklash
     XLSX.writeFile(workbook, "ombor_ma'lumotlari.xlsx");
   };
 
@@ -138,7 +102,7 @@ const SuperadminOmbor = () => {
                 type="checkbox"
                 className="toggle toggle-success"
                 checked={!!isOmborClosed}
-                onChange={handleToggleOmbor} // Toggle state
+                onChange={handleToggleOmbor}
               />
             </label>
           </div>
@@ -146,61 +110,49 @@ const SuperadminOmbor = () => {
       </div>
 
       {/* Display items only if the warehouse is open (isOmborClosed is false) */}
+      {/* Ombor start */}
       {!isOmborClosed && (
         <div>
-          {category.map((item) => (
+          {jami.map((item) => (
             <div key={item.id} className="p-2">
               <h2 className="text-lg font-semibold text-[#004269]">
                 {item.name}
               </h2>
               <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
-                {jami
-                  .filter((o) =>
-                    mahsulot
-                      .filter((k) => k.kategoriya === item.id)
-                      .map((item) => item.id)
-                      .includes(o.maxsulot)
-                  )
-                  .map((jamiItem) => {
-                    const mahsulotItem = mahsulot.find(
-                      (prod) => prod.id === jamiItem.maxsulot
-                    );
-                    const mahsulotNomi =
-                      mahsulot.find((prod) => prod.id === jamiItem.maxsulot)
-                        ?.name || "Noma'lum";
-                    const birlikNomi =
-                      birlik.find((unit) => unit.id === jamiItem.birlik)
-                        ?.name || "Noma'lum";
-                    const mahsulotRasm = mahsulotItem?.rasm;
-                    return (
-                      <div
-                        key={jamiItem.id}
-                        className="border rounded p-2 flex items-center justify-between bg-slate-50"
-                      >
-                        <div className="text-[#000]">{mahsulotNomi}</div>
-                        <div>
-                          <a
-                            href={mahsulotRasm}
-                            className={`italic underline ${
-                              !mahsulotRasm && "hidden"
-                            }`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Rasm
-                          </a>
-                        </div>
+                {item.maxsulotlar.map((maxsulotItem) => {
+                  return (
+                    <div
+                      key={maxsulotItem.id}
+                      className="border rounded p-2 flex items-center justify-between bg-slate-50"
+                    >
+                      <div className="text-[#000]">
+                        {maxsulotItem.maxsulot.name}
+                      </div>
+                      <div className="flex items-center">
+                        <a
+                          href={maxsulotItem.maxsulot.rasm}
+                          className={`italic underline text-blue-300 mr-3 ${
+                            !maxsulotItem.maxsulot.rasm && "hidden"
+                          }`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Rasmi
+                        </a>
                         <div className="text-[#000]">
-                          {jamiItem.yakuniy_qiymat} {birlikNomi}
+                          {maxsulotItem.qiymat}{" "}
+                          {maxsulotItem.maxsulot.birlik.name}
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ))}
         </div>
       )}
+      {/* Ombor end */}
     </div>
   );
 };

@@ -2,29 +2,11 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addToCart, fetchCartLength } from "../../redux/cartSlice";
 
-const Modal = ({
-  selectedItem,
-  mahsulot,
-  birlik,
-  buyurtmaId,
-  yakuniyQiymat,
-  onClose,
-}) => {
+const Modal = ({ selectedItem, onClose }) => {
   const [quantity, setQuantity] = useState("");
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
-
-  const mahsulotName =
-    mahsulot.find((prod) => prod.id === selectedItem?.maxsulot)?.name ||
-    "Noma'lum";
-  const mahsulotId =
-    mahsulot.find((prod) => prod.id === selectedItem?.maxsulot)?.id ||
-    "Noma'lum";
-  const birlikName =
-    birlik.find((unit) => unit.id === selectedItem?.birlik)?.name || "Noma'lum";
-  const birlikId =
-    birlik.find((unit) => unit.id === selectedItem?.birlik)?.id || "Noma'lum";
-
+  console.log(selectedItem);
   // Handle input change with validation
   const handleQuantityChange = (e) => {
     const value = e.target.value;
@@ -36,8 +18,8 @@ const Modal = ({
     }
 
     // Ensure value does not exceed yakuniyQiymat
-    if (parseFloat(value) > yakuniyQiymat) {
-      setError(`Miqdor ${yakuniyQiymat} dan katta bo'lishi mumkin emas!`);
+    if (parseFloat(value) > selectedItem.qiymat) {
+      setError(`Miqdor ${selectedItem.qiymat} dan katta bo'lishi mumkin emas!`);
     } else {
       setError(null);
     }
@@ -53,11 +35,8 @@ const Modal = ({
     }
 
     const newCartItem = {
+      maxsulot: selectedItem.maxsulot.id,
       qiymat: quantity,
-      buyurtma: buyurtmaId,
-      maxsulot: mahsulotId,
-      birlik: birlikId,
-      active: true,
     };
 
     try {
@@ -81,7 +60,9 @@ const Modal = ({
           >
             ✕
           </button>
-          <h3 className="font-bold text-lg mb-3">{mahsulotName}</h3>
+          <h3 className="font-bold text-lg mb-3">
+            {selectedItem.maxsulot.name}
+          </h3>
           <div className="mb-3 flex items-center justify-between gap-3">
             <label className="input input-bordered flex items-center w-full gap-2">
               Miqdori:
@@ -93,7 +74,7 @@ const Modal = ({
                 onChange={handleQuantityChange}
               />
             </label>
-            <div>{birlikName}</div>
+            <div>{selectedItem.maxsulot.birlik.name}</div>
           </div>
           {error && <p className="text-red-500">{error}</p>}
           <div className="modal-action">

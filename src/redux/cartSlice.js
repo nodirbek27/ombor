@@ -1,7 +1,6 @@
 // src/redux/cartSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import APISavat from "../services/savat";
-import APIBuyurtma from "../services/buyurtma";
 
 // Async action to add item to the cart
 export const addToCart = createAsyncThunk(
@@ -21,18 +20,9 @@ export const fetchCartLength = createAsyncThunk(
   "cart/fetchCartLength",
   async (_, { rejectWithValue }) => {
     try {
-      const userId = Number(localStorage.getItem("userId"));
-      const responseBuyurtma = await APIBuyurtma.get();
-      const filteredBuyurtma = responseBuyurtma?.data?.filter(
-        (item) => item.user === userId && item.active
-      );
-      if (filteredBuyurtma && filteredBuyurtma[0]?.id) {
-        const response = await APISavat.get();  
-        const filteredSavat = response?.data?.filter(
-          (item) => item.buyurtma === filteredBuyurtma[0].id
-        );    
-        return filteredSavat?.length;
-      }
+      const response = await APISavat.get();
+      const filteredSavat = response?.data;
+      return filteredSavat?.length;
     } catch (error) {
       return rejectWithValue("Failed to fetch cart length");
     }

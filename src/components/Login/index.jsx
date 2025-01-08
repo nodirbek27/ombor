@@ -78,7 +78,7 @@ const Login = () => {
                 } else if (data.role === "omborchi") {
                   navigate("/omborchi/ombor");
                 } else if (data.role === "komendant") {
-                  navigate("/komendant/ombor/xojalik-bolimi");
+                  navigate("/komendant/ombor");
                 } else if (data.role === "prorektor") {
                   navigate("/prorektor/talabnoma");
                 } else if (data.role === "bugalter") {
