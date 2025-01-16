@@ -22,7 +22,10 @@ export const fetchCartLength = createAsyncThunk(
     try {
       const response = await APISavat.get();
       const filteredSavat = response?.data;
-      return filteredSavat?.length;
+      return (
+        filteredSavat[0].maxsulotlar?.length +
+        filteredSavat[1].maxsulotlar?.length
+      );
     } catch (error) {
       return rejectWithValue("Failed to fetch cart length");
     }

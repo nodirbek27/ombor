@@ -11,10 +11,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import CryptoJS from "crypto-js";
 
 const KomendantNavbar = () => {
-  // const [showModal, setShowModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null);
-  // const [rejectedBuyurtma, setRejectedBuyurtma] = useState([]);
-  // const [rejectedMahsulotlar, setRejectedMahsulotlar] = useState([]);
   const dispatch = useDispatch();
   const cartLength = useSelector((state) => state.cart.cartLength);
 
@@ -212,44 +209,6 @@ const KomendantNavbar = () => {
           </div>
         </div>
 
-        {/* Modal for rejected order */}
-        {/* {showModal &&
-          rejectedBuyurtma.length > 0 &&
-          rejectedBuyurtma.map((buyurtma) => {
-            const rejectedMahsulot = rejectedMahsulotlar.find(
-              (rM) => rM.buyurtma === buyurtma.id
-            );
-            const radUser = radUsers.find(
-              (u) => u.id === rejectedMahsulot?.user
-            );
-            return (
-              <div
-                key={buyurtma.id}
-                className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 mb-3"
-              >
-                <div className="max-w-[320px] md:max-w-[450px] flex flex-col items-center border p-6 rounded bg-white">
-                  <div className="w-full text-center mb-3">
-                    <p className="text-red-500 italic md:text-lg">
-                      Sizning <strong>{buyurtma.id}</strong> raqamli
-                      buyurtmangizni{" "}
-                      <strong>
-                        {radUser
-                          ? `${radUser?.first_name} ${radUser?.last_name}`
-                          : "Yuklanmoqda..."}
-                      </strong>{" "}
-                      rad etdi!
-                    </p>
-                    <button
-                      onClick={() => handleChange(buyurtma)}
-                      className="btn btn-warning w-full mt-4"
-                    >
-                      Yopish
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })} */}
         {/* Marquee */}
         <div className="pb-4 max-w-7xl mx-auto bg-white">
           <div className="marquee-container mb-3">

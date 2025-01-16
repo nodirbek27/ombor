@@ -69,6 +69,7 @@ const Login = () => {
                 last_name: ShifredTxt("last_name-001", data?.last_name),
                 token: ShifredTxt("token-001", res.data?.access),
                 role: ShifredTxt("role-001", data?.role),
+                id: ShifredTxt("id-001", data?.id),
               });
               localStorage.setItem("data", jsonData);
 
