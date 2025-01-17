@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import APIBuyurtma from "../../services/buyurtma";
-import APIArxivRad from "../../services/arxivRad";
 import { RxCross2, RxCheck } from "react-icons/rx";
 import CryptoJS from "crypto-js";
 
 const XojalikTalabnoma = () => {
   const [buyurtmalar, setBuyurtmalar] = useState([]);
-  const [radBuyurtmalar, setRadBuyurtmalar] = useState([]);
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -28,17 +26,12 @@ const XojalikTalabnoma = () => {
         setLoading(true);
         setError(null);
 
-        const [buyurtmaResponse, radResponse] = await Promise.all([
-          APIBuyurtma.get(),
-          APIArxivRad.get(),
-        ]);
-
-        const filteredBuyurtmalar = buyurtmaResponse?.data?.filter(
+        const response = await APIBuyurtma.get();
+        const filteredBuyurtmalar = response?.data?.filter(
           (item) => item.buyurtma_role === role
         );
 
         setBuyurtmalar(filteredBuyurtmalar);
-        setRadBuyurtmalar(radResponse?.data);
       } catch (err) {
         setError("Talabnomalarni olishda xatolik yuz berdi!");
         console.error("Fetch error:", err);
@@ -51,8 +44,6 @@ const XojalikTalabnoma = () => {
       fetchData();
     }
   }, [role]);
-
-  console.log(radBuyurtmalar);
 
   const handleSumbit = async (action, buyurtmaId) => {
     try {
@@ -138,6 +129,22 @@ const XojalikTalabnoma = () => {
                       ))}
                     </tbody>
                   </table>
+                  <div className="flex justify-end">
+                    <div className="flex gap-2 sm:hidden mt-3">
+                      <button
+                        onClick={() => handleSumbit("approve", buyurtma.id)}
+                        className="bg-green-400 px-6 py-1 rounded-md hover:bg-green-500 focus:ring-4 focus:ring-red-300 dark:focus:ring-gray-600 transition-colors duration-300 text-white"
+                      >
+                        <RxCheck className="font-bold" />
+                      </button>
+                      <button
+                        onClick={() => handleSumbit("reject", buyurtma.id)}
+                        className="bg-red-400 px-6 py-1 rounded-md hover:bg-red-500 transition-colors duration-300 text-white"
+                      >
+                        <RxCross2 />
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

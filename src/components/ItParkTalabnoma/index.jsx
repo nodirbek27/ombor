@@ -1,50 +1,80 @@
 import React, { useEffect, useState } from "react";
 import APIBuyurtma from "../../services/buyurtma";
-// import APIArxivRad from "../../services/arxivRad";
 import { RxCross2, RxCheck } from "react-icons/rx";
+import CryptoJS from "crypto-js";
 
 const ItParkTalabnoma = () => {
   const [buyurtmalar, setBuyurtmalar] = useState([]);
+  const [role, setRole] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Fetch buyurtmalar and related users
-  const getBuyurtmalar = async () => {
-    try {
-      const response = await APIBuyurtma.get();
-      const filteredBuyurtmalar = response?.data?.filter(
-        (item) => item.buyurtma_role === "rttm"
-      );
-      setBuyurtmalar(filteredBuyurtmalar);
-    } catch (error) {
-      console.error("Failed to fetch buyurtmalar or users", error);
-    }
-  };
-
-  // Fetch savat data based on buyurtmalar
   useEffect(() => {
-    getBuyurtmalar();
+    const data = JSON.parse(localStorage.getItem("data"));
+    if (data) {
+      const unShifredRole = CryptoJS.AES.decrypt(data?.role, "role-001")
+        .toString(CryptoJS.enc.Utf8)
+        .trim()
+        .replace(/^"|"$/g, "");
+      setRole(unShifredRole);
+    }
   }, []);
 
-  // Handle approve or reject actions
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await APIBuyurtma.get();
+        const filteredBuyurtmalar = response?.data?.filter(
+          (item) => item.buyurtma_role === role
+        );
+
+        setBuyurtmalar(filteredBuyurtmalar);
+      } catch (err) {
+        setError("Talabnomalarni olishda xatolik yuz berdi!");
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (role) {
+      fetchData();
+    }
+  }, [role]);
+
   const handleSumbit = async (action, buyurtmaId) => {
     try {
-      // Update buyurtma status
       const updatedBuyurtma = {
         rttm: action === "approve",
         rad_etish: action === "reject",
       };
 
       await APIBuyurtma.patch(`${buyurtmaId}`, updatedBuyurtma);
-      await getBuyurtmalar();
 
-      // Update state to remove processed buyurtma and savat
-      setBuyurtmalar(buyurtmalar.filter((b) => b.id !== buyurtmaId));
+      setBuyurtmalar((prev) => prev.filter((b) => b.id !== buyurtmaId));
     } catch (error) {
       console.error(
         `Failed to ${action === "approve" ? "approve" : "reject"} buyurtma`,
         error
       );
+      setError("Buyurtmani yangilashda xatolik yuz berdi!");
     }
   };
+
+  if (loading) {
+    return (
+      <div className="w-full h-[80vh] flex items-center justify-center">
+        <span className="loader"></span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-600 text-center">{error}</div>;
+  }
 
   return (
     <div>
@@ -54,7 +84,7 @@ const ItParkTalabnoma = () => {
       {buyurtmalar.length > 0 ? (
         <div className="grid gap-3">
           {buyurtmalar.map((buyurtma) => (
-            <div key={buyurtma.id} className={`${buyurtmalar ? "" : "hidden"}`}>
+            <div key={buyurtma.id}>
               <div className="collapse collapse-arrow bg-base-200">
                 <input type="radio" name="my-accordion-2" />
                 <div className="collapse-title text-xl font-medium flex justify-between items-center">
@@ -122,7 +152,7 @@ const ItParkTalabnoma = () => {
         </div>
       ) : (
         <div className="flex justify-center italic text-red-600 text-lg font-medium my-5">
-          Sizda talabnomalar mavjud emas.!
+          Sizda talabnomalar mavjud emas!
         </div>
       )}
     </div>
