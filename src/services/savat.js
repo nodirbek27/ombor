@@ -3,8 +3,8 @@ import axiosInstance from "./index";
 const ep = "ombor/korzinka/";
 const epPost = "ombor/korzinka_maxsulot/";
 
-const get = (komendant_user) =>
-  axiosInstance.get(`${ep}?komendant_user=${komendant_user}`);
+const get = (unShifredId) =>
+  axiosInstance.get(`${ep}?komendant_user=${unShifredId}`);
 
 const getbyId = (id) => {
   return axiosInstance.get(`${ep}${id}/`);

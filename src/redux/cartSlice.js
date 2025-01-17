@@ -1,6 +1,7 @@
 // src/redux/cartSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import APISavat from "../services/savat";
+import CryptoJS from "crypto-js";
 
 // Async action to add item to the cart
 export const addToCart = createAsyncThunk(
@@ -19,13 +20,25 @@ export const addToCart = createAsyncThunk(
 export const fetchCartLength = createAsyncThunk(
   "cart/fetchCartLength",
   async (_, { rejectWithValue }) => {
+    const data = JSON.parse(localStorage.getItem("data"));
     try {
-      const response = await APISavat.get();
-      const filteredSavat = response?.data;
-      return (
-        filteredSavat[0].maxsulotlar?.length +
-        filteredSavat[1].maxsulotlar?.length
-      );
+      if (data) {
+        const unShifredId = CryptoJS.AES.decrypt(data?.id, "id-001")
+          .toString(CryptoJS.enc.Utf8)
+          .trim()
+          .replace(/^"|"$/g, "");
+        const response = await APISavat.get(unShifredId);
+        const filteredSavat = response?.data;
+
+        return (
+          (filteredSavat[0]?.maxsulotlar?.length
+            ? filteredSavat[0]?.maxsulotlar?.length
+            : 0) +
+          (filteredSavat[1]?.maxsulotlar?.length
+            ? filteredSavat[1]?.maxsulotlar?.length
+            : 0)
+        );
+      }
     } catch (error) {
       return rejectWithValue("Failed to fetch cart length");
     }

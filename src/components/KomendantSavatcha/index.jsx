@@ -12,72 +12,88 @@ const KomendantSavatcha = () => {
   const [savatRttm, setSavatRttm] = useState([]);
   const [buyurtma, setBuyurtma] = useState([]);
   const dispatch = useDispatch();
-  const [komendantId, setKomendantId] = useState([]);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("data"));
-    if (data) {
-      const unShifredName = CryptoJS.AES.decrypt(data?.id, "id-001")
-        .toString(CryptoJS.enc.Utf8)
-        .trim()
-        .replace(/^"|"$/g, "");
-      setKomendantId(unShifredName);
+    const fetchData = async () => {
+      const data = JSON.parse(localStorage.getItem("data"));
+      try {
+        if (data) {
+          const unShifredId = CryptoJS.AES.decrypt(data?.id, "id-001")
+            .toString(CryptoJS.enc.Utf8)
+            .trim()
+            .replace(/^"|"$/g, "");
+          const response = await APISavat.get(unShifredId);
+
+          setSavatXojalik(
+            response?.data?.find((item) => item.maxsulot_role === "xojalik") ||
+              []
+          );
+          setSavatRttm(
+            response?.data?.find((item) => item.maxsulot_role === "rttm") || []
+          );
+          dispatch(fetchCartLength());
+        }
+      } catch (error) {
+        console.error("Failed to fetch savat", error);
+      }
+    };
+    fetchData();
+  }, [dispatch]);
+
+  const getBuyurtma = async () => {
+    try {
+      const response = await APIBuyurtma.get();
+      setBuyurtma(response?.data || []);
+    } catch (error) {
+      console.error("Failed to fetch savat", error);
     }
-  }, []);
-
+  };
   useEffect(() => {
-    const getSavat = async () => {
-      try {
-        const response = await APISavat.get(komendantId);
-        console.log(response.data);
-        setSavatXojalik(
-          response?.data.find((item) => item.maxsulot_role === "xojalik") || []
-        );
-        setSavatRttm(
-          response?.data.find((item) => item.maxsulot_role === "rttm") || []
-        );
-        dispatch(fetchCartLength());
-      } catch (error) {
-        console.error("Failed to fetch savat", error);
-      }
-    };
-    getSavat();
-    
-  }, [dispatch, komendantId]);
-
-  useEffect(() => {
-    const getBuyurtma = async () => {
-      try {
-        const response = await APIBuyurtma.get();
-        setBuyurtma(response?.data || []);
-      } catch (error) {
-        console.error("Failed to fetch savat", error);
-      }
-    };
     getBuyurtma();
   }, []);
 
-  const handleSumbit = async () => {
+  const handleSumbit = async (id) => {
+    const data = JSON.parse(localStorage.getItem("data"));
     try {
       dispatch(fetchCartLength());
-      await APISavat.delKorzinka();
+      await APISavat.delKorzinka(id);
+      if (data) {
+        const unShifredId = CryptoJS.AES.decrypt(data?.id, "id-001")
+          .toString(CryptoJS.enc.Utf8)
+          .trim()
+          .replace(/^"|"$/g, "");
+        const response = await APISavat.get(unShifredId);
+        setSavatXojalik(
+          response?.data?.find((item) => item.maxsulot_role === "xojalik") || []
+        );
+        setSavatRttm(
+          response?.data?.find((item) => item.maxsulot_role === "rttm") || []
+        );
+      }
+      getBuyurtma();
     } catch (error) {
       console.error("Failed to submit and clear items", error);
     }
   };
 
   const handleDelete = async (id) => {
+    const data = JSON.parse(localStorage.getItem("data"));
     try {
       await APISavat.delProduct(id);
       dispatch(fetchCartLength());
-      // Mahsulot o'chirilgandan keyin savatni qayta yuklash
-      const response = await APISavat.get(komendantId);
-      setSavatXojalik(
-        response?.data.find((item) => item.maxsulot_role === "xojalik") || []
-      );
-      setSavatRttm(
-        response?.data.find((item) => item.maxsulot_role === "rttm") || []
-      );
+      if (data) {
+        const unShifredId = CryptoJS.AES.decrypt(data?.id, "id-001")
+          .toString(CryptoJS.enc.Utf8)
+          .trim()
+          .replace(/^"|"$/g, "");
+        const response = await APISavat.get(unShifredId);
+        setSavatXojalik(
+          response?.data?.find((item) => item.maxsulot_role === "xojalik") || []
+        );
+        setSavatRttm(
+          response?.data?.find((item) => item.maxsulot_role === "rttm") || []
+        );
+      }
     } catch (error) {
       console.error("Failed to delete item", error);
     }
@@ -97,81 +113,81 @@ const KomendantSavatcha = () => {
         Savat
       </h2>
 
-      {savatXojalik.length === 0 ? (
+      {/* {!true ? (
         <div className="text-xl font-bold text-red-500 text-center">
           Sizning savatingiz bo'sh!
         </div>
-      ) : (
-        <div>
-          {/* RTTM savat */}
-          <div
-            className={`text-xl font-semibold text-center mb-3 ${
-              savatRttm.maxsulotlar.length > 0 ? "" : "hidden"
-            }`}
-          >
-            RTTMga tegishli mahsulotlar
-          </div>
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mb-3">
-            {savatRttm.maxsulotlar.map((item) => (
-              <div key={item.id} className="border p-4 rounded-lg bg-slate-50">
-                <h3 className="font-semibold">{item.maxsulot.name}</h3>
-                <div className="flex items-center justify-between gap-2">
-                  <div>
-                    {item.qiymat} {item.maxsulot.birlik?.name}
-                  </div>
-                  <div className="flex items-center justify-end gap-2">
-                    <button onClick={() => handleDelete(item.id)}>
-                      <RiDeleteBin5Line className="w-5 h-auto text-red-400" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <button
-            onClick={() => handleSumbit(savatRttm.id)}
-            className={`btn w-full bg-blue-400 hover:bg-blue-500 transition-colors duration-300 text-white mb-5 ${
-              savatRttm.maxsulotlar.length > 0 ? "" : "hidden"
-            }`}
-          >
-            So'rov yuborish
-          </button>
-
-          {/* Xojalik savat */}
-          <div
-            className={`text-xl font-semibold text-center mb-3 ${
-              savatXojalik.maxsulotlar.length > 0 ? "" : "hidden"
-            }`}
-          >
-            Xo'jalik bo'limiga tegishli mahsulotlar
-          </div>
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mb-3">
-            {savatXojalik.maxsulotlar.map((item) => (
-              <div key={item.id} className="border p-4 rounded-lg bg-slate-50">
-                <h3 className="font-semibold">{item.maxsulot.name}</h3>
-                <div className="flex items-center justify-between gap-2">
-                  <div>
-                    {item.qiymat} {item.maxsulot.birlik?.name}
-                  </div>
-                  <div className="flex items-center justify-end gap-2">
-                    <button onClick={() => handleDelete(item.id)}>
-                      <RiDeleteBin5Line className="w-5 h-auto text-red-400" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <button
-            onClick={() => handleSumbit(savatXojalik.id)}
-            className={`btn w-full bg-blue-400 hover:bg-blue-500 transition-colors duration-300 text-white ${
-              savatXojalik.maxsulotlar.length > 0 ? "" : "hidden"
-            }`}
-          >
-            So'rov yuborish
-          </button>
+      ) : ( */}
+      <div>
+        {/* RTTM savat */}
+        <div
+          className={`text-xl font-semibold text-center mb-3 ${
+            savatRttm?.maxsulotlar?.length > 0 ? "" : "hidden"
+          }`}
+        >
+          RTTMga tegishli mahsulotlar
         </div>
-      )}
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mb-3">
+          {savatRttm?.maxsulotlar?.map((item) => (
+            <div key={item.id} className="border p-4 rounded-lg bg-slate-50">
+              <h3 className="font-semibold">{item.maxsulot.name}</h3>
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  {item.qiymat} {item.maxsulot.birlik?.name}
+                </div>
+                <div className="flex items-center justify-end gap-2">
+                  <button onClick={() => handleDelete(item.id)}>
+                    <RiDeleteBin5Line className="w-5 h-auto text-red-400" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <button
+          onClick={() => handleSumbit(savatRttm.id)}
+          className={`btn w-full bg-blue-400 hover:bg-blue-500 transition-colors duration-300 text-white mb-5 ${
+            savatRttm?.maxsulotlar?.length > 0 ? "" : "hidden"
+          }`}
+        >
+          So'rov yuborish
+        </button>
+
+        {/* Xojalik savat */}
+        <div
+          className={`text-xl font-semibold text-center mb-3 ${
+            savatXojalik?.maxsulotlar?.length > 0 ? "" : "hidden"
+          }`}
+        >
+          Xo'jalik bo'limiga tegishli mahsulotlar
+        </div>
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mb-3">
+          {savatXojalik?.maxsulotlar?.map((item) => (
+            <div key={item.id} className="border p-4 rounded-lg bg-slate-50">
+              <h3 className="font-semibold">{item.maxsulot.name}</h3>
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  {item.qiymat} {item.maxsulot.birlik?.name}
+                </div>
+                <div className="flex items-center justify-end gap-2">
+                  <button onClick={() => handleDelete(item.id)}>
+                    <RiDeleteBin5Line className="w-5 h-auto text-red-400" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <button
+          onClick={() => handleSumbit(savatXojalik.id)}
+          className={`btn w-full bg-blue-400 hover:bg-blue-500 transition-colors duration-300 text-white ${
+            savatXojalik?.maxsulotlar?.length > 0 ? "" : "hidden"
+          }`}
+        >
+          So'rov yuborish
+        </button>
+      </div>
+      {/* )} */}
 
       {/* Tasdiqlanish jarayonida */}
       <div
@@ -184,13 +200,13 @@ const KomendantSavatcha = () => {
         </h2>
         {/* Buyurtma Timeline */}
         {buyurtma.map((item) => (
-          <div key={item.id}>
+          <div key={item.id} className="mb-6">
             {/* Buyurtma maxsulotlar */}
-            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mb-3">
+            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mb-5">
               {item.maxsulotlar.map((prod) => (
                 <div
                   key={prod.id}
-                  className="border p-4 rounded-lg bg-slate-50"
+                  className="flex items-center justify-between border p-4 rounded-lg bg-slate-50"
                 >
                   <h3 className="font-semibold">{prod.maxsulot.name}</h3>
                   <div className="flex items-center gap-2">
@@ -207,13 +223,7 @@ const KomendantSavatcha = () => {
                 data-content={`${item.xojalik ? "✓" : "?"}`}
                 className={`step ${item.xojalik && "step-accent"}`}
               >
-                Xo'jalik bo'limi
-              </li>
-              <li
-                data-content={`${item.rttm ? "✓" : "?"}`}
-                className={`step ${item.rttm && "step-accent"}`}
-              >
-                RTTM
+                {item.maxsulot_role === "xojalik" ? "Xo'jalik bo'limi" : "RTTM"}
               </li>
               <li
                 data-content={`${item.prorektor ? "✓" : "?"}`}
