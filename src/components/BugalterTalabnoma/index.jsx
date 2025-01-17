@@ -1,44 +1,18 @@
 import React, { useEffect, useState } from "react";
-import APISavat from "../../services/savat";
 import APIBuyurtma from "../../services/buyurtma";
-import APIMahsulot from "../../services/mahsulot";
-import APIBirlik from "../../services/birlik";
-import APIUsers from "../../services/user";
 import APIArxivRad from "../../services/arxivRad";
 import { RxCross2, RxCheck } from "react-icons/rx";
 
 const BugalterTalabnoma = () => {
-  const [savat, setSavat] = useState([]);
   const [buyurtmalar, setBuyurtmalar] = useState([]);
-  const [mahsulot, setMahsulot] = useState([]);
-  const [birlik, setBirlik] = useState([]);
-  const [users, setUsers] = useState({});
 
   const getBuyurtmalar = async () => {
     try {
       const response = await APIBuyurtma.get();
       const filteredBuyurtmalar = response?.data?.filter(
-        (item) =>
-          item.sorov &&
-          item.active &&
-          (item.it_park || item.xojalik_bolimi) &&
-          item.prorektor &&
-          !item.bugalter
+        (item) => item.buyurtma_role === "bugalter"
       );
       setBuyurtmalar(filteredBuyurtmalar);
-      // Fetch user data for each buyurtma
-      const userPromises = filteredBuyurtmalar.map((buyurtma) =>
-        APIUsers.getbyId(`${buyurtma.user}`).then((response) => {
-          const user = response?.data;
-          return {
-            [buyurtma.user]: `${user?.first_name || "Noma'lum"} ${
-              user?.last_name || ""
-            }`.trim(),
-          };
-        })
-      );
-      const usersData = await Promise.all(userPromises);
-      setUsers(Object.assign({}, ...usersData));
     } catch (error) {
       console.error("Failed to fetch buyurtmalar or users", error);
     }
@@ -47,65 +21,10 @@ const BugalterTalabnoma = () => {
     getBuyurtmalar();
   }, []);
 
-  useEffect(() => {
-    const getSavat = async () => {
-      try {
-        if (buyurtmalar.length > 0) {
-          const response = await APISavat.get();
-          const filteredSavat = response?.data?.filter((item) =>
-            buyurtmalar.some((buyurtma) => item.buyurtma === buyurtma.id)
-          );
-          setSavat(filteredSavat);
-        }
-      } catch (error) {
-        console.error("Failed to fetch savat", error);
-      }
-    };
-    getSavat();
-  }, [buyurtmalar]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [mahsulotData, birlikData] = await Promise.all([
-          APIMahsulot.get(),
-          APIBirlik.get(),
-        ]);
-        setMahsulot(mahsulotData?.data);
-        setBirlik(birlikData?.data);
-      } catch (error) {
-        console.error("Failed to fetch mahsulot or birlik", error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const getMahsulotName = (id) =>
-    mahsulot.find((item) => item.id === id)?.name || "Noma'lum";
-  const getBirlikName = (id) =>
-    birlik.find((item) => item.id === id)?.name || "Noma'lum";
-
   const handleSumbit = async (action, buyurtmaId) => {
-    const userId = localStorage.getItem("userId");
     try {
-      const postData = savat
-        .filter((item) => item.buyurtma === buyurtmaId)
-        .map((item) => ({
-          qiymat: item.qiymat,
-          active: true,
-          buyurtma: buyurtmaId,
-          maxsulot: item.maxsulot,
-          birlik: item.birlik,
-          user: userId,
-        }));        
-        
-        if (action === "reject") {
-        await Promise.all(
-          postData.map(async (data, index) => {
-            await APIArxivRad.post(data);
-            await APISavat.del(savat[index].id);
-          })
-        );
+      if (action === "reject") {
+        await APIArxivRad.post();
       }
 
       // Update buyurtma status
@@ -122,7 +41,6 @@ const BugalterTalabnoma = () => {
 
       // Update state to remove processed buyurtma and savat
       setBuyurtmalar(buyurtmalar.filter((b) => b.id !== buyurtmaId));
-      setSavat(savat.filter((item) => item.buyurtma !== buyurtmaId));
     } catch (error) {
       console.error(
         `Failed to ${action === "approve" ? "approve" : "reject"} buyurtma`,
@@ -144,7 +62,8 @@ const BugalterTalabnoma = () => {
                 <input type="radio" name="my-accordion-2" />
                 <div className="collapse-title text-xl font-medium flex justify-between items-center">
                   <h2 className="text-xl font-medium text-gray-700 dark:text-white">
-                    {users[buyurtma.user] || "Noma'lum"}
+                    {buyurtma?.komendant_user?.last_name}{" "}
+                    {buyurtma?.komendant_user?.first_name}
                   </h2>
                   <div className="hidden sm:flex gap-2 z-10">
                     <button
@@ -170,19 +89,17 @@ const BugalterTalabnoma = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {savat
-                        .filter((item) => item.buyurtma === buyurtma.id)
-                        .map((item) => (
-                          <tr
-                            key={item.id}
-                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                          >
-                            <td>{getMahsulotName(item.maxsulot)}</td>
-                            <td>
-                              {item.qiymat} {getBirlikName(item.birlik)}
-                            </td>
-                          </tr>
-                        ))}
+                      {buyurtma?.maxsulotlar?.map((maxsulot) => (
+                        <tr
+                          key={maxsulot.id}
+                          className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                        >
+                          <td>{maxsulot.maxsulot?.name}</td>
+                          <td>
+                            {maxsulot.qiymat} {maxsulot.maxsulot.birlik.name}
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                   <div className="flex justify-end">
@@ -216,4 +133,3 @@ const BugalterTalabnoma = () => {
 };
 
 export default BugalterTalabnoma;
-
