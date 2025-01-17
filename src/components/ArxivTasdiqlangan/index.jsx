@@ -77,14 +77,12 @@ const Arxiv = () => {
           >
             <div className="flex items-center justify-between text-md font-medium p-2">
               <h2 className="text-md font-medium text-[#000]">
-                {buyurtma.user}
+                {buyurtma?.buyurtma?.komendant_user?.last_name}{" "}
+                {buyurtma?.buyurtma?.komendant_user?.first_name}
               </h2>
               <div className="flex items-center">
                 <div className="italic text-[#000] mr-3">
-                  <span className="hidden lg:block">
-                    {format(new Date(buyurtma.created_at), "yyyy-MM-dd HH:mm")}
-                  </span>
-                  <span className="lg:hidden">
+                  <span>
                     {format(new Date(buyurtma.created_at), "yyyy-MM-dd")}
                   </span>
                 </div>
