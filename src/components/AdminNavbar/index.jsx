@@ -3,30 +3,61 @@ import { Container, Section } from "./style";
 import APIBuyurtma from "../../services/buyurtma";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import CryptoJS from "crypto-js";
 
 export const AdminNavbar = () => {
   const [buyurtmalar, setBuyurtmalar] = useState([]);
+  const [role, setRole] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getBuyurtmalar = async () => {
+    const data = JSON.parse(localStorage.getItem("data"));
+    if (data) {
+      const unShifredRole = CryptoJS.AES.decrypt(data?.role, "role-001")
+        .toString(CryptoJS.enc.Utf8)
+        .trim()
+        .replace(/^"|"$/g, "");
+      setRole(unShifredRole);
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
       try {
+        setLoading(true);
+        setError(null);
+
         const response = await APIBuyurtma.get();
         const filteredBuyurtmalar = response?.data?.filter(
-          (item) =>
-            item.sorov &&
-            item.active &&
-            item.prorektor &&
-            item.bugalter &&
-            (item.it_park || item.xojalik_bolimi) &&
-            !item.omborchi
+          (item) => item.buyurtma_role === role
         );
+
         setBuyurtmalar(filteredBuyurtmalar);
-      } catch (error) {
-        console.error("Failed to fetch buyurtmalar or users", error);
+      } catch (err) {
+        setError("Talabnomalarni olishda xatolik yuz berdi!");
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
       }
     };
-    getBuyurtmalar();
-  }, []);
+
+    if (role) {
+      fetchData();
+    }
+  }, [role]);
+
+  if (loading) {
+    return (
+      <div className="w-full h-[80vh] flex items-center justify-center">
+        <span className="loader"></span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-600 text-center">{error}</div>;
+  }
 
   return (
     <Container>

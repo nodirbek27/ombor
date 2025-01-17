@@ -41,9 +41,16 @@ const KomendantSavatcha = () => {
   }, [dispatch]);
 
   const getBuyurtma = async () => {
+    const data = JSON.parse(localStorage.getItem("data"));
     try {
-      const response = await APIBuyurtma.get();
-      setBuyurtma(response?.data || []);
+      if (data) {
+        const unShifredId = CryptoJS.AES.decrypt(data?.id, "id-001")
+          .toString(CryptoJS.enc.Utf8)
+          .trim()
+          .replace(/^"|"$/g, "");
+        const response = await APIBuyurtma.getByUser(unShifredId);
+        setBuyurtma(response?.data || []);
+      }
     } catch (error) {
       console.error("Failed to fetch savat", error);
     }
