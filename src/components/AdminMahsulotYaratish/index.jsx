@@ -297,7 +297,7 @@ const AdminMahsulotYaratish = () => {
                                     <input
                                       id="radio-xo'jalik"
                                       type="radio"
-                                      value="Xo'jalik bo'limi"
+                                      value="xojalik"
                                       name="maxsulot_role"
                                       onChange={formik.handleChange}
                                       checked={
@@ -319,7 +319,7 @@ const AdminMahsulotYaratish = () => {
                                     <input
                                       id="radio-rttm"
                                       type="radio"
-                                      value="RTTM"
+                                      value="rttm"
                                       name="maxsulot_role"
                                       onChange={formik.handleChange}
                                       checked={
