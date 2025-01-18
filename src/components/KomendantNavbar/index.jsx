@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCartLength } from "../../redux/cartSlice";
 import { IoIosArrowDown } from "react-icons/io";
 import CryptoJS from "crypto-js";
+import KomendantTasdiqRadModal from "../KomendantTasdiqRadModal";
 
 const KomendantNavbar = () => {
   const [showDropdown, setShowDropdown] = useState(null);
@@ -214,6 +215,7 @@ const KomendantNavbar = () => {
           <div className="marquee-container mb-3">
             <div className="marquee">Sayt test rejimida ishlayapti</div>
           </div>
+          <KomendantTasdiqRadModal />
           <Outlet />
         </div>
       </div>

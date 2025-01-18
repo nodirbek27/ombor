@@ -227,10 +227,10 @@ const KomendantSavatcha = () => {
             {/* Tasdiqlanish jarayoni */}
             <ul className="steps steps-vertical md:steps-horizontal">
               <li
-                data-content={`${item.xojalik ? "✓" : "?"}`}
-                className={`step ${item.xojalik && "step-accent"}`}
+                data-content={`${(item.xojalik || item.rttm) ? "✓" : "?"}`}
+                className={`step ${(item.xojalik || item.rttm)  && "step-accent"}`}
               >
-                {item.maxsulot_role === "xojalik" ? "Xo'jalik bo'limi" : "RTTM"}
+                {item.buyurtma_role === "xojalik" ? "Xo'jalik bo'limi" : "RTTM"}
               </li>
               <li
                 data-content={`${item.prorektor ? "✓" : "?"}`}

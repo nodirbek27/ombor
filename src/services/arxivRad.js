@@ -3,6 +3,10 @@ import axiosInstance from "./index";
 const ep = "ombor/rad_etilgan_maxsulotlar/";
 
 const get = () => axiosInstance.get(ep);
+
+const getByUser = (unShifredId) =>
+  axiosInstance.get(`${ep}?buyurtma__komendant_user=${unShifredId}`);
+
 const getbyId = (id) => {
   return axiosInstance.get(`${ep}${id}/`);
 };
@@ -20,6 +24,6 @@ const del = (id) => {
   return axiosInstance.delete(`${ep}${id}/`);
 };
 
-const APIArxivRad = { get, getbyId, post, put, patch, del };
+const APIArxivRad = { get, getByUser, getbyId, post, put, patch, del };
 
 export default APIArxivRad;

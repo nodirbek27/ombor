@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import APIArxivRad from "../../services/arxivRad";
+import CryptoJS from "crypto-js";
 
 const KomendantArxivRad = () => {
   const [radMahsulotlar, setRadMahsulotlar] = useState([]);
@@ -7,10 +8,17 @@ const KomendantArxivRad = () => {
 
   useEffect(() => {
     const fetchAllData = async () => {
+      const data = JSON.parse(localStorage.getItem("data"));
       try {
-        setIsLoading(true);
-        const response = await APIArxivRad.get();
-        setRadMahsulotlar(response?.data);
+        if (data) {
+          const unShifredId = CryptoJS.AES.decrypt(data?.id, "id-001")
+            .toString(CryptoJS.enc.Utf8)
+            .trim()
+            .replace(/^"|"$/g, "");
+          setIsLoading(true);
+          const response = await APIArxivRad.getByUser(unShifredId);
+          setRadMahsulotlar(response?.data);
+        }
       } catch (error) {
         console.error("Failed to fetch data", error);
       } finally {

@@ -37,7 +37,7 @@ const SuperadminOmbor = () => {
 
     try {
       if (omborYopishId) {
-        await APIOmborYopish.put(`${omborYopishId}/`, { yopish: newStatus });
+        await APIOmborYopish.patch(`${omborYopishId}/`, { yopish: newStatus });
       } else {
         const response = await APIOmborYopish.post({ yopish: newStatus });
         setOmborYopishId(response.data.id);
