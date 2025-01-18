@@ -54,7 +54,7 @@ const AdminMahsulotYaratish = () => {
       maxviylik: product.maxviylik || false,
       birlik: product.birlik || "",
       rasm: "",
-      maxsulot_role: product.maxsulot_role ? "rttm" : "xojalik",
+      maxsulot_role: product.maxsulot_role,
     });
   };
 
@@ -100,10 +100,7 @@ const AdminMahsulotYaratish = () => {
       formData.append("kategoriya", values.kategoriya);
       formData.append("birlik", values.birlik);
       formData.append("maxviylik", values.maxviylik);
-      formData.append(
-        "maxsulot_role",
-        values.maxsulot_role ? "rttm" : "xojalik"
-      );
+      formData.append("maxsulot_role", values.maxsulot_role);
       if (values.rasm) {
         formData.append("rasm", values.rasm);
       }
@@ -145,7 +142,7 @@ const AdminMahsulotYaratish = () => {
 
   const modalClose = () => {
     setIsModalOpen(false);
-    setEditingId(null)
+    setEditingId(null);
     setOpenCategoryId(null);
   };
 
@@ -291,6 +288,55 @@ const AdminMahsulotYaratish = () => {
 
                             {/* Checkbox */}
                             <div className="flex flex-col items-start">
+                              <h3 class="mb-3 text-sm text-gray-900 dark:text-white">
+                                Qaysi bo'limga tegishli?
+                              </h3>
+                              <ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white mb-3">
+                                <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+                                  <div className="flex items-center ps-3">
+                                    <input
+                                      id="radio-xo'jalik"
+                                      type="radio"
+                                      value="Xo'jalik bo'limi"
+                                      name="maxsulot_role"
+                                      onChange={formik.handleChange}
+                                      checked={
+                                        formik.values.maxsulot_role ===
+                                        "xojalik"
+                                      }
+                                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                                    />
+                                    <label
+                                      htmlFor="radio-xo'jalik"
+                                      className="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                    >
+                                      Xo'jalik bo'limi
+                                    </label>
+                                  </div>
+                                </li>
+                                <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+                                  <div className="flex items-center ps-3">
+                                    <input
+                                      id="radio-rttm"
+                                      type="radio"
+                                      value="RTTM"
+                                      name="maxsulot_role"
+                                      onChange={formik.handleChange}
+                                      checked={
+                                        formik.values.maxsulot_role === "rttm"
+                                      }
+                                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                                    />
+                                    <label
+                                      htmlFor="radio-rttm"
+                                      className="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                    >
+                                      RTTM
+                                    </label>
+                                  </div>
+                                </li>
+                              </ul>
+                              {/* Checkbox */}
                               <label className="cursor-pointer label">
                                 <input
                                   type="checkbox"
@@ -301,18 +347,6 @@ const AdminMahsulotYaratish = () => {
                                 />
                                 <span className="label-text text-[#000] dark:text-white">
                                   Maxfiylik
-                                </span>
-                              </label>
-                              <label className="cursor-pointer label">
-                                <input
-                                  type="checkbox"
-                                  name="maxsulot_role"
-                                  onChange={formik.handleChange}
-                                  checked={formik.values.maxsulot_role}
-                                  className="checkbox checkbox-success mr-2"
-                                />
-                                <span className="label-text text-[#000] dark:text-white">
-                                  RTTM
                                 </span>
                               </label>
                             </div>
