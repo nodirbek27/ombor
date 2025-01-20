@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import APIJami from "../../services/jami";
 import APIOmborYopish from "../../services/omborYopish";
+import * as XLSX from "xlsx";
 
 const BugalterOmbor = () => {
   const [jami, setJami] = useState([]);
@@ -43,6 +44,28 @@ const BugalterOmbor = () => {
       ? jami
       : jami.filter((item) => item.id === selectedCategory);
 
+  const handleExportToExcel = () => {
+    const exportData = [];
+
+    jami.forEach((item) => {
+      item?.maxsulotlar?.forEach((product) => {
+        exportData.push({
+          Kategoriya: item?.name,
+          Mahsulot: product?.maxsulot?.name,
+          Miqdor: product?.qiymat,
+          Birlik: product?.maxsulot?.birlik?.name,
+        });
+      });
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Ombor");
+
+    // Excel faylni yuklash
+    XLSX.writeFile(workbook, "ombor_ma'lumotlari.xlsx");
+  };
+
   if (loading) {
     return (
       <div className="w-full h-[80vh] flex items-center justify-center">
@@ -53,11 +76,18 @@ const BugalterOmbor = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="md:flex items-center justify-between">
         <div className="flex items-center justify-between mb-3 md:mb-0 w-full mr-3">
           <p className="text-2xl font-semibold text-[#004269] mr-5">Ombor</p>
+          <button
+            onClick={handleExportToExcel}
+            className="btn flex items-center bg-green-500 hover:bg-green-600 text-white mr-3"
+          >
+            Excelga Yuklash
+          </button>
+        </div>
           <select
-            className="select select-info w-full max-w-xs"
+            className="select select-info w-full max-w-xs justify-end"
             value={selectedCategory}
             onChange={handleCategoryChange}
           >
@@ -68,7 +98,6 @@ const BugalterOmbor = () => {
               </option>
             ))}
           </select>
-        </div>
       </div>
       <div className={`${isClose && "hidden"}`}>
         {filteredItems.map((item) => (
