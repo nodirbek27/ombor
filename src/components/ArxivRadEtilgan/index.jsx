@@ -20,7 +20,6 @@ const ArxivRadEtilgan = () => {
 
     fetchAllData();
   }, []);
-  console.log(radMahsulotlar);
 
   return (
     <div className="px-4">

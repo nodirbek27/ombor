@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaDownload } from "react-icons/fa6";
-import APIArxiv from "../../services/arxiv";
+import APITalabnoma from "../../services/talabnoma";
 import {
   MdKeyboardDoubleArrowLeft,
   MdKeyboardDoubleArrowRight,
@@ -22,7 +22,7 @@ const KomendantArxiv = () => {
             .toString(CryptoJS.enc.Utf8)
             .trim()
             .replace(/^"|"$/g, "");
-          const response = await APIArxiv.getByUser(unShifredId);
+          const response = await APITalabnoma.getByUser(unShifredId);
           setBuyurtmalar(response?.data?.reverse());
         }
       } catch (error) {
@@ -34,24 +34,17 @@ const KomendantArxiv = () => {
   }, []);
 
   const handleSumbit = async (id) => {
-    // try {
-    //   // Find the buyurtma object by id
-    //   const buyurtma = buyurtmalar.find((b) => b.id === id);
-    //   if (talabnoma?.talabnoma_pdf) {
-    //     const pdfUrl = talabnoma.talabnoma_pdf;
-    //     window.open(pdfUrl, "_blank");
-    //   } else {
-    //     const postData = { buyurtma: buyurtma.id };
-    //     const pdfUrl = response?.data?.talabnoma_pdf;
-    //     if (pdfUrl) {
-    //       window.open(pdfUrl, "_blank");
-    //     } else {
-    //       console.error("No talabnoma PDF URL in response");
-    //     }
-    //   }
-    // } catch (err) {
-    //   console.error("Error submitting buyurtma:", err);
-    // }
+    try {
+      const response = await APITalabnoma.getbyId(id);
+      if (response) {
+        const pdfUrl = response?.data?.talabnoma_pdf;
+        window.open(pdfUrl, "_blank");
+      } else {
+        console.error("No talabnoma PDF URL in response");
+      }
+    } catch (err) {
+      console.error("Error submitting buyurtma:", err);
+    }
   };
 
   const indexOfLastBuyurtma = currentPage * itemsPerPage;
@@ -77,24 +70,24 @@ const KomendantArxiv = () => {
         </p>
       </div>
       <div className="p-4 min-w-full bg-white">
-        {currentBuyurtmalar.map((buyurtma) => (
+        {currentBuyurtmalar.map((talabnoma) => (
           <div
-            key={buyurtma.id}
+            key={talabnoma.id}
             className="join-item border-base-300 border mb-3 rounded"
           >
             <div className="flex items-center justify-between text-md font-medium p-2">
               <h2 className="text-md font-medium text-[#000]">
-                {buyurtma?.buyurtma?.komendant_user?.last_name}{" "}
-                {buyurtma?.buyurtma?.komendant_user?.first_name}
+                {talabnoma?.buyurtma?.komendant_user?.last_name}{" "}
+                {talabnoma?.buyurtma?.komendant_user?.first_name}
               </h2>
               <div className="flex items-center">
                 <div className="italic text-[#000] mr-3">
                   <span>
-                    {format(new Date(buyurtma.created_at), "yyyy-MM-dd")}
+                    {format(new Date(talabnoma.created_at), "yyyy-MM-dd")}
                   </span>
                 </div>
                 <button
-                  onClick={() => handleSumbit(buyurtma.id)}
+                  onClick={() => handleSumbit(talabnoma.id)}
                   className="btn bg-blue-400 hover:bg-blue-500 transition-colors duration-300 text-white flex items-center gap-2"
                 >
                   <FaDownload />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import APIArxiv from "../../services/arxiv";
+import APITalabnoma from "../../services/talabnoma";
 import APIArxivRad from "../../services/arxivRad";
 import CryptoJS from "crypto-js";
 import { IoCheckmarkDoneCircleOutline } from "react-icons/io5";
@@ -19,11 +19,12 @@ const KomendantTasdiqRadModal = () => {
           .replace(/^"|"$/g, "");
         setId(unShifredId);
         // Tasdiqlangan
-        const responseTasdiqlangan = await APIArxiv.getByUser(unShifredId);
-        const filteredTasBuyurtma = responseTasdiqlangan?.data?.filter(
-          (item) => item.active
+        const responseTasdiqlangan = await APITalabnoma.getByUserActive(
+          unShifredId
         );
+        const filteredTasBuyurtma = responseTasdiqlangan?.data;
         setTasdiqlanganBuyurtmalar(filteredTasBuyurtma[0]);
+
         // Rad etilgan
         const responseRadEtilgan = await APIArxivRad.getByUser(unShifredId);
         const filteredTRadBuyurtma = responseRadEtilgan?.data?.filter(
@@ -39,11 +40,9 @@ const KomendantTasdiqRadModal = () => {
   const handleClose = async (tasdiqId) => {
     try {
       // Tasdiqlangan
-      await APIArxiv.patch(tasdiqId, { active: false });
-      const responseTasdiqlangan = await APIArxiv.getByUser(id);
-      const filteredTasBuyurtma = responseTasdiqlangan?.data?.filter(
-        (item) => item.active
-      );
+      await APITalabnoma.patch(tasdiqId, { active: false });
+      const responseTasdiqlangan = await APITalabnoma.getByUserActive(id);
+      const filteredTasBuyurtma = responseTasdiqlangan?.data;
       setTasdiqlanganBuyurtmalar(filteredTasBuyurtma[0]);
     } catch (error) {
       console.error("Xatolik yuz berdi:", error);
@@ -67,7 +66,7 @@ const KomendantTasdiqRadModal = () => {
   return (
     <div>
       {/* Tasdiqlangan buyurtma modali */}
-      {tasdiqlanganBuyurtmalar?.active && (
+      {tasdiqlanganBuyurtmalar && (
         <div
           id="popup-modal"
           tabIndex="-1"
