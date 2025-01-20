@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import APIJami from "../../services/jami";
 import APIOmborYopish from "../../services/omborYopish";
 
-const OmborForAll = () => {
+const BugalterOmbor = () => {
   const [jami, setJami] = useState([]);
   const [yopish, setYopish] = useState([]);
   const [isClose, setIsClose] = useState(false);
@@ -116,4 +116,4 @@ const OmborForAll = () => {
   );
 };
 
-export default OmborForAll;
+export default BugalterOmbor;

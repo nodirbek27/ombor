@@ -1,7 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
-import Ombor from "../pages/Ombor";
 
 // Superadmin
 import SuperadminDashboard from "../pages/SuperadminDashboard";
@@ -33,15 +32,16 @@ import KomendantArxivRad from "../pages/KomendantDashboard/ArxivRad";
 import ProrektorDashboard from "../pages/ProrektorDashboard";
 import ProrektorTalabnoma from "../pages/ProrektorDashboard/Talabnoma";
 
-// Prorektor
+// Bugalter
 import BugalterDashboard from "../pages/BugalterDashboard";
 import BugalterTalabnoma from "../pages/BugalterDashboard/Talabnoma";
+import BugalterOmbor from "../pages/BugalterDashboard/Ombor";
 
-// Prorektor
+// Xojalik
 import XojalikDashboard from "../pages/XojalikDashboard";
 import XojalikTalabnoma from "../pages/XojalikDashboard/Talabnoma";
 
-// Prorektor
+// RTTM
 import ItParkDashboard from "../pages/ItParkDashboard";
 import ItParkTalabnoma from "../pages/ItParkDashboard/Talabnoma";
 
@@ -155,7 +155,7 @@ const Root = () => {
       >
         <Route index element={<BugalterTalabnoma />} />
         <Route path="talabnoma" element={<BugalterTalabnoma />} />
-        <Route path="ombor" element={<Ombor />} />
+        <Route path="ombor" element={<BugalterOmbor />} />
         <Route path="chiqgan-mahsulotlar" element={<ChiqganMahsulotlar />} />
         <Route
           path="rad-etilgan-mahsulotlar"
@@ -174,7 +174,6 @@ const Root = () => {
       >
         <Route index element={<XojalikTalabnoma />} />
         <Route path="talabnoma" element={<XojalikTalabnoma />} />
-        <Route path="ombor" element={<Ombor />} />
         <Route path="chiqgan-mahsulotlar" element={<ChiqganMahsulotlar />} />
         <Route
           path="rad-etilgan-mahsulotlar"
@@ -193,7 +192,7 @@ const Root = () => {
       >
         <Route index element={<ItParkTalabnoma />} />
         <Route path="talabnoma" element={<ItParkTalabnoma />} />
-        <Route path="ombor" element={<Ombor />} />
+        <Route path="ombor" element={<BugalterOmbor />} />
         <Route path="chiqgan-mahsulotlar" element={<ChiqganMahsulotlar />} />
         <Route
           path="rad-etilgan-mahsulotlar"

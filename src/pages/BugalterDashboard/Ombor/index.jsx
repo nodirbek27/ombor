@@ -1,10 +1,10 @@
 import React from "react";
-import OmborForAll from "../../components/OmborForAll";
+import BugalterOmbor from "../../../components/BugalterOmbor";
 
 const Ombor = () => {
   return (
     <div>
-      <OmborForAll />
+      <BugalterOmbor />
     </div>
   );
 };
