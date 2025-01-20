@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import APIBuyurtma from "../../services/buyurtma";
-import { RxCross2, RxCheck } from "react-icons/rx";
 import CryptoJS from "crypto-js";
 
 const XojalikTalabnoma = () => {
@@ -97,13 +96,13 @@ const XojalikTalabnoma = () => {
                       onClick={() => handleSumbit("approve", buyurtma.id)}
                       className="bg-green-400 px-6 py-1 rounded-md hover:bg-green-500 transition-colors duration-300 text-white"
                     >
-                      <RxCheck className="font-bold" />
+                      Tasdiqlash
                     </button>
                     <button
                       onClick={() => handleSumbit("reject", buyurtma.id)}
                       className="bg-red-400 px-6 py-1 rounded-md focus:bg-red-500 transition-colors duration-300 text-white"
                     >
-                      <RxCross2 />
+                      Rad etish
                     </button>
                   </div>
                 </div>
@@ -135,13 +134,13 @@ const XojalikTalabnoma = () => {
                         onClick={() => handleSumbit("approve", buyurtma.id)}
                         className="bg-green-400 px-6 py-1 rounded-md hover:bg-green-500 focus:ring-4 focus:ring-red-300 dark:focus:ring-gray-600 transition-colors duration-300 text-white"
                       >
-                        <RxCheck className="font-bold" />
+                        Tasdiqlash
                       </button>
                       <button
                         onClick={() => handleSumbit("reject", buyurtma.id)}
                         className="bg-red-400 px-6 py-1 rounded-md hover:bg-red-500 transition-colors duration-300 text-white"
                       >
-                        <RxCross2 />
+                        Rad etish
                       </button>
                     </div>
                   </div>

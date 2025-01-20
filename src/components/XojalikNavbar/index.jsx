@@ -3,7 +3,6 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import profilePicture from "../../assets/images/profile-picture.png";
 import CryptoJS from "crypto-js";
 
-
 const XojalikNavbar = () => {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -144,6 +143,15 @@ const XojalikNavbar = () => {
                   aria-current="page"
                 >
                   Talabnomalar
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="ombor"
+                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  aria-current="page"
+                >
+                  Mahsulotlar
                 </Link>
               </li>
               <li>

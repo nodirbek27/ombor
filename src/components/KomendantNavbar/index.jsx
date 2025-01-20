@@ -63,7 +63,7 @@ const KomendantNavbar = () => {
   return (
     <div className="">
       <div className="bg-white header sticky top-0 z-50 shadow-xl">
-        <div className="max-w-7xl mx-auto flex justify-between items-center p-4 relative border-b-2">
+        <div className="max-w-7xl mx-auto flex justify-between items-center p-4 relative border-b-2 bg-[#24dada]">
           <div>
             <Link
               to="/komendant/ombor"
@@ -126,7 +126,7 @@ const KomendantNavbar = () => {
             <div className="flex items-center">
               <Link to="savatcha" className="relative mr-5 text-2xl">
                 <MdOutlineLocalGroceryStore />
-                <div className="items_count absolute -top-3 -right-4 bg-yellow-500 rounded-full w-6 h-6 flex items-center justify-center">
+                <div className="items_count absolute -top-3 -right-4 bg-red-500 rounded-full w-6 h-6 flex items-center justify-center">
                   <span className="text-white text-sm">
                     {cartLength ? cartLength : "0"}
                   </span>
@@ -211,7 +211,7 @@ const KomendantNavbar = () => {
         </div>
 
         {/* Marquee */}
-        <div className="pb-4 max-w-7xl mx-auto bg-white">
+        <div className="pb-4 max-w-7xl mx-auto bg-white min-h-[90vh]">
           <div className="marquee-container mb-3">
             <div className="marquee">Sayt test rejimida ishlayapti</div>
           </div>
