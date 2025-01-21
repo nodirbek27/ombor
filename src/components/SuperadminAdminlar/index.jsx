@@ -359,7 +359,7 @@ const SuperadminAdminlar = () => {
                     type="checkbox"
                     checked={user.is_active}
                     onChange={() => toggleIsActive(user.id, user.is_active)}
-                    className="toggle toggle-success"
+                    className={`toggle toggle-success ${user.role === "admin" ? "hidden" : ""}`}
                   />
                 </th>
               </tr>
