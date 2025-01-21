@@ -149,7 +149,7 @@ const Login = () => {
           onSubmit={formik.handleSubmit}
         >
           <label className="w-full flex flex-col gap-1" htmlFor="username">
-            Username
+            Login
             <input
               disabled={isLoading ? true : false}
               type="text"
@@ -167,8 +167,8 @@ const Login = () => {
           {formik.errors.username && (
             <div className="text-xs text-red-600">{formik.errors.username}</div>
           )}
-          <label className="relative flex flex-col gap-1" htmlFor="password">
-            Password
+          <label className="relative flex flex-col gap-1 mb-3" htmlFor="password">
+            Parol
             <input
               disabled={isLoading ? true : false}
               type="password"
@@ -201,20 +201,6 @@ const Login = () => {
           {formik.errors.password && (
             <div className="text-xs text-red-600">{formik.errors.password}</div>
           )}
-          <div className="form-control">
-            <label className="cursor-pointer justify-start gap-2 label">
-              <input
-                disabled={isLoading ? true : false}
-                id="remember"
-                name="remember"
-                type="checkbox"
-                onChange={formik.handleChange}
-                value={formik.values.remember}
-                className="checkbox checkbox-sm checkbox-accent"
-              />
-              <span className="label-text">Remember me</span>
-            </label>
-          </div>
           <button
             type="submit"
             className={`w-full btn btn-sm text-white ${
@@ -226,7 +212,7 @@ const Login = () => {
             ) : errMessage ? (
               `${errMessage}`
             ) : (
-              "Submit"
+              "Kirish"
             )}
           </button>
         </form>
