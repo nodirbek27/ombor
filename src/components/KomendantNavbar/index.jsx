@@ -69,7 +69,7 @@ const KomendantNavbar = () => {
               to="/komendant/ombor"
               className="logo flex items-start text-xl font-semibold"
             >
-              <img className="mr-3" src={logo} alt="Logo" />
+              <img className="mr-3" src={logo} alt="Logo" width={40} />
               QDPI <br /> Ombor
             </Link>
           </div>
