@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import APIBirlik from "../../services/birlik";
-import { RiDeleteBin5Line } from "react-icons/ri";
 import { MdOutlineAddBox } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
 
@@ -63,18 +62,6 @@ const AdminBirlik = () => {
       name: item.name,
     });
     document.getElementById("my_modal_2").showModal();
-  };
-
-  const handleDelete = async (id) => {
-    if (window.confirm("O'chirishga ishonchingiz komilmi.??")) {
-      try {
-        await APIBirlik.del(id);
-        alert("Muvaffaqiyatli o'chirildi.!");
-        getBirlik();
-      } catch (error) {
-        console.error("Failed to delete birlik", error);
-      }
-    }
   };
 
   const resetForm = () => {
@@ -165,7 +152,6 @@ const AdminBirlik = () => {
               <th>№</th>
               <th>Birlik</th>
               <th>Tahrirlash</th>
-              <th>O'chirish</th>
             </tr>
           </thead>
           <tbody>
@@ -180,14 +166,6 @@ const AdminBirlik = () => {
                       onClick={() => handleEdit(item)}
                     >
                       <CiEdit className="w-5 h-auto text-green-400" />
-                    </button>
-                  </th>
-                  <th>
-                    <button
-                      className="cursor-pointer"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      <RiDeleteBin5Line className="w-5 h-auto text-red-400" />
                     </button>
                   </th>
                 </tr>
