@@ -9,10 +9,10 @@ const QRTalabnomalar = () => {
     const fetchTalabnoma = async () => {
       try {
         // QRTalabnomalarni olish
-        const response = await APITalabnoma.get();
+        const response = await APITalabnoma.getByOrder(pk);
 
         // Buyurtmaga mos talabnomani topish
-        const talabnoma = response?.data?.find((b) => b.buyurtma === pk);
+        const talabnoma = response?.data
 
         if (!talabnoma) {
           console.error("Talabnoma topilmadi.");

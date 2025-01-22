@@ -7,6 +7,9 @@ const get = () => axiosInstance.get(ep);
 const getByUser = (unShifredId) =>
   axiosInstance.get(`${ep}?buyurtma__komendant_user=${unShifredId}`);
 
+const getByOrder = (buyurtma) =>
+  axiosInstance.get(`${ep}?buyurtma=${buyurtma}`);
+
 const getByUserActive = (unShifredId) =>
   axiosInstance.get(`${ep}?buyurtma__komendant_user=${unShifredId}&active=true`);
 
@@ -24,6 +27,6 @@ const del = (id) => {
   return axiosInstance.delete(`${ep}${id}/`);
 };
 
-const APITalabnoma = { get, getByUser, getByUserActive, getbyId, post, patch, del };
+const APITalabnoma = { get, getByUser, getByOrder, getByUserActive, getbyId, post, patch, del };
 
 export default APITalabnoma;

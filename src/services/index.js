@@ -2,7 +2,8 @@ import axios from "axios";
 import CryptoJS from "crypto-js";
 
 const axiosInstance = axios.create({
-    baseURL: "https://apiombor.kspi.uz/",
+    baseURL: "https://omborxona2024.pythonanywhere.com/",
+    // baseURL: "https://apiombor.kspi.uz/",
     headers: {
         "Content-Type": "multipart/form-data",
         Accept: "application/json",
