@@ -16,6 +16,10 @@ const get = (username, token) => {
   return axiosInstance.get(`${ep}?username=${username}`, config);
 };
 
+const getUser = (username) => {
+  return axiosInstance.get(`${ep}?username=${username}`);
+};
+
 const getbyId = (id) => {
   return axiosInstance.get(`${ep}${id}`);
 };
@@ -33,6 +37,6 @@ const del = (id) => {
   return axiosInstance.delete(`${ep}${id}`);
 };
 
-const APIUsers = { getAll, get, getbyId, post, put, patch, del };
+const APIUsers = { getAll, get, getUser, getbyId, post, put, patch, del };
 
 export default APIUsers;

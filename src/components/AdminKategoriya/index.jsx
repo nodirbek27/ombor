@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import APICategory from "../../services/category";
-import { RiDeleteBin5Line } from "react-icons/ri";
 import { MdOutlineAddCard } from "react-icons/md";
 import { CiEdit } from "react-icons/ci";
 
@@ -61,18 +60,6 @@ const AdminKategoriya = () => {
       name: item.name,
     });
     document.getElementById("my_modal_2").showModal();
-  };
-
-  const handleDelete = async (id) => {
-    if (window.confirm("O'chirishga ishonchingiz komilmi.??")) {
-      try {
-        await APICategory.del(id);
-        alert("Muvaffaqiyatli o'chirildi.!");
-        getCategory();
-      } catch (error) {
-        console.error("Failed to delete category", error);
-      }
-    }
   };
 
   const resetForm = () => {
@@ -150,7 +137,6 @@ const AdminKategoriya = () => {
               <th>№</th>
               <th>Kategoriya</th>
               <th>Tahrirlash</th>
-              <th>O'chirish</th>
             </tr>
           </thead>
           <tbody>
@@ -165,14 +151,6 @@ const AdminKategoriya = () => {
                       onClick={() => handleEdit(item)}
                     >
                       <CiEdit className="w-5 h-auto text-green-400" />
-                    </button>
-                  </th>
-                  <th>
-                    <button
-                      className="cursor-pointer"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      <RiDeleteBin5Line className="w-5 h-auto text-red-400" />
                     </button>
                   </th>
                 </tr>

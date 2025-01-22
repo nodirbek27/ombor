@@ -2,13 +2,13 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import APITalabnoma from "../../services/talabnoma";
 
-const Talabnomalar = () => {
+const QRTalabnomalar = () => {
   const { pk } = useParams();
 
   useEffect(() => {
     const fetchTalabnoma = async () => {
       try {
-        // Talabnomalarni olish
+        // QRTalabnomalarni olish
         const response = await APITalabnoma.get();
 
         // Buyurtmaga mos talabnomani topish
@@ -42,4 +42,4 @@ const Talabnomalar = () => {
   );
 };
 
-export default Talabnomalar;
+export default QRTalabnomalar;

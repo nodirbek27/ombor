@@ -50,13 +50,15 @@ import NotFoundPage from "../pages/NotFoundPage";
 import Login from "../components/Login";
 
 // PDF Talabnoma
-import Talabnomalar from "../components/Talabnomalar";
+import Talabnomalar from "../components/QRTalabnomalar";
+import User from "../components/QRUser";
 
 const Root = () => {
   return (
     <Routes>
       {/* TALABNOMALAR */}
       <Route path="/talabnoma/:pk" element={<Talabnomalar />} />
+      <Route path="/user/:pk" element={<User />} />
 
       {/* SUPERADMIN */}
       <Route

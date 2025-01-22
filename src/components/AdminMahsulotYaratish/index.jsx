@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { RiDeleteBin5Line } from "react-icons/ri";
 import { CiEdit } from "react-icons/ci";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import APICategory from "../../services/category";
@@ -128,17 +127,6 @@ const AdminMahsulotYaratish = () => {
       }
     },
   });
-
-  const handleDelete = async (id) => {
-    if (window.confirm("O'chirishga ishonchingiz komilmi?")) {
-      try {
-        await APIMahsulot.del(`${id}`);
-        getCategory();
-      } catch (error) {
-        console.error("Failed to delete mahsulot", error);
-      }
-    }
-  };
 
   const modalClose = () => {
     setIsModalOpen(false);
@@ -406,13 +394,6 @@ const AdminMahsulotYaratish = () => {
                       onClick={() => handleEdit(product, item.id)}
                     >
                       <CiEdit className="w-5 h-auto text-green-400" />
-                    </button>
-                    {/* Delete */}
-                    <button
-                      className="cursor-pointer"
-                      onClick={() => handleDelete(product.id)}
-                    >
-                      <RiDeleteBin5Line className="w-5 h-auto text-red-400" />
                     </button>
                   </div>
                 </div>
