@@ -7,12 +7,14 @@ const QRTalabnomalar = () => {
 
   useEffect(() => {
     const fetchTalabnoma = async () => {
+      
       try {
         // QRTalabnomalarni olish
-        const response = await APITalabnoma.getByOrder(pk);
+        console.log(pk);
+        const response = await APITalabnoma.getByOrder("70795383-54ba-4b86-bad4-b255d6be2c90");
 
         // Buyurtmaga mos talabnomani topish
-        const talabnoma = response?.data
+        const talabnoma = response?.data[0]
 
         if (!talabnoma) {
           console.error("Talabnoma topilmadi.");
