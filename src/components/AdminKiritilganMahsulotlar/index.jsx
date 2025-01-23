@@ -139,9 +139,9 @@ const AdminKiritilganMahsulotlar = () => {
                   <button
                     type="button"
                     onClick={() => handleEdit(omborItem)}
-                    className="text-xl text-green-400 hover:text-green-500"
+                    className="text-xl"
                   >
-                    <CiEdit />
+                    <CiEdit className="w-7 h-auto text-green-500 border hover:border-green-500 transition-all duration-200 p-1 rounded-md" />
                   </button>
                 </td>
                 <td className="text-center">{omborItem.maxsulot.created_at}</td>

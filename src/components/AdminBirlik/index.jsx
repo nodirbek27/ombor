@@ -165,7 +165,7 @@ const AdminBirlik = () => {
                       className="mr-5 cursor-pointer"
                       onClick={() => handleEdit(item)}
                     >
-                      <CiEdit className="w-5 h-auto text-green-400" />
+                      <CiEdit className="w-7 h-auto text-green-500 border hover:border-green-500 transition-all duration-200 p-1 rounded-md" />
                     </button>
                   </th>
                 </tr>

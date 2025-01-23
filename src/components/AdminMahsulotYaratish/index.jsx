@@ -393,7 +393,7 @@ const AdminMahsulotYaratish = () => {
                       className="mr-4 cursor-pointer"
                       onClick={() => handleEdit(product, item.id)}
                     >
-                      <CiEdit className="w-5 h-auto text-green-400" />
+                      <CiEdit className="w-7 h-auto text-green-500 border hover:border-green-500 transition-all duration-200 p-1 rounded-md" />
                     </button>
                   </div>
                 </div>

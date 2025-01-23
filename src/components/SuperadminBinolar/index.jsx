@@ -140,7 +140,7 @@ const SuperadminBinolar = () => {
                 <td className="dark:text-[#333] font-semibold xl:text-lg">{bino.name}</td>
                 <td>
                   <CiEdit
-                    className="cursor-pointer w-5 h-auto text-green-400 hover:text-green-500"
+                    className="cursor-pointer w-7 h-auto text-green-400 hover:text-green-500 border hover:border-green-500 p-1 rounded-md"
                     onClick={() => handleEdit(bino)}
                   />
                 </td>
