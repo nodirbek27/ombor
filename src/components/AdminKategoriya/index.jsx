@@ -40,7 +40,7 @@ const AdminKategoriya = () => {
 
       try {
         if (editingId) {
-          await APICategory.put(`${editingId}`, dataToPost);
+          await APICategory.patch(`${editingId}`, dataToPost);
           alert("Muvaffaqiyatli o'zgartirildi.!");
         } else {
           await APICategory.post(dataToPost);

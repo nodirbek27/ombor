@@ -11,13 +11,13 @@ const getbyName = (name) => {
 const post = (item) => {
   return axiosInstance.post(ep, item);
 };
-const put = (id, item) => {
-  return axiosInstance.put(`${ep}${id}/`, item);
+const patch = (id, item) => {
+  return axiosInstance.patch(`${ep}${id}/`, item);
 };
 const del = (id) => {
   return axiosInstance.delete(`${ep}${id}/`);
 };
 
-const APICategory = { get, getbyName, post, put, del };
+const APICategory = { get, getbyName, post, patch, del };
 
 export default APICategory;
