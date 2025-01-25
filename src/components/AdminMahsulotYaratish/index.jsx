@@ -219,6 +219,7 @@ const AdminMahsulotYaratish = () => {
                                   onChange={formik.handleChange}
                                   onBlur={formik.handleBlur}
                                   value={formik.values.name}
+                                  maxLength={50}
                                 />
                               </div>
 
