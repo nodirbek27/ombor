@@ -10,13 +10,13 @@ const getbyId = (id) => {
 const post = (item) => {
   return axiosInstance.post(ep, item);
 };
-const put = (id, item) => {
-    return axiosInstance.put(`${ep}${id}/`, item);
+const patch = (id, item) => {
+    return axiosInstance.patch(`${ep}${id}/`, item);
   };
   const del = (id) => {
     return axiosInstance.delete(`${ep}${id}/`);
   };
 
-const APIBirlik = { get, getbyId, post, put, del };
+const APIBirlik = { get, getbyId, post, patch, del };
 
 export default APIBirlik;

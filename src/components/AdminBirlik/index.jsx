@@ -42,7 +42,7 @@ const AdminBirlik = () => {
 
       try {
         if (editingId) {
-          await APIBirlik.put(`${editingId}`, dataToPost);
+          await APIBirlik.patch(`${editingId}`, dataToPost);
           alert("Muvaffaqiyatli o'zgartirildi.!");
         } else {
           await APIBirlik.post(dataToPost);

@@ -13,8 +13,8 @@ const getbyId = (id) => {
 const post = (item) => {
   return axiosInstance.post(epPost, item);
 };
-const put = (id, item) => {
-  return axiosInstance.put(`${ep}${id}/`, item);
+const patch = (id, item) => {
+  return axiosInstance.patch(`${ep}${id}/`, item);
 };
 const delKorzinka = (id) => {
   return axiosInstance.delete(`${ep}${id}/`);
@@ -23,6 +23,6 @@ const delProduct = (id) => {
   return axiosInstance.delete(`${epPost}${id}/`);
 };
 
-const APISavat = { get, getbyId, post, put, delKorzinka, delProduct };
+const APISavat = { get, getbyId, post, patch, delKorzinka, delProduct };
 
 export default APISavat;
