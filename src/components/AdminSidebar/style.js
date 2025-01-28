@@ -63,11 +63,16 @@ const Logo = styled.div`
 const LogOut = styled(Logo)`
   display: flex;
   align-items: center;
+  justify-content: center;
   margin-top: auto;
+  margin-bottom: 10px;
   width: 100%;
   position: sticky;
   bottom: 0;
-  border-top: 1px solid rgba(222, 225, 227, 1);
+  background-color: #ab0000;
+  color: white;
+  font-weight: 700;
+  border-radius: 30px;
   border-bottom: 0;
 `;
 
@@ -158,7 +163,7 @@ const ChildWrapper = styled.div`
 `;
 
 const ExitIcon = styled(exit)`
-  margin-right: 16px;
+  margin-right: 12px;
 `;
 
 export {

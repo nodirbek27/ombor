@@ -4,6 +4,7 @@ import APIBuyurtma from "../../services/buyurtma";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import CryptoJS from "crypto-js";
+import Time from "./Time"
 
 export const AdminNavbar = () => {
   const [buyurtmalar, setBuyurtmalar] = useState([]);
@@ -62,6 +63,7 @@ export const AdminNavbar = () => {
   return (
     <Container>
       <Section>
+        <Time />
         <Link to="/omborchi/so'rovlar" style={{ position: "relative" }}>
           <IoNotificationsOutline className="w-6 h-auto" />
           {buyurtmalar.length > 0 && (

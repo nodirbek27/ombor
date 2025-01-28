@@ -31,7 +31,7 @@ export const AdminSidebar = () => {
   useEffect(() => {}, [location]);
 
   const onClickLogo = () => {
-    navigate("/admin/ombor");
+    navigate("/omborchi/ombor");
   };
   const onLogOut = () => {
     localStorage.clear();
