@@ -110,7 +110,7 @@ const BugalterOmbor = () => {
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
               {item.maxsulotlar.map((product) => {
                 return (
-                  product.qiymat && (
+                  product.qiymat > 0 && (
                     <div
                       key={product.id}
                       className="border rounded p-2 flex items-center justify-between bg-slate-50"

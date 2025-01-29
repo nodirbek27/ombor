@@ -123,7 +123,7 @@ const SuperadminOmbor = () => {
               <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
                 {item.maxsulotlar.map((maxsulotItem) => {
                   return (
-                    maxsulotItem.qiymat && (
+                    maxsulotItem.qiymat > 0 && (
                       <div
                         key={maxsulotItem.id}
                         className="border rounded p-2 flex items-center justify-between bg-slate-50"
