@@ -54,7 +54,7 @@ const AdminOmbor = () => {
         alert("Successfully added!");
         formik.resetForm();
         fetchData();
-        setBirlik([])
+        setBirlik([]);
         modalRef.current.close();
       } catch (error) {
         console.error("Failed to add/update ombor", error);
@@ -81,12 +81,14 @@ const AdminOmbor = () => {
 
     jami.forEach((item) => {
       item?.maxsulotlar?.forEach((product) => {
-        exportData.push({
-          Kategoriya: item?.name,
-          Mahsulot: product?.maxsulot?.name,
-          Miqdor: product?.qiymat,
-          Birlik: product?.maxsulot?.birlik?.name,
-        });
+        if (product?.qiymat > 0) {
+          exportData.push({
+            Kategoriya: item?.name,
+            Mahsulot: product?.maxsulot?.name,
+            Miqdor: product?.qiymat,
+            Birlik: product?.maxsulot?.birlik?.name,
+          });
+        }
       });
     });
 
@@ -154,9 +156,7 @@ const AdminOmbor = () => {
               value={formik.values.category}
               className="select select-bordered w-full bg-white text-[#000]"
             >
-              <option value="">
-                Kategoriya
-              </option>
+              <option value="">Kategoriya</option>
               {category.map((cat) => (
                 <option key={cat.id} value={cat.name}>
                   {cat.name}
@@ -223,30 +223,32 @@ const AdminOmbor = () => {
             <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
               {item.maxsulotlar.map((maxsulotItem) => {
                 return (
-                  <div
-                    key={maxsulotItem.id}
-                    className="border rounded p-2 flex items-center justify-between bg-slate-50"
-                  >
-                    <div className="text-[#000]">
-                      {maxsulotItem.maxsulot.name}
-                    </div>
-                    <div className="flex items-center">
-                      <a
-                        href={maxsulotItem.maxsulot.rasm}
-                        className={`italic underline text-blue-300 mr-3 ${
-                          !maxsulotItem.maxsulot.rasm && "hidden"
-                        }`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Rasmi
-                      </a>
+                  maxsulotItem.qiymat && (
+                    <div
+                      key={maxsulotItem.id}
+                      className="border rounded p-2 flex items-center justify-between bg-slate-50"
+                    >
                       <div className="text-[#000]">
-                        {maxsulotItem.qiymat}{" "}
-                        {maxsulotItem.maxsulot.birlik.name}
+                        {maxsulotItem.maxsulot.name}
+                      </div>
+                      <div className="flex items-center">
+                        <a
+                          href={maxsulotItem.maxsulot.rasm}
+                          className={`italic underline text-blue-300 mr-3 ${
+                            !maxsulotItem.maxsulot.rasm && "hidden"
+                          }`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Rasmi
+                        </a>
+                        <div className="text-[#000]">
+                          {maxsulotItem.qiymat}{" "}
+                          {maxsulotItem.maxsulot.birlik.name}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )
                 );
               })}
             </div>

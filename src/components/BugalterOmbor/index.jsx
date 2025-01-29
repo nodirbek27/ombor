@@ -49,12 +49,14 @@ const BugalterOmbor = () => {
 
     jami.forEach((item) => {
       item?.maxsulotlar?.forEach((product) => {
-        exportData.push({
-          Kategoriya: item?.name,
-          Mahsulot: product?.maxsulot?.name,
-          Miqdor: product?.qiymat,
-          Birlik: product?.maxsulot?.birlik?.name,
-        });
+        if (product?.qiymat > 0) {
+          exportData.push({
+            Kategoriya: item?.name,
+            Mahsulot: product?.maxsulot?.name,
+            Miqdor: product?.qiymat,
+            Birlik: product?.maxsulot?.birlik?.name,
+          });
+        }
       });
     });
 
@@ -108,31 +110,33 @@ const BugalterOmbor = () => {
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
               {item.maxsulotlar.map((product) => {
                 return (
-                  <div
-                    key={product.id}
-                    className="border rounded p-2 flex items-center justify-between bg-slate-50"
-                  >
-                    <div className="flex flex-col gap-2">
-                      <div>{product.maxsulot.name}</div>
-                    </div>
-                    <div className="flex items-center gap-3 xl:gap-8">
-                      <div>
-                        <a
-                          href={product.maxsulot?.rasm}
-                          className={`italic underline ${
-                            !product.maxsulot?.rasm && "hidden"
-                          }`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Rasm
-                        </a>
+                  product.qiymat && (
+                    <div
+                      key={product.id}
+                      className="border rounded p-2 flex items-center justify-between bg-slate-50"
+                    >
+                      <div className="flex flex-col gap-2">
+                        <div>{product.maxsulot.name}</div>
                       </div>
-                      <div>
-                        {product.qiymat} {product.maxsulot?.birlik.name}
+                      <div className="flex items-center gap-3 xl:gap-8">
+                        <div>
+                          <a
+                            href={product.maxsulot?.rasm}
+                            className={`italic underline ${
+                              !product.maxsulot?.rasm && "hidden"
+                            }`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Rasm
+                          </a>
+                        </div>
+                        <div>
+                          {product.qiymat} {product.maxsulot?.birlik.name}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )
                 );
               })}
             </div>
