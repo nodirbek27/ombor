@@ -102,7 +102,7 @@ const KomendantOmbor = () => {
                       <div className="flex flex-col gap-2">
                         <div>{product.maxsulot.name}</div>
                       </div>
-                      <div className="flex items-center gap-3 xl:gap-8">
+                      <div className="flex items-center gap-3">
                         <div>
                           <a
                             href={`https://apiombor.kspi.uz${product.maxsulot.rasm}`}
@@ -119,7 +119,7 @@ const KomendantOmbor = () => {
                           {product.qiymat} {product.maxsulot?.birlik.name}
                         </div>
                         <MdOutlineLocalGroceryStore
-                          className="w-5 md:w-6 h-auto cursor-pointer"
+                          className="w-[24px] h-[24px] cursor-pointer flex-shrink-0"
                           onClick={(e) => handleAddToCart(product, e)}
                         />
                       </div>
