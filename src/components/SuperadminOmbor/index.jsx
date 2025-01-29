@@ -133,7 +133,7 @@ const SuperadminOmbor = () => {
                         </div>
                         <div className="flex items-center">
                           <a
-                            href={maxsulotItem.maxsulot.rasm}
+                            href={`https://apiombor.kspi.uz${maxsulotItem.maxsulot.rasm}`}
                             className={`italic underline text-blue-300 mr-3 ${
                               !maxsulotItem.maxsulot.rasm && "hidden"
                             }`}

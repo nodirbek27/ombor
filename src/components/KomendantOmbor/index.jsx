@@ -93,7 +93,8 @@ const KomendantOmbor = () => {
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
               {item.maxsulotlar.map((product) => {
                 return (
-                  !product?.maxsulot?.maxviylik && product.qiymat > 0 && (
+                  !product?.maxsulot?.maxviylik &&
+                  product.qiymat > 0 && (
                     <div
                       key={product.id}
                       className="border rounded p-2 flex items-center justify-between bg-slate-50"
@@ -104,8 +105,8 @@ const KomendantOmbor = () => {
                       <div className="flex items-center gap-3 xl:gap-8">
                         <div>
                           <a
-                            href={product.maxsulot?.rasm}
-                            className={`italic underline ${
+                            href={`https://apiombor.kspi.uz${product.maxsulot.rasm}`}
+                            className={`italic underline text-blue-400 ${
                               !product.maxsulot?.rasm && "hidden"
                             }`}
                             target="_blank"
